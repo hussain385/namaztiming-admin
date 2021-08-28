@@ -3752,6 +3752,7 @@ __metadata:
     react-router-dom: ^5.2.0
     react-scripts: 4.0.3
     redux: ^4.1.0
+    redux-firestore: ^0.15.0
     web-vitals: ^1.1.2
   languageName: unknown
   linkType: soft
@@ -13406,6 +13407,24 @@ fsevents@^1.2.7:
     indent-string: ^4.0.0
     strip-indent: ^3.0.0
   checksum: fa1ef20404a2d399235e83cc80bd55a956642e37dd197b4b612ba7327bf87fa32745aeb4a1634b2bab25467164ab4ed9c15be2c307923dd08b0fe7c52431ae6b
+  languageName: node
+  linkType: hard
+
+"reduce-reducers@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "reduce-reducers@npm:1.0.4"
+  checksum: 9b3648fa505a3ac7834cd8150ec98f9915e4020c8df0e9a4eddb5d3615814067943913f2582d0be4763ad6583209c0cf7ad3cc1021745b9b8e6ace768d49f6a9
+  languageName: node
+  linkType: hard
+
+"redux-firestore@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "redux-firestore@npm:0.15.0"
+  dependencies:
+    immer: 8.0.1
+    lodash: ^4.17.20
+    reduce-reducers: ^1.0.4
+  checksum: 2a089d20ee822563359a646f33f9215f57269daf2d611b298068d3e0a297f07d0905a74cb71c42a48f54d36f2eac25d76fc8909a2f8a9a1410c249d9a73fc543
   languageName: node
   linkType: hard
 

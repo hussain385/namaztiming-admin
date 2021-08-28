@@ -5,8 +5,10 @@ import {
   firebaseReducer,
 } from 'react-redux-firebase';
 import {firestoreReducer, constants as rfConstants} from 'redux-firestore';
+import ThemeReducer from "./reducers/ThemeReducer";
 
 const reducer = combineReducers({
+  ThemeReducer,
   firebase: firebaseReducer,
   firestore: firestoreReducer,
 });

@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
-import { initializeApp } from "firebase/app";
+// import { initializeApp } from "firebase/app";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
-import "firebase/auth";
-import "firebase/firestore";
 import { createFirestoreInstance } from "redux-firestore";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 
@@ -16,6 +14,8 @@ import "./assets/css/theme.css";
 import "./assets/css/index.css";
 
 import Layout from "./components/layout/Layout";
+import firebase from "firebase/compat";
+// import {initializeApp} from "firebase/firebase-app";
 
 document.title = "Tua CRM";
 
@@ -30,14 +30,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 const rrfConfig = {
   userProfile: "users",
   useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
 };
 const rrfProps = {
-  firebase: FirebaseApp,
+  firebase: firebase,
   config: rrfConfig,
   dispatch: store.dispatch,
   createFirestoreInstance, // <- needed if using firestore
