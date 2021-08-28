@@ -16,6 +16,7 @@ import "./assets/css/theme.css";
 import "./assets/css/index.css";
 
 import Layout from "./components/layout/Layout";
+import Routes from "./components/Routes";
 
 firebase.initializeApp({
     apiKey: "AIzaSyAq5zFrHz0lSjTiE1U43XEnaiR-D4I8sjY",
@@ -49,7 +50,7 @@ ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
             <ReactReduxFirebaseProvider {...rrfProps}>
-                <Layout/>
+                <Routes/>
             </ReactReduxFirebaseProvider>
         </Provider>
     </React.StrictMode>,

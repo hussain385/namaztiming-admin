@@ -5,7 +5,7 @@
     "icon": "bx bx-category-alt"
   },
   {
-    "display_name": "Masjids List",
+    "display_name": "Masjid List",
     "route": "/masjidList",
     "icon": "bx bx-user-pin"
   },
