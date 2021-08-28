@@ -1,7 +1,5 @@
 import React from "react";
-
 import Table from "../components/table/Table";
-
 import {populate, useFirestoreConnect} from "react-redux-firebase";
 import {useSelector} from "react-redux";
 import _ from 'lodash'

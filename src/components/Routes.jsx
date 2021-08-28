@@ -1,7 +1,6 @@
 import React from "react";
 import {Redirect, Route} from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
-import Customers from "../pages/Customers";
 import Request from "../pages/Request";
 import {useSelector} from "react-redux";
 import {isEmpty, isLoaded} from "react-redux-firebase";
@@ -37,7 +36,7 @@ const Routes = () => {
             <PrivateRoute path="/masjidList" exact component={MasjidList}/>
             <PrivateRoute path="/request" exact component={Request}/>
             <PrivateRoute path="/example" exact component={Example}/>
-            <PrivateRoute path='/' component={notFound}/>
+            <PrivateRoute path='/notfound' component={notFound}/>
         </>
     );
 };

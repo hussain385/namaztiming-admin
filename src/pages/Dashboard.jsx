@@ -1,18 +1,14 @@
 import React from 'react'
-
 import {Link} from 'react-router-dom'
-
 import Chart from 'react-apexcharts'
-
 import {useSelector} from 'react-redux'
-
 import StatusCard from '../components/status-card/StatusCard'
-
 import Table from '../components/table/Table'
-
 import Badge from '../components/badge/Badge'
-
 import statusCards from '../assets/JsonData/status-card-data.json'
+import {populate, useFirestoreConnect} from "react-redux-firebase"
+import _ from "lodash";
+
 
 const chartOptions = {
     series: [{
@@ -36,9 +32,6 @@ const chartOptions = {
         xaxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
         },
-        legend: {
-            position: 'top'
-        },
         grid: {
             show: false
         }
@@ -47,37 +40,11 @@ const chartOptions = {
 
 const topCustomers = {
     head: [
-        'user',
-        'total orders',
-        'total spending'
+        "ID",
+        "name",
+        "address",
+        "admin",
     ],
-    body: [
-        {
-            "username": "john doe",
-            "order": "490",
-            "price": "$15,870"
-        },
-        {
-            "username": "frank iva",
-            "order": "250",
-            "price": "$12,251"
-        },
-        {
-            "username": "anthony baker",
-            "order": "120",
-            "price": "$10,840"
-        },
-        {
-            "username": "frank iva",
-            "order": "110",
-            "price": "$9,251"
-        },
-        {
-            "username": "anthony baker",
-            "order": "80",
-            "price": "$8,840"
-        }
-    ]
 }
 
 const renderCusomerHead = (item, index) => (
@@ -86,9 +53,10 @@ const renderCusomerHead = (item, index) => (
 
 const renderCusomerBody = (item, index) => (
     <tr key={index}>
-        <td>{item.username}</td>
-        <td>{item.order}</td>
-        <td>{item.price}</td>
+        <td>{index+1}</td>
+        <td>{item.name}</td>
+        <td>{item.address}</td>
+        <td>{item.user?.name}</td>
     </tr>
 )
 
@@ -163,7 +131,19 @@ const renderOrderBody = (item, index) => (
 )
 
 const Dashboard = () => {
-
+    const populates = [
+        {child: 'adminId', root: 'users', childAlias: 'user'}, // replace owner with user object
+    ];
+    useFirestoreConnect([
+        {
+            collection: 'Masjid',
+            populates,
+        },
+    ]);
+    const firestore = useSelector(state => state.firestore);
+    const masjid = populate(firestore, 'Masjid', populates);
+    const masjidData = _.map(masjid,(data, id) => ({...data,id: id}))
+    console.log(masjidData.length)
     const themeReducer = useSelector(state => state.ThemeReducer.mode)
 
     return (
@@ -172,17 +152,48 @@ const Dashboard = () => {
             <div className="row">
                 <div className="col-6">
                     <div className="row">
-                        {
-                            statusCards.map((item, index) => (
-                                <div className="col-6" key={index}>
+                                <div className="col-6">
                                     <StatusCard
-                                        icon={item.icon}
-                                        count={item.count}
-                                        title={item.title}
+                                        icon="fas fa-mosque"
+                                        count={masjidData.length}
+                                        title="No. Of Masjid"
                                     />
                                 </div>
-                            ))
-                        }
+                        <div className="col-6">
+                            <StatusCard
+                                icon="fas fa-mosque"
+                                count={masjidData.length}
+                                title="No. Of Masjid"
+                            />
+                        </div>
+                        <div className="col-6">
+                            <StatusCard
+                                icon="fas fa-mosque"
+                                count={masjidData.length}
+                                title="No. Of Masjid"
+                            />
+                        </div>
+                        <div className="col-6">
+                            <StatusCard
+                                icon="fas fa-mosque"
+                                count={masjidData.length}
+                                title="No. Of Masjid"
+                            />
+                        </div>
+                        <div className="col-6">
+                            <StatusCard
+                                icon="fas fa-mosque"
+                                count={masjidData.length}
+                                title="No. Of Masjid"
+                            />
+                        </div>
+                        <div className="col-6">
+                            <StatusCard
+                                icon="fas fa-mosque"
+                                count={masjidData.length}
+                                title="No. Of Masjid"
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="col-6">
@@ -202,42 +213,42 @@ const Dashboard = () => {
                         />
                     </div>
                 </div>
-                <div className="col-4">
+                <div className="">
                     <div className="card">
                         <div className="card__header">
-                            <h3>top customers</h3>
+                            <h3>Masjid List</h3>
                         </div>
                         <div className="card__body">
                             <Table
                                 headData={topCustomers.head}
                                 renderHead={(item, index) => renderCusomerHead(item, index)}
-                                bodyData={topCustomers.body}
+                                bodyData={masjidData}
                                 renderBody={(item, index) => renderCusomerBody(item, index)}
                             />
                         </div>
                         <div className="card__footer">
-                            <Link to='/'>view all</Link>
+                            <Link to='/masjidList'>view all</Link>
                         </div>
                     </div>
                 </div>
-                <div className="col-8">
-                    <div className="card">
-                        <div className="card__header">
-                            <h3>latest orders</h3>
-                        </div>
-                        <div className="card__body">
-                            <Table
-                                headData={latestOrders.header}
-                                renderHead={(item, index) => renderOrderHead(item, index)}
-                                bodyData={latestOrders.body}
-                                renderBody={(item, index) => renderOrderBody(item, index)}
-                            />
-                        </div>
-                        <div className="card__footer">
-                            <Link to='/'>view all</Link>
-                        </div>
-                    </div>
-                </div>
+                {/*<div className="col-8">*/}
+                {/*    <div className="card">*/}
+                {/*        <div className="card__header">*/}
+                {/*            <h3>latest orders</h3>*/}
+                {/*        </div>*/}
+                {/*        <div className="card__body">*/}
+                {/*            <Table*/}
+                {/*                headData={latestOrders.header}*/}
+                {/*                renderHead={(item, index) => renderOrderHead(item, index)}*/}
+                {/*                bodyData={latestOrders.body}*/}
+                {/*                renderBody={(item, index) => renderOrderBody(item, index)}*/}
+                {/*            />*/}
+                {/*        </div>*/}
+                {/*        <div className="card__footer">*/}
+                {/*            <Link to='/'>view all</Link>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
             </div>
         </div>
     )

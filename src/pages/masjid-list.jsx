@@ -5,7 +5,7 @@ import _ from "lodash";
 import Table from "../components/table/Table";
 
 const customerTableHead = [
-    "UID",
+    "ID",
     "name",
     "address",
     "admin",
@@ -15,7 +15,7 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 
 const renderBody = (item, index) => (
     <tr key={index}>
-        <td>{item.id}</td>
+        <td>{index+1}</td>
         <td>{item.name}</td>
         <td>{item.address}</td>
         <td>{item.user?.name}</td>
@@ -36,7 +36,7 @@ function MasjidList(props) {
     console.log(masjidData)
     return (
         <div>
-            <h2 className="page-header">Masjid Requests</h2>
+            <h2 className="page-header">Masjid List</h2>
             <div className="row">
                 <div className="col-12">
                     <div className="card">
