@@ -1,14 +1,57 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import reportWebVitals from "./reportWebVitals";
+import { initializeApp } from "firebase/app";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+
+import "firebase/auth";
+import "firebase/firestore";
+import { createFirestoreInstance } from "redux-firestore";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+
+import "./assets/boxicons-2.0.7/css/boxicons.min.css";
+import "./assets/css/grid.css";
+import "./assets/css/theme.css";
+import "./assets/css/index.css";
+
+import Layout from "./components/layout/Layout";
+
+document.title = "Tua CRM";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAq5zFrHz0lSjTiE1U43XEnaiR-D4I8sjY",
+  authDomain: "fir-c232b.firebaseapp.com",
+  projectId: "fir-c232b",
+  storageBucket: "fir-c232b.appspot.com",
+  messagingSenderId: "84116374184",
+  appId: "1:84116374184:web:81f8d8c9f3be0781dd389d",
+  measurementId: "G-8352Z31MRV"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+const rrfConfig = {
+  userProfile: "users",
+  useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
+};
+const rrfProps = {
+  firebase: FirebaseApp,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance, // <- needed if using firestore
+};
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <React.StrictMode>
+        <Layout />
+      </React.StrictMode>
+    </ReactReduxFirebaseProvider>
+  </Provider>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
