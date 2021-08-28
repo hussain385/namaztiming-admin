@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import './table.css'
 
@@ -28,6 +28,10 @@ const Table = props => {
 
         setCurrPage(page)
     }
+
+    useEffect(() => {
+        setDataShow(props.limit && props.bodyData ? props.bodyData.slice(0, Number(props.limit)) : props.bodyData)
+    },[props.bodyData])
 
     return (
         <div>

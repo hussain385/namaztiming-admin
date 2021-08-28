@@ -2,14 +2,15 @@ import React from "react";
 
 import Table from "../components/table/Table";
 
-import customerList from "../assets/JsonData/customers-list.json";
+import {populate, useFirestoreConnect} from "react-redux-firebase";
+import {useSelector} from "react-redux";
+import _ from 'lodash'
 
 const customerTableHead = [
-  "",
+  "UID",
   "name",
-  "email",
-  "phone",
-  "location",
+  "address",
+  "admin",
 ];
 
 const renderHead = (item, index) => <th key={index}>{item}</th>;
@@ -18,15 +19,23 @@ const renderBody = (item, index) => (
   <tr key={index}>
     <td>{item.id}</td>
     <td>{item.name}</td>
-    <td>{item.email}</td>
-    <td>{item.phone}</td>
-    <td>{item.total_orders}</td>
-    <td>{item.total_spend}</td>
-    <td>{item.location}</td>
+    <td>{item.address}</td>
+    <td>{item.user?.name}</td>
   </tr>
 );
 
 const Request = () => {
+    const populates = [
+        {child: 'adminId', root: 'users', childAlias: 'user'}, // replace owner with user object
+    ];
+    useFirestoreConnect([{
+            collection: 'Masjid',
+            populates,
+        }]);
+    const firestore = useSelector(state => state.firestore);
+    const masjid = populate(firestore, 'Masjid', populates);
+    const masjidData = _.map(masjid,(data, id) => ({...data,id: id}))
+    console.log(masjidData)
   return (
     <div>
       <h2 className="page-header">Masjid Requests</h2>
@@ -38,7 +47,7 @@ const Request = () => {
                 limit="10"
                 headData={customerTableHead}
                 renderHead={(item, index) => renderHead(item, index)}
-                bodyData={customerList}
+                bodyData={masjidData}
                 renderBody={(item, index) => renderBody(item, index)}
               />
             </div>

@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 import Chart from 'react-apexcharts'
 
-import { useSelector } from 'react-redux'
+import {useSelector} from 'react-redux'
 
 import StatusCard from '../components/status-card/StatusCard'
 
@@ -17,7 +17,7 @@ import statusCards from '../assets/JsonData/status-card-data.json'
 const chartOptions = {
     series: [{
         name: 'Online Customers',
-        data: [40,70,20,90,36,80,30,91,60]
+        data: [40, 70, 20, 90, 36, 80, 30, 91, 60]
     }, {
         name: 'Store Customers',
         data: [40, 30, 70, 80, 40, 16, 40, 20, 51, 10]
@@ -191,10 +191,10 @@ const Dashboard = () => {
                         <Chart
                             options={themeReducer === 'theme-mode-dark' ? {
                                 ...chartOptions.options,
-                                theme: { mode: 'dark'}
+                                theme: {mode: 'dark'}
                             } : {
                                 ...chartOptions.options,
-                                theme: { mode: 'light'}
+                                theme: {mode: 'light'}
                             }}
                             series={chartOptions.series}
                             type='line'
