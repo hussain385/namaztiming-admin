@@ -7,6 +7,7 @@ import {useSelector} from "react-redux";
 import {isEmpty, isLoaded} from "react-redux-firebase";
 import notFound from "../pages/404";
 import Example from "../pages/example";
+import MasjidList from "../pages/masjid-list";
 
 function PrivateRoute({children, ...rest}) {
     const {auth, profile} = useSelector(state => state.firebase)
@@ -33,7 +34,7 @@ const Routes = () => {
     return (
         <>
             <PrivateRoute path="/" exact component={Dashboard}/>
-            <PrivateRoute path="/customers" exact component={Customers}/>
+            <PrivateRoute path="/masjidList" exact component={MasjidList}/>
             <PrivateRoute path="/request" exact component={Request}/>
             <PrivateRoute path="/example" exact component={Example}/>
             <PrivateRoute path='/' component={notFound}/>

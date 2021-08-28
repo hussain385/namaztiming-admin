@@ -25,17 +25,12 @@ const renderBody = (item, index) => (
 );
 
 const Request = () => {
-    const populates = [
-        {child: 'adminId', root: 'users', childAlias: 'user'}, // replace owner with user object
-    ];
     useFirestoreConnect([{
-            collection: 'Masjid',
-            populates,
+            collection: 'NewMasjid',
         }]);
     const firestore = useSelector(state => state.firestore);
-    const masjid = populate(firestore, 'Masjid', populates);
-    const masjidData = _.map(masjid,(data, id) => ({...data,id: id}))
-    console.log(masjidData)
+    // const masjid = populate(firestore, 'Masjid', populates);
+    const masjidData = firestore.ordered.NewMasjid
   return (
     <div>
       <h2 className="page-header">Masjid Requests</h2>
@@ -47,7 +42,7 @@ const Request = () => {
                 limit="10"
                 headData={customerTableHead}
                 renderHead={(item, index) => renderHead(item, index)}
-                bodyData={masjidData}
+                bodyData={masjidData || []}
                 renderBody={(item, index) => renderBody(item, index)}
               />
             </div>

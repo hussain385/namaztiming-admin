@@ -6,7 +6,7 @@
   },
   {
     "display_name": "Masjids List",
-    "route": "/customers",
+    "route": "/masjidList",
     "icon": "bx bx-user-pin"
   },
   {
