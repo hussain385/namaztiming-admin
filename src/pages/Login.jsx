@@ -11,7 +11,7 @@ const LogInSchema = Yup.object().shape({
 });
 
 const Login = (props) => {
-    const firebaseApp = useFirebase();
+    const {login, logout} = useFirebase();
     const {auth, profile} = useSelector(state => state.firebase);
     const history = useHistory();
 
@@ -19,7 +19,7 @@ const Login = (props) => {
         if (isLoaded(auth) && !isEmpty(auth)) {
             if (profile.isAdmin === false) {
                 console.log('not an admin')
-                firebaseApp.logout()
+                logout()
             } else {
                 if (props.location.state) {
                     console.log('pushing to ' + props.location.state.from.pathname)
@@ -39,10 +39,10 @@ const Login = (props) => {
                 initialValues={{email: "", password: ""}}
                 validationSchema={LogInSchema}
                 onSubmit={(values, {setSubmitting}) => {
-                    firebaseApp.login({
+                    login({
                         email: values.email,
                         password: values.password,
-                    }).then(res => {
+                    }).then(() => {
                         setSubmitting(false)
                     })
                 }}
