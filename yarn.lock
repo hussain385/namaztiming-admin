@@ -1600,7 +1600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.5, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.15.3
   resolution: "@babel/runtime@npm:7.15.3"
   dependencies:
@@ -3760,6 +3760,7 @@ __metadata:
     react-redux-firebase: ^3.10.0
     react-router-dom: ^5.2.0
     react-scripts: 4.0.3
+    react-simple-hook-modal: ^1.1.0
     redux: ^4.1.0
     redux-firestore: ^0.15.0
     web-vitals: ^1.1.2
@@ -8209,6 +8210,13 @@ fsevents@^1.2.7:
   dependencies:
     react-is: ^16.7.0
   checksum: b1538270429b13901ee586aa44f4cc3ecd8831c061d06cb8322e50ea17b3f5ce4d0e2e66394761e6c8e152cd8c34fb3b4b690116c6ce2bd45b18c746516cb9e8
+  languageName: node
+  linkType: hard
+
+"hooks@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "hooks@npm:0.3.2"
+  checksum: d9526b03ea524cb2861579f461923ccf779696d96291d61b1b588bc30050b00326086e21518d339f380ddf74bdaa0629af08ea095d9f445fddc3721c8b9a07dc
   languageName: node
   linkType: hard
 
@@ -12807,7 +12815,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.5.7, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:^15.5.7, prop-types@npm:^15.5.8, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -13319,6 +13327,31 @@ fsevents@^1.2.7:
   bin:
     react-scripts: ./bin/react-scripts.js
   checksum: a05a46ce3145b42ac8b57633d3b90b6689c24697c1449bccf219349996d718a3cd0796e4910f4ab6abb5b024982cafd62345e88c8e7b42a45efca3bef1a0eb87
+  languageName: node
+  linkType: hard
+
+"react-simple-hook-modal@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "react-simple-hook-modal@npm:1.1.0"
+  dependencies:
+    hooks: ^0.3.2
+    react-spring: ^8.0.27
+  peerDependencies:
+    react: ">=16"
+  checksum: 6e625c7a2dc8cd44a45c7282d0f102970dcbd15edbd1dda1adc9752c64b521f11bcb31134ac86e5215b90120c30af1ff4812ac20677a61132cc0c5d69ab2177c
+  languageName: node
+  linkType: hard
+
+"react-spring@npm:^8.0.27":
+  version: 8.0.27
+  resolution: "react-spring@npm:8.0.27"
+  dependencies:
+    "@babel/runtime": ^7.3.1
+    prop-types: ^15.5.8
+  peerDependencies:
+    react: ">= 16.8.0"
+    react-dom: ">= 16.8.0"
+  checksum: 4f306e30c3a425fd2b11c265ca0a7c261de0f63c0250fa6fa19eddd58c50fc9eaa463927571ee1dec39659a1bf619aaacf3352602b7724695da240ec0bc106cf
   languageName: node
   linkType: hard
 

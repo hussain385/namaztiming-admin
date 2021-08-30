@@ -1,14 +1,15 @@
 import React from "react";
-import Table from "../components/table/Table";
-import {populate, useFirestoreConnect} from "react-redux-firebase";
-import {useSelector} from "react-redux";
-import _ from 'lodash'
+import { useFirestoreConnect } from "react-redux-firebase";
+import { ModalProvider } from "react-simple-hook-modal";
+import { useSelector } from "react-redux";
+import RequestTable from "../components/requestTable/RequestTable";
 
 const customerTableHead = [
-  "UID",
-  "name",
-  "address",
-  "admin",
+  "ID",
+  "Masjid name",
+  "User Name",
+  "User Contact",
+  "",
 ];
 
 const renderHead = (item, index) => <th key={index}>{item}</th>;
@@ -23,31 +24,36 @@ const renderBody = (item, index) => (
 );
 
 const Request = () => {
-    useFirestoreConnect([{
-            collection: 'NewMasjid',
-        }]);
-    const firestore = useSelector(state => state.firestore);
-    // const masjid = populate(firestore, 'Masjid', populates);
-    const masjidData = firestore.ordered.NewMasjid
+  useFirestoreConnect([
+    {
+      collection: "newMasjid",
+    },
+  ]);
+  const firestore = useSelector((state) => state.firestore);
+  // const masjid = populate(firestore, 'Masjid', populates);
+  const masjidData = firestore.ordered.newMasjid;
+  console.log(masjidData);
   return (
-    <div>
-      <h2 className="page-header">Masjid Requests</h2>
-      <div className="row">
-        <div className="col-12">
-          <div className="card">
-            <div className="card__body">
-              <Table
-                limit="10"
-                headData={customerTableHead}
-                renderHead={(item, index) => renderHead(item, index)}
-                bodyData={masjidData || []}
-                renderBody={(item, index) => renderBody(item, index)}
-              />
+    <ModalProvider>
+      <div>
+        <h2 className="page-header">Masjid Requests</h2>
+        <div className="row">
+          <div className="col-12">
+            <div className="card">
+              <div className="card__body">
+                <RequestTable
+                  limit="10"
+                  headData={customerTableHead}
+                  renderHead={(item, index) => renderHead(item, index)}
+                  bodyData={masjidData || []}
+                  renderBody={(item, index) => renderBody(item, index)}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ModalProvider>
   );
 };
 
