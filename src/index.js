@@ -15,7 +15,6 @@ import "./assets/css/grid.css";
 import "./assets/css/theme.css";
 import "./assets/css/index.css";
 
-import Layout from "./components/layout/Layout";
 import Routes from "./components/Routes";
 
 firebase.initializeApp({
