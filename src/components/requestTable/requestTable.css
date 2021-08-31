@@ -41,6 +41,7 @@ tbody > tr:hover {
   border-radius: 10px;
 }
 
+
 .table__pagination {
   display: flex;
   width: 100%;

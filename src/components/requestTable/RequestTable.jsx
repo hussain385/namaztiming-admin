@@ -31,7 +31,14 @@ const TIMEINPUT = {
 
 const AddMasjidSchema = Yup.object().shape({
   name: Yup.string().required("Masjid name is required"),
-  address: Yup.string().url().required("Masjid address is required"),
+  address: Yup.string().required("Masjid address is required"),
+  latitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
+    (value + "").match(/^\d*\.{1}\d*$/)
+  ),
+  longitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
+    (value + "").match(/^\d*\.{1}\d*$/)
+  ),
+  gLink: Yup.string().url().required("Masjid address is required"),
   pictureURL: Yup.string()
     .url("Not a valid url")
     .required("Masjid's pictureURL is required"),
@@ -63,9 +70,16 @@ const MyComponent = (props) => {
         <td>{props.item.name}</td>
         <td>{props.item.userName}</td>
         <td>{props.item.userPhone}</td>
-        <td>
+        <td style={{ justifyContent: "center", textAlign: "center" }}>
           <button onClick={openModal} className="buttonStyle">
             View
+          </button>
+          <button
+            // onClick={openModal}
+            className="buttonStyle"
+            style={{ backgroundColor: "darkred", marginLeft: 15 }}
+          >
+            delete
           </button>
         </td>
       </tr>
@@ -78,10 +92,13 @@ const MyComponent = (props) => {
           initialValues={{
             name: `${props.item.name}`,
             address: `${props.item.address}`,
+            gLink: "",
             pictureURL: `${props.item.pictureURL}`,
             userEmail: `${props.item.userEmail}`,
             userName: `${props.item.userName}`,
             userPhone: `${props.item.userPhone}`,
+            latitude: "",
+            longitude: "",
             timing: {
               isha: `${props.item.timing.isha}`,
               fajar: `${props.item.timing.fajar}`,
@@ -104,8 +121,14 @@ const MyComponent = (props) => {
             touched,
             /* and other goodies */
           }) => (
-            <form className="flex flex-col-reverse" onSubmit={handleSubmit}>
-              <div style={{ height: "70vh", overflowY: "scroll" }}>
+            <>
+              <div
+                style={{
+                  height: "70vh",
+                  overflowY: "scroll",
+                  paddingRight: 10,
+                }}
+              >
                 <p>Masjid Name</p>
                 <input
                   onChange={handleChange("name")}
@@ -156,6 +179,19 @@ const MyComponent = (props) => {
                 {errors.userPhone && touched.userPhone && (
                   <p style={ERROR}>{errors.userPhone}</p>
                 )}
+                <p style={{ marginLeft: 10, marginTop: 10 }}>Google Link</p>
+
+                <input
+                  onChange={handleChange("gLink")}
+                  value={values.gLink}
+                  onBlur={handleBlur("gLink")}
+                  style={INPUT}
+                  placeholder="Enter Masjid Address Google Link..."
+                  placeholderTextColor="grey"
+                />
+                {errors.gLink && touched.gLink && (
+                  <p style={ERROR}>{errors.gLink}</p>
+                )}
                 <p style={{ marginLeft: 10, marginTop: 10 }}>Masjid Address</p>
 
                 <input
@@ -163,13 +199,46 @@ const MyComponent = (props) => {
                   value={values.address}
                   onBlur={handleBlur("address")}
                   style={INPUT}
-                  placeholder="Enter Masjid Address Google Link..."
+                  placeholder="Enter Masjid Address..."
                   placeholderTextColor="grey"
                 />
                 {errors.address && touched.address && (
                   <p style={ERROR}>{errors.address}</p>
                 )}
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div style={{ marginRight: 10, width: "30vw" }}>
+                    <p style={{ marginLeft: 10, marginTop: 10 }}>Latitude</p>
 
+                    <input
+                      onChange={handleChange("latitude")}
+                      value={values.latitude}
+                      onBlur={handleBlur("latitude")}
+                      style={INPUT}
+                      placeholder="Enter Latitude..."
+                      placeholderTextColor="grey"
+                    />
+                    {errors.latitude && touched.latitude && (
+                      <p style={ERROR}>{errors.latitude}</p>
+                    )}
+                  </div>
+                  <div style={{ marginLeft: 10, width: "30vw" }}>
+                    <p style={{ marginLeft: 10, marginTop: 10 }}>Longitude</p>
+
+                    <input
+                      onChange={handleChange("longitude")}
+                      value={values.longitude}
+                      onBlur={handleBlur("longitude")}
+                      style={INPUT}
+                      placeholder="Enter Longitude..."
+                      placeholderTextColor="grey"
+                    />
+                    {errors.longitude && touched.longitude && (
+                      <p style={ERROR}>{errors.longitude}</p>
+                    )}
+                  </div>
+                </div>
                 <div style={{ marginTop: 20 }}>
                   <p>Namaz Timings</p>
                   <div
@@ -317,12 +386,12 @@ const MyComponent = (props) => {
                     height: 30,
                   }}
                   type="submit"
-                  disabled={handleSubmit}
+                  onClick={handleSubmit}
                 >
                   Save
                 </button>
               </div>
-            </form>
+            </>
           )}
         </Formik>
       </Modal>
@@ -365,7 +434,7 @@ const RequestTable = (props) => {
         ? props.bodyData.slice(0, Number(props.limit))
         : props.bodyData
     );
-  }, [props.bodyData]);
+  }, [props.bodyData, props.limit]);
 
   return (
     <div>
