@@ -4,6 +4,7 @@ import "./requestTable.css";
 import { Formik } from "formik";
 import "react-simple-hook-modal/dist/styles.css";
 import * as Yup from "yup";
+import { firebaseConnect, useFirestore } from "react-redux-firebase";
 
 const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -49,20 +50,21 @@ const AddMasjidSchema = Yup.object().shape({
     .min(11, "phone no. is short, please check again")
     .max(16, "phone no. is long, please check again")
     .required("Your Phone no. is required"),
-  timing: Yup.string().required("Timings are required "),
-  // timing: Yup.object().shape({
-  //   isha: Yup.string(),
-  //   fajar: Yup.string(),
-  //   zohar: Yup.string(),
-  //   asar: Yup.string(),
-  //   magrib: Yup.string(),
-  //   jummuah: Yup.string(),
-  // }),
+  // timing: Yup.string().required("Timings are required "),
+  timing: Yup.object().shape({
+    isha: Yup.string(),
+    fajar: Yup.string(),
+    zohar: Yup.string(),
+    asar: Yup.string(),
+    magrib: Yup.string(),
+    jummuah: Yup.string(),
+  }),
 });
 
 const MyComponent = (props) => {
   const { isModalOpen, openModal, closeModal } = useModal();
-  console.log(props.item.pictureURL);
+  const firestore = useFirestore();
+  console.log(props.item);
   return (
     <>
       <tr key={props.index}>
@@ -110,6 +112,13 @@ const MyComponent = (props) => {
           validationSchema={AddMasjidSchema}
           onSubmit={(values) => {
             console.log(values);
+            firestore
+              .collection("Masjid")
+              .push(values)
+              .then((snapshot) => {
+                console.log(snapshot);
+                firestore.collection("newMasjid").doc(props.id).delete();
+              });
           }}
         >
           {({
@@ -346,6 +355,7 @@ const MyComponent = (props) => {
                       />
                     </div>
                   </div>
+                  {errors.timing && <p>{errors.timing}</p>}
                   <div>
                     <img
                       alt="masjid"
