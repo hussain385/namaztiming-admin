@@ -96,10 +96,6 @@ input:focus {
     border-radius: var(--border-radius);
 }
 
-.card__body{
-    height: 70vh;
-    overflow-y: auto;
-}
 
 .full-height {
     height: 100%;

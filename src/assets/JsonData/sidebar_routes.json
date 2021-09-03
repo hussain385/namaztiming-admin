@@ -2,16 +2,26 @@
   {
     "display_name": "Dashboard",
     "route": "/",
-    "icon": "bx bx-category-alt"
+    "icon": "far fa-hourglass"
   },
   {
     "display_name": "Masjid List",
     "route": "/masjidList",
-    "icon": "bx bx-user-pin"
+    "icon": "far fa-lightbulb"
   },
   {
-    "display_name": "Request",
+    "display_name": "New Masjid Request",
     "route": "/request",
-    "icon": "bx bx-package"
+    "icon": "fas fa-inbox"
+  },
+  {
+    "display_name": "Admin Request",
+    "route": "/admin-request",
+    "icon": "far fa-sticky-note"
+  },
+  {
+    "display_name": "Add Masjid",
+    "route": "/add-masjid",
+    "icon": "far fa-building"
   }
 ]

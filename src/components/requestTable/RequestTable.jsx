@@ -94,8 +94,8 @@ const MyComponent = (props) => {
                 <Formik
                     initialValues={{
                         name: `${props.item.name}`,
-                        address: `${props.item.address}`,
-                        gLink: "",
+                        address: "",
+                        gLink: `${props.item.gLink}`,
                         pictureURL: `${props.item.pictureURL}`,
                         userEmail: `${props.item.userEmail}`,
                         userName: `${props.item.userName}`,
