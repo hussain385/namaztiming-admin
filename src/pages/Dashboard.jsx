@@ -76,7 +76,6 @@ const Dashboard = () => {
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
-  console.log(masjidData.length);
   const themeReducer = useSelector((state) => state.ThemeReducer.mode);
 
   return (
