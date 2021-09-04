@@ -4,7 +4,7 @@ import "./adminTable.css";
 import { Formik } from "formik";
 import "react-simple-hook-modal/dist/styles.css";
 import * as Yup from "yup";
-import { useFirestore } from "react-redux-firebase";
+import {useFirebase, useFirestore} from "react-redux-firebase";
 
 const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -55,12 +55,12 @@ const AddMasjidSchema = Yup.object().shape({
 
 const MyComponent = (props) => {
   const { isModalOpen, openModal, closeModal } = useModal();
-  const firestore = useFirestore();
+  const firebase = useFirebase();
   return (
     <>
       <tr key={props.index}>
         <td>{props.index + 1}</td>
-        <td>{props.item.name}</td>
+        <td>{props.item.masjid.id}</td>
         <td>{props.item.userName}</td>
         <td>{props.item.userPhone}</td>
         <td style={{ justifyContent: "center", textAlign: "center" }}>
@@ -146,6 +146,8 @@ const MyComponent = (props) => {
                   <p style={ERROR}>{errors.userPhone}</p>
                 )}
               </div>
+              <p>{props.item.masjid.name}</p>
+              <p>{props.item.masjid.address}</p>
               <div
                 style={{
                   display: "flex",
