@@ -7,12 +7,13 @@ import { Link } from "react-router-dom";
 import Dropdown from "../dropdown/Dropdown";
 
 import ThemeMenu from "../thememenu/ThemeMenu";
-
+import { useFirebase } from "react-redux-firebase";
 import notifications from "../../assets/JsonData/notification.json";
 
 import user_image from "../../assets/images/tuat.png";
 
 import user_menu from "../../assets/JsonData/user_menus.json";
+import UserDropDown from "../User-dropdown/UserDropDown";
 
 const curr_user = {
   display_name: "Admin Panel",
@@ -32,18 +33,44 @@ const renderUserToggle = (user) => (
   </div>
 );
 
-const renderUserMenu = (item, index) => (
-  <Link to="/" key={index}>
-    <div className="notification-item">
-      <i className={item.icon}></i>
-      <span>{item.content}</span>
-    </div>
-  </Link>
-);
+const RenderUserMenu = () => {
+  const { logout } = useFirebase();
+  return (
+    <>
+      <Link to="/">
+        <div className="notification-item">
+          <i className="bx bx-user"></i>
+          <span>Profile</span>
+        </div>
+      </Link>
+      <Link to="/">
+        <div className="notification-item">
+          <i className="bx bx-wallet-alt"></i>
+          <span>My Wallet</span>
+        </div>
+      </Link>
+      <Link to="/">
+        <div className="notification-item">
+          <i className="bx bx-cog"></i>
+          <span>Settings</span>
+        </div>
+      </Link>
+      <a href="/" onClick={() => logout()}>
+        <div className="notification-item">
+          <i className="bx bx-log-out-circle bx-rotate-180"></i>
+          <span>Logout</span>
+        </div>
+      </a>
+    </>
+  );
+};
 
-const Topnav = () => {
+const Topnav = (props) => {
   return (
     <div className="topnav">
+      <div onClick={() => props.clickOpen()}>
+        <i style={{ fontSize: 25 }} className="fas fa-bars"></i>
+      </div>
       <div className="topnav__search">
         <input type="text" placeholder="Search here..." />
         <i className="bx bx-search"></i>
@@ -51,10 +78,10 @@ const Topnav = () => {
       <div className="topnav__right">
         <div className="topnav__right-item">
           {/* dropdown here */}
-          <Dropdown
+          <UserDropDown
             customToggle={() => renderUserToggle(curr_user)}
             contentData={user_menu}
-            renderItems={(item, index) => renderUserMenu(item, index)}
+            renderItems={() => RenderUserMenu()}
           />
         </div>
         <div className="topnav__right-item">
