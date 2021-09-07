@@ -51,16 +51,19 @@ const Login = (props) => {
           Sign in
         </p>
         <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={LogInSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            login({
-              email: values.email,
-              password: values.password,
-            }).then(() => {
-              setSubmitting(false);
-            });
-          }}
+            initialValues={{ email: "", password: "" }}
+            validationSchema={LogInSchema}
+            onSubmit={(values, {setSubmitting, setFieldError}) => {
+                login({
+                    email: values.email,
+                    password: values.password,
+                }).then(() => {
+                    setSubmitting(false);
+                }, reason => {
+                    setSubmitting(false)
+                    setFieldError('firebase', reason.message)
+                });
+            }}
         >
           {({
             values,
@@ -87,19 +90,22 @@ const Login = (props) => {
                 <p style={ERROR}>{errors.email}</p>
               )}
               <input
-                type="password"
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                className="pass"
-                placeholder="Enter Your Password..."
+                  type="password"
+                  name="password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                  className="pass"
+                  placeholder="Enter Your Password..."
               />
-              <br />
-              {errors.password && touched.password && (
-                <p style={ERROR}>{errors.password}</p>
-              )}
-              {/* <a
+                <br/>
+                {errors.password && touched.password && (
+                    <p style={ERROR}>{errors.password}</p>
+                )}
+                {errors.firebase && (
+                    <p style={ERROR}>{errors.firebase}</p>
+                )}
+                {/* <a
                 className="submit"
                 type="submit"
                 disabled={isSubmitting}
@@ -107,8 +113,8 @@ const Login = (props) => {
               >
                 Sign in
               </a> */}
-              <button
-                onClick={handleSubmit}
+                <button
+                    onClick={handleSubmit}
                 type="submit"
                 className="submit"
                 disabled={isSubmitting}
