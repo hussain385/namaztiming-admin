@@ -51,7 +51,7 @@ const Login = (props) => {
           Sign in
         </p>
         <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{email: '', password: ''}}
             validationSchema={LogInSchema}
             onSubmit={(values, {setSubmitting, setFieldError}) => {
                 login({
@@ -90,8 +90,8 @@ const Login = (props) => {
                 <p style={ERROR}>{errors.email}</p>
               )}
               <input
-                  type="password"
                   name="password"
+                  type="password"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
@@ -99,6 +99,7 @@ const Login = (props) => {
                   placeholder="Enter Your Password..."
               />
                 <br/>
+                {/*{JSON.stringify(values,null,2)}*/}
                 {errors.password && touched.password && (
                     <p style={ERROR}>{errors.password}</p>
                 )}

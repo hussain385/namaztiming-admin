@@ -1,57 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Modal, ModalTransition, useModal } from "react-simple-hook-modal";
+import React, {useEffect, useState} from "react";
+import {Modal, ModalTransition, useModal} from "react-simple-hook-modal";
 import "./adminTable.css";
-import { Formik } from "formik";
+import {Formik} from "formik";
 import "react-simple-hook-modal/dist/styles.css";
-import * as Yup from "yup";
-// import {useFirebase} from "react-redux-firebase";
+import {MasjidSchema} from "../../services/validation";
+// import {useFirebase} from "react-redux-firebase"
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const ERROR = {
-  color: "darkred",
-  fontSize: 12,
-  marginTop: 5,
+    color: "darkred",
+    fontSize: 12,
+    marginTop: 5,
 };
 
 const INPUT = {
-  borderRadius: 5,
+    borderRadius: 5,
   padding: 10,
   backgroundColor: "#eeee",
   width: "100%",
 };
-
-const AddMasjidSchema = Yup.object().shape({
-  name: Yup.string().required("Masjid name is required"),
-  address: Yup.string().required("Masjid address is required"),
-  latitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-    (value + "").match(/^\d*\.{1}\d*$/)
-  ),
-  longitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-    (value + "").match(/^\d*\.{1}\d*$/)
-  ),
-  gLink: Yup.string().url().required("Masjid address is required"),
-  pictureURL: Yup.string()
-    .url("Not a valid url")
-    .required("Masjid's pictureURL is required"),
-  userEmail: Yup.string().email().required("Email is required"),
-  userName: Yup.string().required("Your name is required"),
-  userPhone: Yup.string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .min(11, "phone no. is short, please check again")
-    .max(16, "phone no. is long, please check again")
-    .required("Your Phone no. is required"),
-  // timing: Yup.string().required("Timings are required "),
-  timing: Yup.object().shape({
-    isha: Yup.string(),
-    fajar: Yup.string(),
-    zohar: Yup.string(),
-    asar: Yup.string(),
-    magrib: Yup.string(),
-    jummuah: Yup.string(),
-  }),
-});
 
 const MyComponent = (props) => {
   const { isModalOpen, openModal, closeModal } = useModal();
@@ -82,15 +49,15 @@ const MyComponent = (props) => {
         transition={ModalTransition.BOTTOM_UP}
       >
         <Formik
-          initialValues={{
-            userEmail: `${props.item.userEmail}`,
-            userName: `${props.item.userName}`,
-            userPhone: `${props.item.userPhone}`,
-          }}
-          validationSchema={AddMasjidSchema}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
+            initialValues={{
+                userEmail: `${props.item.userEmail}`,
+                userName: `${props.item.userName}`,
+                userPhone: `${props.item.userPhone}`,
+            }}
+            validationSchema={MasjidSchema}
+            onSubmit={(values) => {
+                console.log(values);
+            }}
         >
           {({
             handleChange,

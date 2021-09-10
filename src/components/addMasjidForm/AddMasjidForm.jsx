@@ -3,14 +3,12 @@ import React from "react";
 // import "./requestTable.css";
 import { Formik } from "formik";
 // import "react-simple-hook-modal/dist/styles.css";
-import * as Yup from "yup";
-import { useFirestore } from "react-redux-firebase";
+import {useFirebase, useFirestore} from "react-redux-firebase";
 import _ from "lodash";
 import geohash from "ngeohash";
-import { useState } from "react";
+import {useState} from "react";
+import {MasjidSchema} from "../../services/validation";
 
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const ERROR = {
   color: "darkred",
@@ -33,75 +31,68 @@ const TIMEINPUT = {
   textAlign: "center",
 };
 
-const AddMasjidSchema = Yup.object().shape({
-  name: Yup.string().required("Masjid name is required"),
-  address: Yup.string().required("Masjid address is required"),
-  latitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-    (value + "").match(/^\d*\.{1}\d*$/)
-  ),
-  longitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-    (value + "").match(/^\d*\.{1}\d*$/)
-  ),
-  gLink: Yup.string().url().required("Masjid address is required"),
-  pictureURL: Yup.string()
-    .url("Not a valid url")
-    .required("Masjid's pictureURL is required"),
-  userEmail: Yup.string().email().required("Email is required"),
-  userName: Yup.string().required("Your name is required"),
-  userPhone: Yup.string()
-    .matches(phoneRegExp, "Phone number is not valid")
-    .min(11, "phone no. is short, please check again")
-    .max(16, "phone no. is long, please check again")
-    .required("Your Phone no. is required"),
-  // timing: Yup.string().required("Timings are required "),
-  timing: Yup.object().shape({
-    isha: Yup.string(),
-    fajar: Yup.string(),
-    zohar: Yup.string(),
-    asar: Yup.string(),
-    magrib: Yup.string(),
-    jummuah: Yup.string(),
-  }),
-});
-
 const AddMasjidForm = () => {
-  const firestore = useFirestore();
-  const [image, setImage] = useState(null);
-  const onImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      setImage(URL.createObjectURL(event.target.files[0]));
+    const firestore = useFirestore();
+    const firebase = useFirebase();
+    const [image, setImage] = useState(null);
+    const [path, setPath] = useState('')
+    const filePath = 'MasjidUploads'
+    // const uploadedFile = useSelector(({ firebase: { data } }) => data[filePath])
+
+    const onImageChange = async (event, handleChange, value) => {
+        if (event.target.files && event.target.files[0]) {
+            firebase.uploadFile(filePath, event.target.files[0]).then(snapshot => {
+                setPath(snapshot.uploadTaskSnaphot._delegate.metadata.fullPath);
+                snapshot.uploadTaskSnaphot.ref.getDownloadURL().then(url => {
+                    value = url
+                    handleChange(url);
+                    console.log(' * new url', url)
+                    setImage(url);
+                })
+            })
+            // console.log(URL.createObjectURL(event.target.files[0]),event.target.files[0])
+        }
+    };
+
+    function onFileDelete() {
+        console.log(path)
+        setImage('')
+        if (path) {
+            return firebase.deleteFile(path)
+        }
     }
-  };
-  return (
-    <Formik
-      initialValues={{
-        name: "",
-        address: "",
-        gLink: "",
-        pictureURL: "",
-        userEmail: "",
-        userName: "",
+
+    return (
+        <Formik
+            initialValues={{
+                name: "",
+                address: "",
+                gLink: "",
+                pictureURL: "",
+                userEmail: "",
+                userName: "",
         userPhone: "",
-        latitude: "",
-        longitude: "",
-        timing: {
-          isha: "",
-          fajar: "",
-          zohar: "",
-          asar: "",
-          magrib: "",
-        },
-      }}
-      validationSchema={AddMasjidSchema}
-      onSubmit={async (values) => {
-        const data = _.omit(values, ["latitude", "longitude"]);
-        await firestore.add("Masjid", {
-          ...data,
-          g: {
-            geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
-            geohash: geohash.encode(values.latitude, values.longitude, 9),
-          },
-        });
+                latitude: "",
+                longitude: "",
+                timing: {
+                    isha: "",
+                    fajar: "",
+                    zohar: "",
+                    asar: "",
+                    magrib: "",
+                },
+            }}
+            validationSchema={MasjidSchema}
+            onSubmit={async (values) => {
+                const data = _.omit(values, ["latitude", "longitude"]);
+                await firestore.add("Masjid", {
+                    ...data,
+                    g: {
+                        geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
+                        geohash: geohash.encode(values.latitude, values.longitude, 9),
+                    },
+                });
+                alert('Sent')
       }}
     >
       {({
@@ -334,13 +325,18 @@ const AddMasjidForm = () => {
               }}
             >
               {image ? (
-                <img
-                  alt="masjid"
-                  // style={{ alignSelf: "center" }}
-                  width={250}
-                  height={200}
-                  src={image}
-                />
+                  <>
+                      <img
+                          alt="masjid"
+                          // style={{ alignSelf: "center" }}
+                          width={250}
+                          height={200}
+                          src={image}
+                      />
+                      <button onClick={onFileDelete}>
+                          Delete
+                      </button>
+                  </>
               ) : (
                 <i
                   className="far fa-folder-open"
@@ -348,11 +344,12 @@ const AddMasjidForm = () => {
                 />
               )}
               <input
-                type="file"
-                onChange={onImageChange}
-                className="filetype"
-                style={{ width: "92px", marginTop: "15px" }}
+                  type="file"
+                  onChange={(e) => onImageChange(e, handleChange('pictureURL'), values.pictureURL)}
+                  className="filetype"
+                  style={{ width: "92px", marginTop: "15px" }}
               />
+                {errors.pictureURL && <p>{errors.pictureURL}</p>}
             </div>
           </div>
           <div
