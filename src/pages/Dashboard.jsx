@@ -83,7 +83,7 @@ const Dashboard = () => {
   const masjidData = _.map(masjid, (data, id) => ({...data, id: id}));
   const RequestsLength = _.sum(_.map(masjid, (data) => (data.requestList?.length)));
   const AnnouncementLength = _.sum(_.map(masjid, (data) => (data.announcementList?.length)));
-  const adminRequests = firestore.ordered.adminRequest.length
+  const adminRequests = firestore.ordered.adminRequest?.length
   const themeReducer = useSelector((state) => state.ThemeReducer.mode);
   return (
       <div>
