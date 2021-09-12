@@ -64,9 +64,7 @@ const renderCusomerBody = (item, index) => (
 );
 
 const Dashboard = () => {
-  const populates = [
-    {child: "adminId", root: "users", childAlias: "user"},
-  ];
+  const populates = [{ child: "adminId", root: "users", childAlias: "user" }];
   useFirestoreConnect([
     {
       collection: "Masjid",
@@ -80,43 +78,47 @@ const Dashboard = () => {
   ]);
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
-  const masjidData = _.map(masjid, (data, id) => ({...data, id: id}));
-  const RequestsLength = _.sum(_.map(masjid, (data) => (data.requestList?.length)));
-  const AnnouncementLength = _.sum(_.map(masjid, (data) => (data.announcementList?.length)));
-  const adminRequests = firestore.ordered.adminRequest?.length
+  const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
+  const RequestsLength = _.sum(
+    _.map(masjid, (data) => data.requestList?.length)
+  );
+  const AnnouncementLength = _.sum(
+    _.map(masjid, (data) => data.announcementList?.length)
+  );
+  const adminRequests = firestore.ordered.adminRequest?.length;
   const themeReducer = useSelector((state) => state.ThemeReducer.mode);
   return (
-      <div>
-        <h2 className="page-header">Dashboard</h2>
-        <div className="row">
-          <div className="screenStyle">
-            <div className="row">
-              <div className="col-6">
-                <StatusCard
-                    icon="fas fa-mosque"
+    <div>
+      <h2 className="page-header">Dashboard</h2>
+      <div className="row">
+        <div className="screenStyle">
+          <div className="row">
+            <div className="col-6">
+              <StatusCard
+                icon="fas fa-mosque"
                 count={masjidData.length}
                 title="No. Of Masjid"
               />
             </div>
             <div className="col-6">
-                <StatusCard
-                    icon="fas fa-mosque"
-                    count={RequestsLength}
-                    title="No. Of Requests"
-                />
-            </div>
-            <div className="col-6">
               <StatusCard
-                  icon="fas fa-mosque"
-                  count={AnnouncementLength}
-                  title="News & Announcement"
+                icon="fas fa-mosque"
+                count={RequestsLength}
+                title="No. Of Requests"
               />
             </div>
             <div className="col-6">
               <StatusCard
-                  icon="fas fa-mosque"
-                  count={adminRequests}
-                  title="No. Of admin Requests"
+                icon="fas fa-mosque"
+                count={AnnouncementLength}
+                title="News & Announcement"
+              />
+            </div>
+            <div className="col-6">
+              <StatusCard
+                icon="fas fa-mosque"
+                count={adminRequests}
+                title="No. Of admin Requests"
               />
             </div>
           </div>
@@ -152,6 +154,7 @@ const Dashboard = () => {
                 headData={topCustomers.head}
                 renderHead={(item, index) => renderCusomerHead(item, index)}
                 bodyData={masjidData}
+                edit={false}
                 renderBody={(item, index) => renderCusomerBody(item, index)}
               />
             </div>
