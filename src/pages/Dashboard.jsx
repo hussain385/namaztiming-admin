@@ -65,8 +65,7 @@ const renderCusomerBody = (item, index) => (
 
 const Dashboard = () => {
   const populates = [
-    { child: "adminId", root: "users", childAlias: "user" }, // replace owner with user object
-      // {child: 'requestList', root: 'requests', childAlias: 'requests'},
+    {child: "adminId", root: "users", childAlias: "user"},
   ];
   useFirestoreConnect([
     {
@@ -74,20 +73,27 @@ const Dashboard = () => {
       populates,
     },
   ]);
+  useFirestoreConnect([
+    {
+      collection: "adminRequest",
+    },
+  ]);
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
-    const masjidData = _.map(masjid, (data, id) => ({...data, id: id}));
-    const RequestsLength = _.sum(_.map(masjid, (data) => (data.requestList?.length)));
-    const themeReducer = useSelector((state) => state.ThemeReducer.mode);
+  const masjidData = _.map(masjid, (data, id) => ({...data, id: id}));
+  const RequestsLength = _.sum(_.map(masjid, (data) => (data.requestList?.length)));
+  const AnnouncementLength = _.sum(_.map(masjid, (data) => (data.announcementList?.length)));
+  const adminRequests = firestore.ordered.adminRequest.length
+  const themeReducer = useSelector((state) => state.ThemeReducer.mode);
   return (
-    <div>
-      <h2 className="page-header">Dashboard</h2>
-      <div className="row">
-        <div className="screenStyle">
-          <div className="row">
-            <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
+      <div>
+        <h2 className="page-header">Dashboard</h2>
+        <div className="row">
+          <div className="screenStyle">
+            <div className="row">
+              <div className="col-6">
+                <StatusCard
+                    icon="fas fa-mosque"
                 count={masjidData.length}
                 title="No. Of Masjid"
               />
@@ -101,16 +107,16 @@ const Dashboard = () => {
             </div>
             <div className="col-6">
               <StatusCard
-                icon="fas fa-mosque"
-                count={masjidData.length}
-                title="No. Of Masjid"
+                  icon="fas fa-mosque"
+                  count={AnnouncementLength}
+                  title="News & Announcement"
               />
             </div>
             <div className="col-6">
               <StatusCard
-                icon="fas fa-mosque"
-                count={masjidData.length}
-                title="No. Of Masjid"
+                  icon="fas fa-mosque"
+                  count={adminRequests}
+                  title="No. Of admin Requests"
               />
             </div>
           </div>
