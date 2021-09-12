@@ -66,6 +66,7 @@ const renderCusomerBody = (item, index) => (
 const Dashboard = () => {
   const populates = [
     { child: "adminId", root: "users", childAlias: "user" }, // replace owner with user object
+      // {child: 'requestList', root: 'requests', childAlias: 'requests'},
   ];
   useFirestoreConnect([
     {
@@ -75,9 +76,9 @@ const Dashboard = () => {
   ]);
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
-  const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
-  const themeReducer = useSelector((state) => state.ThemeReducer.mode);
-
+    const masjidData = _.map(masjid, (data, id) => ({...data, id: id}));
+    const RequestsLength = _.sum(_.map(masjid, (data) => (data.requestList?.length)));
+    const themeReducer = useSelector((state) => state.ThemeReducer.mode);
   return (
     <div>
       <h2 className="page-header">Dashboard</h2>
@@ -92,11 +93,11 @@ const Dashboard = () => {
               />
             </div>
             <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
-                count={masjidData.length}
-                title="No. Of Masjid"
-              />
+                <StatusCard
+                    icon="fas fa-mosque"
+                    count={RequestsLength}
+                    title="No. Of Requests"
+                />
             </div>
             <div className="col-6">
               <StatusCard
