@@ -20,7 +20,7 @@ const renderBody = (item, index) => (
 
 function MasjidList(props) {
   const populates = [
-    { child: "adminId", root: "users", childAlias: "user" }, // replace owner with user object
+    { child: "adminId", root: "users", childAlias: "user" },
   ];
   useFirestoreConnect([
     {

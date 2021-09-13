@@ -37,24 +37,6 @@ const RenderUserMenu = () => {
   const { logout } = useFirebase();
   return (
     <>
-      <Link to="/">
-        <div className="notification-item">
-          <i className="bx bx-user"></i>
-          <span>Profile</span>
-        </div>
-      </Link>
-      <Link to="/">
-        <div className="notification-item">
-          <i className="bx bx-wallet-alt"></i>
-          <span>My Wallet</span>
-        </div>
-      </Link>
-      <Link to="/">
-        <div className="notification-item">
-          <i className="bx bx-cog"></i>
-          <span>Settings</span>
-        </div>
-      </Link>
       <a href="/" onClick={() => logout()}>
         <div className="notification-item">
           <i className="bx bx-log-out-circle bx-rotate-180"></i>
