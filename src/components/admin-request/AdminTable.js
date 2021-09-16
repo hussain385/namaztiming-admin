@@ -69,7 +69,7 @@ const MyComponent = (props) => {
                     onSubmit={async (values) => {
                         console.log('on submitting')
                         const actionCodeSettings = {
-                            url: `http://localhost:3000/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${props.item.masjid.id}`,
+                            url: `http://localhost:3000/SignUp?userName=${URLEncoder.encode(values.userName, StandardCharsets.UTF_8)}&userPhone=${URLEncoder.encode(values.userPhone, StandardCharsets.UTF_8)}&masjidId=${props.item.masjid.id}`,
                             handleCodeInApp: true,
                             // iOS: {
                             //     bundleId: 'com.example.ios'
