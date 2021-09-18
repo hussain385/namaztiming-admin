@@ -65,8 +65,8 @@ function SignUp() {
         console.log(userError)
         const db = firebase.firestore()
         db.collection('users').doc(user.uid).set({
-            name: params.get('userName'),
-            phone: params.get('userPhone'),
+            name: decodeURI(params.get('userName')),
+            phone: decodeURI(params.get('userPhone')),
             isAdmin: false,
         }).then(r => {
             firebase.auth().sendPasswordResetEmail(user.email).then(r => {
