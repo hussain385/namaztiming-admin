@@ -64,16 +64,25 @@ function SignUp() {
         console.log(user)
         console.log(userError)
         const db = firebase.firestore()
-        db.collection('users').doc(user.uid).set({
-            name: decodeURI(params.get('userName')),
-            phone: decodeURI(params.get('userPhone')),
-            isAdmin: false,
-        }).then(r => {
-            firebase.auth().sendPasswordResetEmail(user.email).then(r => {
-                db.collection('Masjid').doc(params.get('masjidId')).update({
+        db.collection('users').doc(user.uid).get().then(value => {
+            if (value.exists) {
+                return db.collection('Masjid').doc(params.get('masjidId')).update({
                     adminId: user.uid
                 }).then(r => {
                     setSent(true)
+                })
+            }
+            db.collection('users').doc(user.uid).set({
+                name: decodeURI(params.get('userName')),
+                phone: decodeURI(params.get('userPhone')),
+                isAdmin: false,
+            }).then(r => {
+                firebase.auth().sendPasswordResetEmail(user.email).then(r => {
+                    db.collection('Masjid').doc(params.get('masjidId')).update({
+                        adminId: user.uid
+                    }).then(r => {
+                        setSent(true)
+                    })
                 })
             })
         })
