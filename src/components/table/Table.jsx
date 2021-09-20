@@ -99,7 +99,7 @@ const RenderBody = ({ item, index }) => {
           onSubmit={(values) => {
             const data = _.omit(values, ["latitude", "longitude"]);
             firestore
-              .add("Masjid", {
+              .update("Masjid/"+ item.id, {
                 ...data,
                 g: {
                   geopoint: new firestore.GeoPoint(
