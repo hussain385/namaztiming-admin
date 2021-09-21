@@ -75,7 +75,7 @@ const MyComponent = (props) => {
           onSubmit={async (values) => {
             console.log("on submitting");
             const actionCodeSettings = {
-              url: `http://localhost:3000/SignUp?userName=${encodeURI(
+              url: `https://masjid-finder-karachi.surge.sh/SignUp?userName=${encodeURI(
                 values.userName
               )}&userPhone=${encodeURI(values.userPhone)}&masjidId=${
                 props.item.masjid.id
