@@ -11,7 +11,7 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 
 const renderBody = (item, index) => (
   <tr key={index}>
-    <td>{item.masjid.id}</td>
+    <td>{item.masjidID}</td>
     <td>{item.userEmail}</td>
     <td>{item.userName}</td>
     <td>{item.userPhone}</td>

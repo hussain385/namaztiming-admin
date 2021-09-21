@@ -49,7 +49,7 @@ const MyComponent = (props) => {
                         className="buttonStyle"
                         style={{backgroundColor: "darkred", marginLeft: 15}}
                     >
-                        delete
+                        Delete
                     </button>
                 </td>
             </tr>

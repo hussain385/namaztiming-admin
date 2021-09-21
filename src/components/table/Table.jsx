@@ -41,11 +41,25 @@ const RenderBody = ({ item, index }) => {
   });
   const [user, setUser] = useState({
     gLink: item.gLink ? item.gLink : "",
-    userEmail: item.userEmail ? item.userEmail : "",
-    userName: item.userName ? item.userName : "",
-    userPhone: item.userPhone ? item.userPhone : "",
+    userEmail: item.user?.email ? item.user.email : "",
+    userName: item.user?.name ? item.user.name : "",
+    userPhone: item.user?.phone ? item.user.phone : "",
   });
-  console.log(timing);
+  useEffect(() => {
+    async function values() {
+      await setUser({
+        gLink: item.gLink ? item.gLink : "",
+        userEmail: item.user?.email ? item.user.email : "",
+        userName: item.user?.name ? item.user.name : "",
+        userPhone: item.user?.phone ? item.user.phone : "",
+      });
+    }
+    values();
+  }, []);
+  console.log(user.userName);
+  if (!item) {
+    return null;
+  }
   return (
     <>
       <tr key={index}>
@@ -63,11 +77,15 @@ const RenderBody = ({ item, index }) => {
             View
           </button>
           <button
-            // onClick={openModal}
+            onClick={() => {
+              firestore.delete("Masjid/" + item.id).catch((e) => {
+                console.log(e);
+              });
+            }}
             className="buttonStyle"
             style={{ backgroundColor: "darkred", marginLeft: 15 }}
           >
-            delete
+            Delete
           </button>
         </td>
       </tr>
@@ -85,8 +103,8 @@ const RenderBody = ({ item, index }) => {
             userEmail: `${user.userEmail}`,
             userName: `${user.userName}`,
             userPhone: `${user.userPhone}`,
-            latitude: `${item.g.geopoint._lat}`,
-            longitude: `${item.g.geopoint._long}`,
+            latitude: `${item.g?.geopoint._lat}`,
+            longitude: `${item.g?.geopoint._long}`,
             timing: {
               isha: `${timing.isha}`,
               fajar: `${timing.fajar}`,
@@ -97,26 +115,20 @@ const RenderBody = ({ item, index }) => {
           }}
           validationSchema={MasjidSchema}
           onSubmit={(values) => {
-            const data = _.omit(values, ["latitude", "longitude"]);
-            firestore
-              .update("Masjid/"+ item.id, {
-                ...data,
-                g: {
-                  geopoint: new firestore.GeoPoint(
-                    values.latitude,
-                    values.longitude
-                  ),
-                  geohash: geohash.encode(values.latitude, values.longitude, 9),
-                },
-              })
-              .then((snapshot) => {
-                console.log(snapshot);
-                firestore
-                  .delete({ collection: "newMasjid", doc: item.id })
-                  .then((value) => {
-                    console.log(value, "deleted");
-                  });
-              });
+            console.log(item.user, user);
+            // const data = _.omit(values, ["latitude", "longitude"]);
+            // firestore
+            //   .update("Masjid/" + item.id, {
+            //     ...data,
+            //     g: {
+            //       geopoint: new firestore.GeoPoint(
+            //         values.latitude,
+            //         values.longitude
+            //       ),
+            //       geohash: geohash.encode(values.latitude, values.longitude, 9),
+            //     },
+            //   })
+            //   .then(closeModal);
           }}
         >
           {({
