@@ -14,6 +14,7 @@ import AddMasjid from "../pages/AddMasjid";
 import SignUp from "../pages/signUp";
 import {AuthProvider, useFirebaseApp} from "reactfire";
 import {getAuth} from "@firebase/auth";
+import ForgotPassword from "../pages/forgotPassword";
 
 // import {getAuth} from "firebase/auth";
 
@@ -53,6 +54,7 @@ const Routes = () => {
         <BrowserRouter>
             <Switch>
                 <Route path="/login" component={Login}/>
+                <Route path="/forgotPassword" component={ForgotPassword}/>
 
                 {/*    <DatabaseProvider sdk={database}>*/}
                 <Route path="/SignUp" component={() => (
