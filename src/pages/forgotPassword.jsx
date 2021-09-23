@@ -20,7 +20,7 @@ const ERROR = {
     marginBottom: 25,
 };
 
-function ForgotPassword(props) {
+function ForgotPassword() {
     const Firebase = useFirebase();
     const themeReducer = useSelector((state) => state.ThemeReducer);
     const params = new URLSearchParams(window.location.search);

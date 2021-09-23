@@ -3,6 +3,7 @@ import "./login.css";
 import {useUser} from "reactfire";
 import firebase from "firebase/compat";
 import {useHistory} from "react-router-dom";
+import ForgotPassword from "./forgotPassword";
 
 const ERROR = {
     color: "darkred",
@@ -16,7 +17,7 @@ function SignUp() {
     const {status, data: user, error: userError} = useUser();
     const params = new URLSearchParams(window.location.search);
     const [error, setError] = useState(null);
-    const [sent, setSent] = useState(false);
+    // const [sent, setSent] = useState(false);
     const history = useHistory()
 
     useEffect(() => {
@@ -74,8 +75,7 @@ function SignUp() {
         params.get("userName") &&
         params.get("userPhone") &&
         params.get("masjidId") &&
-        user &&
-        !sent
+        user
     ) {
         console.log(status);
         console.log(user);
@@ -135,7 +135,7 @@ function SignUp() {
         return <span>Error</span>;
     }
 
-    return <span>Please Check Your Email</span>;
+    return <ForgotPassword/>
 }
 
 export default SignUp;

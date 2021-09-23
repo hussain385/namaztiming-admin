@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import moment from "moment";
 
 const phoneRegExp =
     /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -24,11 +25,11 @@ export const MasjidSchema = Yup.object().shape({
     //     .max(16, "phone no. is long, please check again")
     //     .required("Your Phone no. is required"),
     timing: Yup.object().shape({
-        isha: Yup.string(),
-        fajar: Yup.string(),
-        zohar: Yup.string(),
-        asar: Yup.string(),
-        magrib: Yup.string(),
-        jummuah: Yup.string(),
+        isha: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        fajar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        zohar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        asar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        magrib: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        // jummuah: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
     }),
 });
