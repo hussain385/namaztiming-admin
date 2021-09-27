@@ -6,6 +6,7 @@ import firebase from "firebase/compat";
 import 'firebase/firestore';
 import {Provider} from "react-redux";
 import {store} from "./redux/store";
+import DateAdapter from '@mui/lab/AdapterMoment';
 import {createFirestoreInstance} from "redux-firestore";
 import {ReactReduxFirebaseProvider} from "react-redux-firebase";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -17,6 +18,7 @@ import "./assets/css/index.css";
 import Routes from "./components/Routes";
 
 import {FirebaseAppProvider} from 'reactfire';
+import {LocalizationProvider} from "@mui/lab";
 
 
 const firebaseConfig = {
@@ -53,7 +55,7 @@ ReactDOM.render(
         <Provider store={store}>
             <ReactReduxFirebaseProvider {...rrfProps}>
                 <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-                    <Routes/>
+                        <Routes/>
                 </FirebaseAppProvider>
             </ReactReduxFirebaseProvider>
         </Provider>

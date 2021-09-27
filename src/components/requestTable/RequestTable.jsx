@@ -1,12 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {Modal, ModalTransition, useModal} from "react-simple-hook-modal";
 import "./requestTable.css";
-import {Formik} from "formik";
+import {Formik,Field} from "formik";
 import "react-simple-hook-modal/dist/styles.css";
 import {useFirestore} from "react-redux-firebase";
 import _ from 'lodash'
 import geohash from "ngeohash";
 import {MasjidSchema} from "../../services/validation";
+import TimePicker from '@mui/lab/TimePicker';
+import {TextField} from "@mui/material";
+import DateAdapter from "@mui/lab/AdapterMoment";
+import {LocalizationProvider, MobileTimePicker} from "@mui/lab";
+import moment from "moment";
 
 
 const ERROR = {
@@ -80,20 +85,21 @@ const MyComponent = (props) => {
                     validationSchema={MasjidSchema}
                     onSubmit={(values) => {
                         const data = _.omit(values, ['latitude', 'longitude'])
-                        firestore
-                            .add("Masjid", {
-                                ...data,
-                                g: {
-                                    geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
-                                    geohash: geohash.encode(values.latitude, values.longitude, 9)
-                                }
-                            })
-                            .then((snapshot) => {
-                                console.log(snapshot);
-                                firestore.delete({collection: 'newMasjid', doc: props.item.id}).then(value => {
-                                    console.log(value, 'deleted')
-                                })
-                            });
+                        console.log(values)
+                        // firestore
+                        //     .add("Masjid", {
+                        //         ...data,
+                        //         g: {
+                        //             geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
+                        //             geohash: geohash.encode(values.latitude, values.longitude, 9)
+                        //         }
+                        //     })
+                        //     .then((snapshot) => {
+                        //         console.log(snapshot);
+                        //         firestore.delete({collection: 'newMasjid', doc: props.item.id}).then(value => {
+                        //             console.log(value, 'deleted')
+                        //         })
+                        //     });
                     }}
                 >
                     {({
@@ -103,6 +109,7 @@ const MyComponent = (props) => {
                           values,
                           errors,
                           touched,
+                          setFieldValue
                           /* and other goodies */
                       }) => (
                         <>
@@ -215,119 +222,157 @@ const MyComponent = (props) => {
                                         )}
                                     </div>
                                 </div>
-                                <div style={{marginTop: 20}}>
-                                    <p>Namaz Timings</p>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            paddingBlockEnd: 10,
-                                        }}
-                                    >
-                                        <div>
-                                            <p style={{marginLeft: 10, marginTop: 10}}>Fajar</p>
+                                <LocalizationProvider dateAdapter={DateAdapter}>
+                                    <div style={{marginTop: 20}}>
+                                        <p>Namaz Timings</p>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                paddingBlockEnd: 10,
+                                            }}
+                                        >
+                                            <div style={{'align-self': 'center'}}>
+                                                <p style={{marginLeft: 10, marginTop: 10, }}>Fajar</p>
+                                            </div>
+                                            <div>
+                                                <Field
+                                                    name={'timing.fajar'}
+                                                    component={MobileTimePicker}
+                                                    renderInput={(params) => <TextField style={TIMEINPUT} {...params} />}
+                                                    onChange={(e) => setFieldValue("timing.fajar", moment(e).format('hh:mm A'))}
+                                                    value={(moment(values.timing.fajar, 'hh:mm A').isValid() ? moment(values.timing.fajar, 'hh:mm A') : values.timing.fajar)}
+                                                />
+                                                {/*<TimePicker*/}
+                                                {/*    onChange={(e) => setFieldValue("fajar", e)*/}
+                                                {/*    }*/}
+                                                {/*    value={moment(values.fajar, 'hh:mm A').isValid() ? moment(values.fajar, 'hh:mm A') : values.fajar}*/}
+                                                {/*    renderInput={(params) => <TextField {...params} />}*/}
+                                                {/*    onError={reason => {*/}
+                                                {/*        console.log(reason)}}*/}
+                                                {/*/>*/}
+                                            </div>
                                         </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                paddingBlockEnd: 10,
+                                            }}
+                                        >
+                                            <div style={{'align-self': 'center'}}>
+                                                <p style={{marginLeft: 10, marginTop: 10}}>Zohar</p>
+                                            </div>
+                                            <div>
+                                                <Field
+                                                    name={'timing.zohar'}
+                                                    component={MobileTimePicker}
+                                                    renderInput={(params) => <TextField style={TIMEINPUT} {...params} />}
+                                                    onChange={(e) => setFieldValue("timing.zohar", moment(e).format('hh:mm A'))}
+                                                    value={(moment(values.timing.zohar, 'hh:mm A').isValid() ? moment(values.timing.zohar, 'hh:mm A') : values.timing.zohar)}
+                                                />
+                                                {/*<input*/}
+                                                {/*    onChange={handleChange("timing")}*/}
+                                                {/*    value={values['timing.zohar']}*/}
+                                                {/*    onBlur={handleBlur("timing")}*/}
+                                                {/*    style={TIMEINPUT}*/}
+                                                {/*    placeholder="00:00 AM"*/}
+                                                {/*/>*/}
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                paddingBlockEnd: 10,
+                                            }}
+                                        >
+                                            <div style={{'align-self': 'center'}}>
+                                                <p style={{marginLeft: 10, marginTop: 10}}>Asar</p>
+                                            </div>
+                                            <div>
+                                                <Field
+                                                    name={'timing.asar'}
+                                                    component={MobileTimePicker}
+                                                    renderInput={(params) => <TextField style={TIMEINPUT} {...params} />}
+                                                    onChange={(e) => setFieldValue("timing.asar", moment(e).format('hh:mm A'))}
+                                                    value={(moment(values.timing.asar, 'hh:mm A').isValid() ? moment(values.timing.asar, 'hh:mm A') : values.timing.asar)}
+                                                />
+                                                {/*<input*/}
+                                                {/*    onChange={handleChange("timing")}*/}
+                                                {/*    value={values['timing.asar']}*/}
+                                                {/*    onBlur={handleBlur("timing")}*/}
+                                                {/*    style={TIMEINPUT}*/}
+                                                {/*    placeholder="00:00 AM"*/}
+                                                {/*/>*/}
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                paddingBlockEnd: 10,
+                                            }}
+                                        >
+                                            <div style={{'align-self': 'center'}}>
+                                                <p style={{marginLeft: 10, marginTop: 10}}>Magrib</p>
+                                            </div>
+                                            <div>
+                                                <Field
+                                                    name={'timing.magrib'}
+                                                    component={MobileTimePicker}
+                                                    renderInput={(params) => <TextField style={TIMEINPUT} {...params} />}
+                                                    onChange={(e) => setFieldValue("timing.magrib", moment(e).format('hh:mm A'))}
+                                                    value={(moment(values.timing.magrib, 'hh:mm A').isValid() ? moment(values.timing.magrib, 'hh:mm A') : values.timing.magrib)}
+                                                />
+                                                {/*<input*/}
+                                                {/*    onChange={handleChange("timing")}*/}
+                                                {/*    value={values['timing.magrib']}*/}
+                                                {/*    onBlur={handleBlur("timing")}*/}
+                                                {/*    style={TIMEINPUT}*/}
+                                                {/*    placeholder="00:00 AM"*/}
+                                                {/*/>*/}
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                paddingBlockEnd: 10,
+                                            }}
+                                        >
+                                            <div style={{'align-self': 'center'}}>
+                                                <p style={{marginLeft: 10, marginTop: 10}}>Isha</p>
+                                            </div>
+                                            <div>
+                                                <Field
+                                                    name={'timing.isha'}
+                                                    component={MobileTimePicker}
+                                                    renderInput={(params) => <TextField style={TIMEINPUT} {...params} />}
+                                                    onChange={(e) => setFieldValue("timing.isha", moment(e).format('hh:mm A'))}
+                                                    value={(moment(values.timing.isha, 'hh:mm A').isValid() ? moment(values.timing.isha, 'hh:mm A') : values.timing.isha)}
+                                                />
+                                                {/*<input*/}
+                                                {/*    onChange={handleChange("timing")}*/}
+                                                {/*    value={values['timing.isha']}*/}
+                                                {/*    onBlur={handleBlur("timing")}*/}
+                                                {/*    style={TIMEINPUT}*/}
+                                                {/*    placeholder="00:00 AM"*/}
+                                                {/*/>*/}
+                                            </div>
+                                        </div>
+                                        {errors.timing && <p>{errors.timing}</p>}
                                         <div>
-                                            <input
-                                                onChange={handleChange("timing")}
-                                                value={values.timing.fajar}
-                                                onBlur={handleBlur("timing")}
-                                                style={TIMEINPUT}
-                                                placeholder="00:00 AM"
+                                            <img
+                                                alt="masjid"
+                                                style={{alignSelf: "center"}}
+                                                width={250}
+                                                height={200}
+                                                src={values.pictureURL}
                                             />
                                         </div>
                                     </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            paddingBlockEnd: 10,
-                                        }}
-                                    >
-                                        <div>
-                                            <p style={{marginLeft: 10, marginTop: 10}}>Zohar</p>
-                                        </div>
-                                        <div>
-                                            <input
-                                                onChange={handleChange("timing")}
-                                                value={values.timing.zohar}
-                                                onBlur={handleBlur("timing")}
-                                                style={TIMEINPUT}
-                                                placeholder="00:00 AM"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            paddingBlockEnd: 10,
-                                        }}
-                                    >
-                                        <div>
-                                            <p style={{marginLeft: 10, marginTop: 10}}>Asar</p>
-                                        </div>
-                                        <div>
-                                            <input
-                                                onChange={handleChange("timing")}
-                                                value={values.timing.asar}
-                                                onBlur={handleBlur("timing")}
-                                                style={TIMEINPUT}
-                                                placeholder="00:00 AM"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            paddingBlockEnd: 10,
-                                        }}
-                                    >
-                                        <div>
-                                            <p style={{marginLeft: 10, marginTop: 10}}>Magrib</p>
-                                        </div>
-                                        <div>
-                                            <input
-                                                onChange={handleChange("timing")}
-                                                value={values.timing.magrib}
-                                                onBlur={handleBlur("timing")}
-                                                style={TIMEINPUT}
-                                                placeholder="00:00 AM"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            paddingBlockEnd: 10,
-                                        }}
-                                    >
-                                        <div>
-                                            <p style={{marginLeft: 10, marginTop: 10}}>Isha</p>
-                                        </div>
-                                        <div>
-                                            <input
-                                                onChange={handleChange("timing")}
-                                                value={values.timing.isha}
-                                                onBlur={handleBlur("timing")}
-                                                style={TIMEINPUT}
-                                                placeholder="00:00 AM"
-                                            />
-                                        </div>
-                                    </div>
-                                    {errors.timing && <p>{errors.timing}</p>}
-                                    <div>
-                                        <img
-                                            alt="masjid"
-                                            style={{alignSelf: "center"}}
-                                            width={250}
-                                            height={200}
-                                            src={values.pictureURL}
-                                        />
-                                    </div>
-                                </div>
+                                </LocalizationProvider>
                             </div>
                             <div
                                 style={{
