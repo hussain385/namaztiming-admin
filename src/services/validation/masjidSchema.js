@@ -1,35 +1,55 @@
 import * as Yup from "yup";
 import moment from "moment";
+import _ from 'lodash'
 
 const phoneRegExp =
     /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+const SIGN = '[\\+-]?'
+const DECIMALS = '(\\.[0-9]+)?'
+const ZEROS = '(\\.0+)?'
+const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 
 export const MasjidSchema = Yup.object().shape({
     name: Yup.string().required("Masjid name is required"),
     address: Yup.string().required("Masjid address is required"),
     latitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-        (value + "").match(/^\d*\.{1}\d*$/)
+        (value + "").match(`${SIGN}(90${ZEROS}|[1-8]\\d${DECIMALS}|\\d${DECIMALS})`)
     ),
     longitude: Yup.number().test("is-decimal", "invalid decimal", (value) =>
-        (value + "").match(/^\d*\.{1}\d*$/)
+        (value + "").match(`${SIGN}(180${ZEROS}|1[0-7]\\d${DECIMALS}|[1-9]\\d${DECIMALS}|\\d${DECIMALS})`)
     ),
     gLink: Yup.string().url().required("Masjid address is required"),
-    pictureURL: Yup.string()
-        .url("Not a valid url",)
+    pictureURL: Yup
+        .mixed()
+        .test('fileSize', "File is too large", value => value.size <= 9000 * 1000)
+        .test('fileType', "Unsupported File format", value => SUPPORTED_FORMATS.includes(value.type))
+        // .url("Not a valid url",)
         .required("Masjid's pictureURL is required"),
-    // userEmail: Yup.string().email().required("Email is required"),
-    // userName: Yup.string().required("Your name is required"),
-    // userPhone: Yup.string()
-    //     .matches(phoneRegExp, "Phone number is not valid")
-    //     .min(11, "phone no. is short, please check again")
-    //     .max(16, "phone no. is long, please check again")
-    //     .required("Your Phone no. is required"),
+    userEmail: Yup.string().email().when(['userPhone', 'userName'], {
+        is: (val, val2) => !_.isEmpty(val) || !_.isEmpty(val2),
+        then: Yup.string().required("Masjid Admin's Email is required"),
+        otherwise: Yup.string(),
+    }),
+    userName: Yup.string().when(['userPhone', 'userEmail'], {
+        is: (val, val2) => !_.isEmpty(val) || !_.isEmpty(val2),
+        then: Yup.string().required("Masjid Admin's Name is required"),
+        otherwise: Yup.string(),
+    }),
+    userPhone: Yup.string()
+        .matches(phoneRegExp, "Phone number is not valid")
+        .min(11, "phone no. is short, please check again")
+        .max(16, "phone no. is long, please check again")
+        .when(['userName', 'userEmail'], {
+            is: (val, val2) => !_.isEmpty(val) || !_.isEmpty(val2),
+            then: Yup.string().required("Masjid Admin's Phone no. is required"),
+            otherwise: Yup.string(),
+        }),
     timing: Yup.object().shape({
-        isha: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
-        fajar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
-        zohar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
-        asar: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
-        magrib: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        isha: Yup.string().test('isDateTime', 'not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        fajar: Yup.string().test('isDateTime', 'not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        zohar: Yup.string().test('isDateTime', 'not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        asar: Yup.string().test('isDateTime', 'not a valid Time', value => moment(value, 'hh:mm A').isValid()),
+        magrib: Yup.string().test('isDateTime', 'not a valid Time', value => moment(value, 'hh:mm A').isValid()),
         // jummuah: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
     }),
-});
+}, [['userPhone', 'userEmail'], ['userPhone', 'userName'], ['userName', 'userEmail']]);
