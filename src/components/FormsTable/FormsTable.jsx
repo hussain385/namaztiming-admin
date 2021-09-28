@@ -4,7 +4,7 @@ import {Field, Formik} from "formik";
 import {MasjidSchema} from "../../services/validation";
 import {LocalizationProvider, MobileTimePicker} from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterMoment";
-import {Autocomplete, createFilterOptions, Grid, TextField} from "@mui/material";
+import {Autocomplete, Button, Grid, TextField} from "@mui/material";
 import moment from "moment";
 import PropTypes from 'prop-types';
 import _ from "lodash";
@@ -31,7 +31,6 @@ const FormsTable = (props) => {
     const [image, setImage] = useState(masjidData?.pictureURL);
     const firestore = useFirestore();
     const users = useSelector(state => state.firestore.ordered.users)
-    const filter = createFilterOptions();
     const loading = users ? users.length === 0 : true;
 
     const onImageChange = async (event, setFieldValue) => {
@@ -483,7 +482,7 @@ const FormsTable = (props) => {
                             {props.preButton?.text}
                         </button>
                         }
-                        <button
+                        <Button
                             style={{
                                 width: 70,
                                 color: "white",
@@ -495,7 +494,7 @@ const FormsTable = (props) => {
                             onClick={handleSubmit}
                         >
                             Save
-                        </button>
+                        </Button>
                     </div>
                 </>
             )}

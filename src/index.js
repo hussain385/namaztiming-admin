@@ -17,6 +17,7 @@ import "./assets/css/index.css";
 import Routes from "./components/Routes";
 
 import {FirebaseAppProvider} from 'reactfire';
+import {CssBaseline} from "@mui/material";
 
 
 const firebaseConfig = {
@@ -53,6 +54,7 @@ ReactDOM.render(
         <Provider store={store}>
             <ReactReduxFirebaseProvider {...rrfProps}>
                 <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+                    <CssBaseline/>
                     <Routes/>
                 </FirebaseAppProvider>
             </ReactReduxFirebaseProvider>
