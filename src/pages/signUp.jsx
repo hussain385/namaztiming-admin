@@ -37,7 +37,7 @@ function SignUp() {
             firebase
                 .auth()
                 .signInWithEmailLink(email, window.location.href)
-                .then(async (result) => {
+                .then(async () => {
                     // Clear email from storage.
                     // const token = await result.user.getIdToken(true)
                     // await firebase.auth().signOut()
@@ -64,11 +64,11 @@ function SignUp() {
         }
     }, []);
 
-    function resetAndRoute() {
-        firebase.auth().sendPasswordResetEmail(user.email).then(r => {
-            history.push('/forgotPassword')
-        })
-    }
+    // function resetAndRoute() {
+    //     firebase.auth().sendPasswordResetEmail(user.email).then(r => {
+    //         history.push('/forgotPassword')
+    //     })
+    // }
 
     if (
         status === "success" &&
@@ -92,7 +92,7 @@ function SignUp() {
                         .update({
                             adminId: user.uid,
                         })
-                        .then((r) => {
+                        .then(() => {
                             // setSent(true);
                             alert('you are now admin')
                         });
@@ -107,18 +107,18 @@ function SignUp() {
                     .then((r) => {
                         // resetAndRoute();
                         firebase
-                          .auth()
-                          .sendPasswordResetEmail(user.email)
-                          .then((r) => {
-                            db.collection("Masjid")
-                              .doc(params.get("masjidId"))
-                              .update({
-                                adminId: user.uid,
-                              })
-                              .then((r) => {
-                                  history.push('/forgotPassword')
-                              });
-                          });
+                            .auth()
+                            .sendPasswordResetEmail(user.email)
+                            .then((r) => {
+                                db.collection("Masjid")
+                                    .doc(params.get("masjidId"))
+                                    .update({
+                                        adminId: user.uid,
+                                    })
+                                    .then((r) => {
+                                        history.push('/forgotPassword')
+                                    });
+                            });
                     });
             });
     }

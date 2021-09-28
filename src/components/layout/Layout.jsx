@@ -12,7 +12,6 @@ const Layout = (props) => {
   const clickOpen = () => {
     setOpen((prevState) => !prevState);
   };
-  console.log("Layout props", props);
   useEffect(() => {
     const themeClass = localStorage.getItem("themeMode", "theme-mode-light");
     const colorClass = localStorage.getItem("colorMode", "theme-mode-light");

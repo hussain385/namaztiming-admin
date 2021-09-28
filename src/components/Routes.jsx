@@ -22,7 +22,6 @@ function PrivateRoute({children, ...rest}) {
     const {auth, profile, isInitializing} = useSelector(
         (state) => state.firebase
     );
-    console.log("PrivateRoute children", children, rest);
 
     return (
         <Route

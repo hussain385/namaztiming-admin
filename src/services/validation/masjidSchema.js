@@ -21,8 +21,29 @@ export const MasjidSchema = Yup.object().shape({
     gLink: Yup.string().url().required("Masjid address is required"),
     pictureURL: Yup
         .mixed()
-        .test('fileSize', "File is too large", value => value.size <= 9000 * 1000)
-        .test('fileType', "Unsupported File format", value => SUPPORTED_FORMATS.includes(value.type))
+        .test('isUndefined', "Upload An Image", value => {
+            return !(_.isUndefined(value) || _.isNull(value));
+        })
+        .test('fileSize', "File is too large", value => {
+            if (value?.size) {
+                return value.size <= 9000 * 1000
+            }
+            return Yup.string().url().validate(value).then(value => {
+                if (value) {
+                    return true
+                }
+            })
+        })
+        .test('fileType', "Unsupported File format", value => {
+            if (SUPPORTED_FORMATS.includes(value?.type)){
+                return true
+            }
+            return Yup.string().url().validate(value).then(value => {
+                if (value) {
+                    return true
+                }
+            })
+        })
         // .url("Not a valid url",)
         .required("Masjid's pictureURL is required"),
     userEmail: Yup.string().email().when(['userPhone', 'userName'], {
@@ -30,10 +51,10 @@ export const MasjidSchema = Yup.object().shape({
         then: Yup.string().required("Masjid Admin's Email is required"),
         otherwise: Yup.string(),
     }),
-    userName: Yup.string().when(['userPhone', 'userEmail'], {
+    userName: Yup.string('Name must be String').when(['userPhone', 'userEmail'], {
         is: (val, val2) => !_.isEmpty(val) || !_.isEmpty(val2),
-        then: Yup.string().required("Masjid Admin's Name is required"),
-        otherwise: Yup.string(),
+        then: Yup.string('Name must be String').required("Masjid Admin's Name is required"),
+        otherwise: Yup.string('Name must be String'),
     }),
     userPhone: Yup.string()
         .matches(phoneRegExp, "Phone number is not valid")

@@ -25,6 +25,7 @@ function ForgotPassword() {
     const themeReducer = useSelector((state) => state.ThemeReducer);
     const params = new URLSearchParams(window.location.search);
     // const {authError} = useSelector(state => state.firebase)
+
     return (
         <div className={`layout ${themeReducer.mode} ${themeReducer.color}`}>
             <div className="main_body">

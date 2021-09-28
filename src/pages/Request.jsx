@@ -32,7 +32,6 @@ const Request = () => {
   const firestore = useSelector((state) => state.firestore);
   // const masjid = populate(firestore, 'Masjid', populates);
   const masjidData = firestore.ordered.newMasjid;
-  console.log(masjidData);
   return (
     <ModalProvider>
       <div>

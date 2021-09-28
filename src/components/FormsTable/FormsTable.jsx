@@ -1,12 +1,15 @@
 import React, {useState} from "react";
-import {useFirebase} from "react-redux-firebase";
-import {Field, Form, Formik} from "formik";
+import {useFirebase, useFirestore, useFirestoreConnect} from "react-redux-firebase";
+import {Field, Formik} from "formik";
 import {MasjidSchema} from "../../services/validation";
 import {LocalizationProvider, MobileTimePicker} from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterMoment";
-import {TextField} from "@mui/material";
+import {Autocomplete, createFilterOptions, Grid, TextField} from "@mui/material";
 import moment from "moment";
 import PropTypes from 'prop-types';
+import _ from "lodash";
+import geohash from "ngeohash";
+import {useSelector} from "react-redux";
 
 const ERROR = {
     color: "darkred",
@@ -14,35 +17,28 @@ const ERROR = {
     marginTop: 5,
 };
 
-const INPUT = {
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: "#eeee",
-    width: "100%",
-};
-
-const TIMEINPUT = {
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: "#eeee",
-    width: "100%",
-    textAlign: "center",
-};
-
 
 const FormsTable = (props) => {
+    useFirestoreConnect([
+        {
+            collection: "users",
+        },
+    ]);
     // const {masjidData, preButton: {onClick: preButtonClick, text: preButtonText}, onSubmit} = props
     const masjidData = props.masjidData || null
     const firebase = useFirebase()
-    const [path, setPath] = useState('')
     const filePath = 'MasjidUploads'
     const [image, setImage] = useState(masjidData?.pictureURL);
-    // console.log(JSON.stringify(masjidData))
+    const firestore = useFirestore();
+    const users = useSelector(state => state.firestore.ordered.users)
+    const filter = createFilterOptions();
+    const loading = users ? users.length === 0 : true;
+
     const onImageChange = async (event, setFieldValue) => {
         if (event.target.files && event.target.files[0]) {
             console.log(event.target.files[0])
             setImage(URL.createObjectURL(event.target.files[0]))
-            setFieldValue('pictureURL',event.target.files[0])
+            setFieldValue('pictureURL', event.target.files[0])
             // firebase.uploadFile(filePath, event.target.files[0]).then(snapshot => {
             //     setPath(snapshot.uploadTaskSnaphot._delegate.metadata.fullPath);
             //     snapshot.uploadTaskSnaphot.ref.getDownloadURL().then(url => {
@@ -56,12 +52,15 @@ const FormsTable = (props) => {
         }
     };
 
-    function onFileDelete() {
-        console.log(path)
-        setImage('')
-        if (path) {
-            return firebase.deleteFile(path)
+    function onFileDelete(setFieldValue) {
+        if (!(masjidData.pictureURL instanceof File)) {
+            // firebase.storage()
+            return firebase.deleteFile(masjidData.pictureURL).then(() => {
+                setFieldValue('pictureURL', '')
+                setImage('')
+            })
         }
+        setImage('')
     }
 
     return (
@@ -71,9 +70,9 @@ const FormsTable = (props) => {
                 address: masjidData?.address,
                 gLink: masjidData?.gLink,
                 pictureURL: masjidData?.pictureURL,
-                userEmail: masjidData?.user?.email,
-                userName: masjidData?.user?.name,
-                userPhone: masjidData?.user?.phone,
+                userEmail: masjidData?.user?.email || masjidData?.userEmail || '',
+                userName: masjidData?.user?.name || masjidData?.userName || '',
+                userPhone: masjidData?.user?.phone || masjidData?.userPhone || '',
                 latitude: masjidData?.g?.geopoint._lat,
                 longitude: masjidData?.g?.geopoint._long,
                 timing: {
@@ -85,7 +84,37 @@ const FormsTable = (props) => {
                 },
             }}
             validationSchema={MasjidSchema}
-            onSubmit={props.onSubmit}
+            validateOnChange={false}
+            validateOnBlur={true}
+            onSubmit={async values => {
+                const filter = ["latitude", "longitude", "pictureURL", "userName", "userEmail", "userPhone"]
+                const data = _.omit(values, filter)
+                let pictureURL
+                if (values.pictureURL instanceof File) {
+                    try {
+                        const uploadedRef = await firebase.uploadFile(filePath, values.pictureURL)
+                        pictureURL = await uploadedRef.uploadTaskSnaphot.ref.getDownloadURL()
+                    } catch (e) {
+                        console.error(e)
+                    }
+                } else {
+                    pictureURL = values.pictureURL
+                }
+                firestore
+                    .add("Masjid", {
+                        ...data,
+                        pictureURL,
+                        g: {
+                            geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
+                            geohash: geohash.encode(values.latitude, values.longitude, 9)
+                        }
+                    })
+                    .then((snapshot) => {
+                        firestore.delete({collection: 'newMasjid', doc: masjidData.id}).then(value => {
+                            console.log(value, 'deleted')
+                        })
+                    });
+            }}
         >
             {({
                   handleChange,
@@ -97,275 +126,340 @@ const FormsTable = (props) => {
                   setFieldValue
                   /* and other goodies */
               }) => (
-                <Form>
-                    <div
+                <>
+                    <Grid
                         style={{
                             height: "70vh",
                             overflowY: "scroll",
                             paddingRight: 10,
                         }}
+                        spacing={2}
+                        container
                     >
-                        <p>Masjid Name</p>
-                        <input
-                            onChange={handleChange("name")}
-                            onBlur={handleBlur("name")}
-                            value={values.name}
-                            style={INPUT}
-                            placeholder="Enter Masjid Name..."
-                        />
-                        {errors.name && touched.name && <p style={ERROR}>{errors.name}</p>}
-                        <p style={{marginLeft: 10, marginTop: 10}}>Admin Name</p>
-                        <input
-                            onChange={handleChange("userName")}
-                            value={values.userName}
-                            onBlur={handleBlur("userName")}
-                            style={INPUT}
-                            placeholder="Enter Your Name..."
-                        />
-                        {errors.userName && touched.userName && (
-                            <p style={ERROR}>{errors.userName}</p>
-                        )}
-                        <p style={{marginLeft: 10, marginTop: 10}}>Admin Email</p>
-                        <input
-                            onChange={handleChange("userEmail")}
-                            value={values.userEmail}
-                            onBlur={handleBlur("userEmail")}
-                            style={INPUT}
-                            placeholder="Enter Your Email..."
-                        />
-                        {errors.userEmail && touched.userEmail && (
-                            <p style={ERROR}>{errors.userEmail}</p>
-                        )}
-                        <p style={{marginLeft: 10, marginTop: 10}}>Admin Phone Number</p>
-                        <input
-                            onChange={handleChange("userPhone")}
-                            value={values.userPhone}
-                            onBlur={handleBlur("userPhone")}
-                            style={INPUT}
-                            placeholder="Enter Your Phone Number..."
-                        />
-                        {errors.userPhone && touched.userPhone && (
-                            <p style={ERROR}>{errors.userPhone}</p>
-                        )}
-                        <p style={{marginLeft: 10, marginTop: 10}}>Google Link</p>
-
-                        <input
-                            onChange={handleChange("gLink")}
-                            value={values.gLink}
-                            onBlur={handleBlur("gLink")}
-                            style={INPUT}
-                            placeholder="Enter Masjid Address Google Link..."
-                        />
-                        {errors.gLink && touched.gLink && (
-                            <p style={ERROR}>{errors.gLink}</p>
-                        )}
-                        <p style={{marginLeft: 10, marginTop: 10}}>Masjid Address</p>
-
-                        <input
-                            onChange={handleChange("address")}
-                            value={values.address}
-                            onBlur={handleBlur("address")}
-                            style={INPUT}
-                            placeholder="Enter Masjid Address..."
-                        />
-                        {errors.address && touched.address && (
-                            <p style={ERROR}>{errors.address}</p>
-                        )}
-                        <div style={{display: "flex", justifyContent: "space-between"}}>
-                            <div style={{marginRight: 10, width: "30vw"}}>
-                                <p style={{marginLeft: 10, marginTop: 10}}>Latitude</p>
-
-                                <input
-                                    onChange={handleChange("latitude")}
-                                    value={values.latitude}
-                                    onBlur={handleBlur("latitude")}
-                                    style={INPUT}
-                                    placeholder="Enter Latitude..."
-                                />
-                                {errors.latitude && touched.latitude && (
-                                    <p style={ERROR}>{errors.latitude}</p>
-                                )}
-                            </div>
-                            <div style={{marginLeft: 10, width: "30vw"}}>
-                                <p style={{marginLeft: 10, marginTop: 10}}>Longitude</p>
-
-                                <input
-                                    onChange={handleChange("longitude")}
-                                    value={values.longitude}
-                                    onBlur={handleBlur("longitude")}
-                                    style={INPUT}
-                                    placeholder="Enter Longitude..."
-                                />
-                                {errors.longitude && touched.longitude && (
-                                    <p style={ERROR}>{errors.longitude}</p>
-                                )}
-                            </div>
-                        </div>
-                        <LocalizationProvider dateAdapter={DateAdapter}>
-                            <div style={{marginTop: 20}}>
-                                <p>Namaz Timings</p>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        paddingBlockEnd: 10,
-                                    }}
-                                >
-                                    <div style={{'align-self': 'center'}}>
-                                        <p style={{marginLeft: 10, marginTop: 10,}}>Fajar</p>
-                                    </div>
-                                    <div>
-                                        <MobileTimePicker
-                                            name={"timing.fajar"}
-                                            onChange={(e) => setFieldValue("timing.fajar", moment(e).format('hh:mm A'))}
-                                            value={(moment(values.timing.fajar, 'hh:mm A').isValid() ? moment(values.timing.fajar, 'hh:mm A') : values.timing.fajar)}
-                                            renderInput={(params) => <TextField
-                                                style={TIMEINPUT} {...params} />}
-                                        />
-                                        {errors.timing?.fajar && touched.timing?.fajar && (
-                                            <p style={ERROR}>{errors.timing?.fajar}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        paddingBlockEnd: 10,
-                                    }}
-                                >
-                                    <div style={{'align-self': 'center'}}>
-                                        <p style={{marginLeft: 10, marginTop: 10}}>Zohar</p>
-                                    </div>
-                                    <div>
-                                        <Field
-                                            name={'timing.zohar'}
-                                            component={MobileTimePicker}
-                                            renderInput={(params) => <TextField
-                                                style={TIMEINPUT} {...params} />}
-                                            onChange={(e) => setFieldValue("timing.zohar", moment(e).format('hh:mm A'))}
-                                            value={(moment(values.timing.zohar, 'hh:mm A').isValid() ? moment(values.timing.zohar, 'hh:mm A') : values.timing.zohar)}
-                                        />
-                                        {errors.timing?.zohar && touched.timing?.zohar && (
-                                            <p style={ERROR}>{errors.timing?.zohar}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        paddingBlockEnd: 10,
-                                    }}
-                                >
-                                    <div style={{'align-self': 'center'}}>
-                                        <p style={{marginLeft: 10, marginTop: 10}}>Asar</p>
-                                    </div>
-                                    <div>
-                                        <Field
-                                            name={'timing.asar'}
-                                            component={MobileTimePicker}
-                                            renderInput={(params) => <TextField
-                                                style={TIMEINPUT} {...params} />}
-                                            onChange={(e) => setFieldValue("timing.asar", moment(e).format('hh:mm A'))}
-                                            value={(moment(values.timing.asar, 'hh:mm A').isValid() ? moment(values.timing.asar, 'hh:mm A') : values.timing.asar)}
-                                        />
-                                        {errors.timing?.asar && touched.timing?.asar && (
-                                            <p style={ERROR}>{errors.timing?.asar}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        paddingBlockEnd: 10,
-                                    }}
-                                >
-                                    <div style={{'align-self': 'center'}}>
-                                        <p style={{marginLeft: 10, marginTop: 10}}>Magrib</p>
-                                    </div>
-                                    <div>
-                                        <Field
-                                            name={'timing.magrib'}
-                                            component={MobileTimePicker}
-                                            renderInput={(params) => <TextField
-                                                style={TIMEINPUT} {...params} />}
-                                            onChange={(e) => setFieldValue("timing.magrib", moment(e).format('hh:mm A'))}
-                                            value={(moment(values.timing.magrib, 'hh:mm A').isValid() ? moment(values.timing.magrib, 'hh:mm A') : values.timing.magrib)}
-                                        />
-                                        {errors.timing?.magrib && touched.timing?.magrib && (
-                                            <p style={ERROR}>{errors.timing?.magrib}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        paddingBlockEnd: 10,
-                                    }}
-                                >
-                                    <div style={{'align-self': 'center'}}>
-                                        <p style={{marginLeft: 10, marginTop: 10}}>Isha</p>
-                                    </div>
-                                    <div>
-                                        <Field
-                                            name={'timing.isha'}
-                                            component={MobileTimePicker}
-                                            renderInput={(params) => <TextField
-                                                style={TIMEINPUT} {...params} />}
-                                            onChange={(e) => setFieldValue("timing.isha", moment(e).format('hh:mm A'))}
-                                            value={(moment(values.timing.isha, 'hh:mm A').isValid() ? moment(values.timing.isha, 'hh:mm A') : values.timing.isha)}
-                                        />
-                                        {errors.timing?.isha && touched.timing?.isha && (
-                                            <p style={ERROR}>{errors.timing?.isha}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                {errors.timing && <p>{JSON.stringify(errors.timing)}</p>}
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        backgroundColor: "#eeee",
-                                        padding: "20px",
-                                        alignItems: "center",
-                                        alignSelf: "center",
-                                        marginInline: "30%",
-                                        borderRadius: "10px",
-                                    }}
-                                >
-                                    {image ? (
-                                        <>
-                                            <img
-                                                alt="masjid"
-                                                // style={{ alignSelf: "center" }}
-                                                width={250}
-                                                height={200}
-                                                src={image}
-                                            />
-                                            <button onClick={onFileDelete}>
-                                                Delete
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <i
-                                            className="far fa-folder-open"
-                                            style={{fontSize: "100px", color: "#a6a6a6"}}
-                                        />
-                                    )}
-                                    <input
-                                        type="file"
-                                        onChange={(e) => onImageChange(e, setFieldValue)}
-                                        className="filetype"
-                                        style={{width: "92px", marginTop: "15px"}}
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                label="Masjid Name"
+                                name={'name'}
+                                value={values.name}
+                                onChange={(event) => {
+                                    setFieldValue('name', event.target.value)
+                                }}
+                                error={touched.name && Boolean(errors.name)}
+                                helperText={touched.name && errors.name}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                freeSolo
+                                fullWidth
+                                options={users && users}
+                                loading={loading}
+                                onChange={(event, value) => {
+                                    if (!value) {
+                                        return setFieldValue('userName', '')
+                                    }
+                                    if (value.name) {
+                                        setFieldValue('userName', value.name)
+                                        setFieldValue('userPhone', value.phone)
+                                        setFieldValue('userEmail', value.email)
+                                    } else {
+                                        setFieldValue('userName', value)
+                                    }
+                                }}
+                                onInputChange={(event, value) => {
+                                    setFieldValue('userName', value)
+                                }}
+                                getOptionLabel={(option) => {
+                                    if (option.name) {
+                                        return option.name;
+                                    }
+                                    return option;
+                                }}
+                                value={values.userName}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Admin Name"
+                                        name={'userName'}
+                                        error={touched.userName && Boolean(errors.userName)}
+                                        helperText={touched.userName && errors.userName}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            type: 'search',
+                                        }}
                                     />
-                                    {errors.pictureURL && <p style={ERROR}>{errors.pictureURL}</p>}
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                freeSolo
+                                fullWidth
+                                options={users && users}
+                                loading={loading}
+                                onChange={(event, value) => {
+                                    if (!value) {
+                                        return setFieldValue('userEmail', '')
+                                    }
+                                    if (value.email) {
+                                        setFieldValue('userName', value.name)
+                                        setFieldValue('userPhone', value.phone)
+                                        setFieldValue('userEmail', value.email)
+                                    } else {
+                                        setFieldValue('userEmail', value)
+                                    }
+                                }}
+                                onInputChange={(event, value) => {
+                                    setFieldValue('userEmail', value)
+                                }}
+                                getOptionLabel={(option) => {
+                                    if (option.email) {
+                                        return option.email;
+                                    }
+                                    return option;
+                                }}
+                                value={values.userEmail}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Admin Email"
+                                        name={'userEmail'}
+                                        error={touched.userEmail && Boolean(errors.userEmail)}
+                                        helperText={touched.userEmail && errors.userEmail}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            type: 'search',
+                                        }}
+                                    />
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                label="Admin Phone."
+                                name={'userPhone'}
+                                value={values.userPhone}
+                                onChange={handleChange}
+                                onBlur={handleBlur} error={touched.userPhone && Boolean(errors.userPhone)}
+                                helperText={touched.userPhone && errors.userPhone}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Google Link"
+                                name={'gLink'}
+                                value={values.gLink}
+                                onChange={handleChange}
+                                onBlur={handleBlur} error={touched.gLink && Boolean(errors.gLink)}
+                                helperText={touched.gLink && errors.gLink}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Masjid Address"
+                                name={'address'}
+                                value={values.address}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.address && Boolean(errors.address)}
+                                helperText={touched.address && errors.address}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                label="Latitude"
+                                name={'latitude'}
+                                value={values.latitude}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.latitude && Boolean(errors.latitude)}
+                                helperText={touched.latitude && errors.latitude}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                label="Longitude"
+                                name={'longitude'}
+                                value={values.longitude}
+                                onChange={handleChange}
+                                onBlur={handleBlur} error={touched.longitude && Boolean(errors.longitude)}
+                                helperText={touched.longitude && errors.longitude}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <LocalizationProvider dateAdapter={DateAdapter}>
+                                <div style={{marginTop: 20}}>
+                                    <p>Namaz Timings</p>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            paddingBlockEnd: 10,
+                                        }}
+                                    >
+                                        <div style={{'alignSelf': 'center'}}>
+                                            <p style={{marginLeft: 10, marginTop: 10,}}>Fajar</p>
+                                        </div>
+                                        <div>
+                                            <Field
+                                                name={'timing.fajar'}
+                                                component={MobileTimePicker}
+                                                renderInput={(params) => <TextField
+                                                    {...params} />}
+                                                onChange={(e) => setFieldValue("timing.fajar", moment(e).format('hh:mm A'))}
+                                                value={(moment(values.timing.fajar, 'hh:mm A').isValid() ? moment(values.timing.fajar, 'hh:mm A') : values.timing.fajar)}
+                                            />
+                                            {errors.timing?.fajar && touched.timing?.fajar && (
+                                                <p style={ERROR}>{errors.timing?.fajar}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            paddingBlockEnd: 10,
+                                        }}
+                                    >
+                                        <div style={{'alignSelf': 'center'}}>
+                                            <p style={{marginLeft: 10, marginTop: 10}}>Zohar</p>
+                                        </div>
+                                        <div>
+                                            <Field
+                                                name={'timing.zohar'}
+                                                component={MobileTimePicker}
+                                                renderInput={(params) => <TextField
+                                                    {...params} />}
+                                                onChange={(e) => setFieldValue("timing.zohar", moment(e).format('hh:mm A'))}
+                                                value={(moment(values.timing.zohar, 'hh:mm A').isValid() ? moment(values.timing.zohar, 'hh:mm A') : values.timing.zohar)}
+                                            />
+                                            {errors.timing?.zohar && touched.timing?.zohar && (
+                                                <p style={ERROR}>{errors.timing?.zohar}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            paddingBlockEnd: 10,
+                                        }}
+                                    >
+                                        <div style={{'alignSelf': 'center'}}>
+                                            <p style={{marginLeft: 10, marginTop: 10}}>Asar</p>
+                                        </div>
+                                        <div>
+                                            <Field
+                                                name={'timing.asar'}
+                                                component={MobileTimePicker}
+                                                renderInput={(params) => <TextField
+                                                    {...params} />}
+                                                onChange={(e) => setFieldValue("timing.asar", moment(e).format('hh:mm A'))}
+                                                value={(moment(values.timing.asar, 'hh:mm A').isValid() ? moment(values.timing.asar, 'hh:mm A') : values.timing.asar)}
+                                            />
+                                            {errors.timing?.asar && touched.timing?.asar && (
+                                                <p style={ERROR}>{errors.timing?.asar}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            paddingBlockEnd: 10,
+                                        }}
+                                    >
+                                        <div style={{'alignSelf': 'center'}}>
+                                            <p style={{marginLeft: 10, marginTop: 10}}>Magrib</p>
+                                        </div>
+                                        <div>
+                                            <Field
+                                                name={'timing.magrib'}
+                                                component={MobileTimePicker}
+                                                renderInput={(params) => <TextField
+                                                    {...params} />}
+                                                onChange={(e) => setFieldValue("timing.magrib", moment(e).format('hh:mm A'))}
+                                                value={(moment(values.timing.magrib, 'hh:mm A').isValid() ? moment(values.timing.magrib, 'hh:mm A') : values.timing.magrib)}
+                                            />
+                                            {errors.timing?.magrib && touched.timing?.magrib && (
+                                                <p style={ERROR}>{errors.timing?.magrib}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            paddingBlockEnd: 10,
+                                        }}
+                                    >
+                                        <div style={{'alignSelf': 'center'}}>
+                                            <p style={{marginLeft: 10, marginTop: 10}}>Isha</p>
+                                        </div>
+                                        <div>
+                                            <Field
+                                                name={'timing.isha'}
+                                                component={MobileTimePicker}
+                                                renderInput={(params) => <TextField
+                                                    {...params} />}
+                                                onChange={(e) => setFieldValue("timing.isha", moment(e).format('hh:mm A'))}
+                                                value={(moment(values.timing.isha, 'hh:mm A').isValid() ? moment(values.timing.isha, 'hh:mm A') : values.timing.isha)}
+                                            />
+                                            {errors.timing?.isha && touched.timing?.isha && (
+                                                <p style={ERROR}>{errors.timing?.isha}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {errors.timing && <p>{JSON.stringify(errors.timing)}</p>}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            backgroundColor: "#eeee",
+                                            padding: "20px",
+                                            alignItems: "center",
+                                            alignSelf: "center",
+                                            marginInline: "30%",
+                                            borderRadius: "10px",
+                                        }}
+                                    >
+                                        {image ? (
+                                            <>
+                                                <img
+                                                    alt="masjid"
+                                                    // style={{ alignSelf: "center" }}
+                                                    width={250}
+                                                    height={200}
+                                                    src={image}
+                                                />
+                                                <button onClick={() => onFileDelete(setFieldValue)}>
+                                                    Delete
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <i
+                                                className="far fa-folder-open"
+                                                style={{fontSize: "100px", color: "#a6a6a6"}}
+                                            />
+                                        )}
+                                        <input
+                                            type="file"
+                                            onChange={(e) => onImageChange(e, setFieldValue)}
+                                            className="filetype"
+                                            style={{width: "92px", marginTop: "15px"}}
+                                        />
+                                        {errors.pictureURL && <p style={ERROR}>{errors.pictureURL}</p>}
+                                    </div>
                                 </div>
-                            </div>
-                        </LocalizationProvider>
-                    </div>
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
                     <div
                         style={{
                             display: "flex",
@@ -384,6 +478,7 @@ const FormsTable = (props) => {
                                 backgroundColor: "darkred",
                             }}
                             onClick={props.preButton?.onClick}
+                            type={"button"}
                         >
                             {props.preButton?.text}
                         </button>
@@ -402,7 +497,7 @@ const FormsTable = (props) => {
                             Save
                         </button>
                     </div>
-                </Form>
+                </>
             )}
         </Formik>
     );
@@ -441,7 +536,6 @@ FormsTable.propTypes = {
         onClick: PropTypes.func.isRequired,
         text: PropTypes.string.isRequired
     }),
-    onSubmit: PropTypes.func.isRequired
 };
 
 

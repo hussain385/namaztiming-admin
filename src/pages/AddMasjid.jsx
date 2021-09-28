@@ -1,7 +1,13 @@
 import React from "react";
 import AddMasjidForm from "../components/addMasjidForm/AddMasjidForm";
+import {useFirestoreConnect} from "react-redux-firebase";
 
 const AdminRequest = () => {
+    useFirestoreConnect([
+        {
+            collection: "users",
+        },
+    ]);
   return (
     <div>
       <h2 className="page-header">Add Masjid</h2>
