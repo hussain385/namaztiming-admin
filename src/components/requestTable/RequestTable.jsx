@@ -19,8 +19,8 @@ const MyComponent = (props) => {
       <tr key={props.index}>
         <td>{props.index + 1}</td>
         <td>{props.item.name}</td>
-        <td>{props.item.userName}</td>
-        <td>{props.item.userPhone}</td>
+        <td>{props.item.user.name}</td>
+        <td>{props.item.user.phone}</td>
         <td style={{ justifyContent: "center", textAlign: "center" }}>
           <button onClick={() => setModel(true)} className="buttonStyle">
             View
@@ -40,9 +40,6 @@ const MyComponent = (props) => {
         onClose={() => setModel(false)}
         closeAfterTransition
         BackdropComponent={Backdrop}
-        // BackdropProps={{
-        //     timeout: 500,
-        // }}
       >
         <Slide in={model} direction="up" timeout={100}>
           <Box
