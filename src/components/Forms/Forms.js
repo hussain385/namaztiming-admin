@@ -60,9 +60,6 @@ const Forms = (props) => {
                     .sendSignInLinkToEmail(values.userEmail, actionCodeSettings)
                     .then((value) => {
                         props.closeModal();
-                        // firestore.delete("adminRequest/" + props.item.id).then((value1) => {
-                        //   props.closeModal();
-                        // });
                     });
                 console.log(values);
             }}

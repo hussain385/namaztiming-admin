@@ -10,11 +10,11 @@ import _ from "lodash";
 const chartOptions = {
   series: [
     {
-      name: "Online Customers",
+      name: "Masjid Live",
       data: [40, 70, 20, 90, 36, 80, 30, 91, 60],
     },
     {
-      name: "Store Customers",
+      name: "Requests",
       data: [40, 30, 70, 80, 40, 16, 40, 20, 51, 10],
     },
   ],
@@ -87,6 +87,7 @@ const Dashboard = () => {
   );
   const adminRequests = firestore.ordered.adminRequest?.length;
   const themeReducer = useSelector((state) => state.ThemeReducer.mode);
+  console.log(AnnouncementLength, adminRequests, RequestsLength);
   return (
     <div>
       <h2 className="page-header">Dashboard</h2>
@@ -103,21 +104,21 @@ const Dashboard = () => {
             <div className="col-6">
               <StatusCard
                 icon="fas fa-mosque"
-                count={RequestsLength}
+                count={RequestsLength || 0}
                 title="No. Of Requests"
               />
             </div>
             <div className="col-6">
               <StatusCard
                 icon="fas fa-mosque"
-                count={AnnouncementLength}
+                count={AnnouncementLength || 0}
                 title="News & Announcement"
               />
             </div>
             <div className="col-6">
               <StatusCard
                 icon="fas fa-mosque"
-                count={adminRequests}
+                count={adminRequests || 0}
                 title="No. Of admin Requests"
               />
             </div>
