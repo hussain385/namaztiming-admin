@@ -2,7 +2,7 @@ import React from "react";
 import FormsTable from "../FormsTable/FormsTable";
 
 const AddMasjidForm = () => {
-  return <FormsTable isAddMasjid={true} Label="Add Masjid"/>;
+  return <FormsTable Label="Add Masjid" variant={"new"}/>;
 };
 
 export default AddMasjidForm;

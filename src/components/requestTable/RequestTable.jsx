@@ -4,13 +4,16 @@ import "react-simple-hook-modal/dist/styles.css";
 import { Backdrop, Box, Modal, Slide } from "@mui/material";
 import FormsTable from "../FormsTable/FormsTable";
 import { useFirestore } from "react-redux-firebase";
+import firebase from "firebase/compat";
+
 
 const MyComponent = (props) => {
   const [model, setModel] = useState(false);
-  const firestore = useFirestore();
+  const Firestore = useFirestore();
 
-  function onDelete() {
-    firestore.delete(`newMasjid/${props.item.id}`);
+  async function onDelete() {
+    await Firestore.delete(`newMasjid/${props.item.id}`);
+    await firebase.storage().refFromURL(props.item.pictureURL).delete()
     window.location.reload(false);
   }
 
@@ -55,7 +58,7 @@ const MyComponent = (props) => {
             <FormsTable
               masjidData={props.item}
               preButton={{ onClick: () => setModel(false), text: "cancel" }}
-            />
+             variant={"request"}/>
           </Box>
         </Slide>
       </Modal>

@@ -17,8 +17,8 @@ import "./assets/css/index.css";
 import Routes from "./components/Routes";
 
 import {FirebaseAppProvider} from 'reactfire';
-import {CssBaseline} from "@mui/material";
-
+import {CssBaseline, ThemeProvider} from "@mui/material";
+import theme from './theme'
 
 const firebaseConfig = {
     apiKey: "AIzaSyAq5zFrHz0lSjTiE1U43XEnaiR-D4I8sjY",
@@ -54,8 +54,10 @@ ReactDOM.render(
         <Provider store={store}>
             <ReactReduxFirebaseProvider {...rrfProps}>
                 <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-                    <CssBaseline/>
-                    <Routes/>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline/>
+                        <Routes/>
+                    </ThemeProvider>
                 </FirebaseAppProvider>
             </ReactReduxFirebaseProvider>
         </Provider>

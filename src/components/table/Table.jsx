@@ -6,21 +6,22 @@ import "./table.css";
 import FormsTable from "../FormsTable/FormsTable";
 import _ from "lodash";
 import geohash from "ngeohash";
+import firebase from "firebase/compat";
 
 const RenderBody = ({ item, index }) => {
   const { isModalOpen, openModal, closeModal } = useModal();
-  const firestore = useFirestore();
+  const Firestore = useFirestore();
   if (!item) {
     return null;
   }
 
   function onSubmit(values) {
     const data = _.omit(values, ["latitude", "longitude"]);
-    firestore
+    Firestore
       .update("Masjid/" + item.id, {
         ...data,
         g: {
-          geopoint: new firestore.GeoPoint(values.latitude, values.longitude),
+          geopoint: new Firestore.GeoPoint(values.latitude, values.longitude),
           geohash: geohash.encode(values.latitude, values.longitude, 9),
         },
       })
@@ -44,11 +45,12 @@ const RenderBody = ({ item, index }) => {
             View
           </button>
           <button
-            onClick={() => {
-              firestore.delete("Masjid/" + item.id).catch((e) => {
-                console.log(e);
-              });
-              window.location.reload(false);
+            onClick={async () => {
+                await Firestore.delete("Masjid/" + item.id).catch((e) => {
+                    console.error(e);
+                });
+                await firebase.storage().refFromURL(item.pictureURL).delete().catch(reason => console.error(reason))
+                window.location.reload(false);
             }}
             className="buttonStyle"
             style={{ backgroundColor: "darkred", marginLeft: 15 }}
@@ -63,7 +65,7 @@ const RenderBody = ({ item, index }) => {
           preButton={{ onClick: closeModal, text: "Close" }}
           onSubmit={onSubmit}
           Label="Save Changes"
-        />
+         variant={'edit'}/>
       </Modal>
     </>
   );
