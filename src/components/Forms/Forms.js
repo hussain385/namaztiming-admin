@@ -47,7 +47,7 @@ const Forms = (props) => {
             onSubmit={async (values) => {
                 console.log("on submitting");
                 const actionCodeSettings = {
-                    url: encodeURI(`https://masjid-finder-karachi.surge.sh/SignUp?userName=${
+                    url: encodeURI(`https://masjid-finder-pakistan.web.app/SignUp?userName=${
                         values.userName
                     }&userPhone=${values.userPhone}&masjidId=${
                         props.item.masjid.id

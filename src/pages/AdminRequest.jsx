@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import AdminTable from "../components/admin-request/AdminTable";
 import _ from "lodash";
 
-const customerTableHead = ["ID", "Masjid ID", "User Name", "User Contact", ""];
+const customerTableHead = ["ID", "Masjid Name", "User Name", "User Contact", ""];
 
 const renderHead = (item, index) => <th key={index}>{item}</th>;
 

@@ -14,7 +14,7 @@ const MyComponent = (props) => {
     <>
       <tr key={props.index}>
         <td>{props.index + 1}</td>
-        <td>{props.item.masjidID}</td>
+        <td>{props.item.masjid?.name}</td>
         <td>{props.item.userName}</td>
         <td>{props.item.userPhone}</td>
         <td style={{ justifyContent: "center", textAlign: "center" }}>

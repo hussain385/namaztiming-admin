@@ -9,7 +9,7 @@ import Dropdown from "../dropdown/Dropdown";
 import ThemeMenu from "../thememenu/ThemeMenu";
 import { useFirebase } from "react-redux-firebase";
 import notifications from "../../assets/JsonData/notification.json";
-
+import { Typography } from "@mui/material";
 import user_image from "../../assets/images/tuat.png";
 
 import user_menu from "../../assets/JsonData/user_menus.json";
@@ -53,10 +53,7 @@ const Topnav = (props) => {
       <div onClick={() => props.clickOpen()}>
         <i style={{ fontSize: 25 }} className="fas fa-bars"></i>
       </div>
-      <div className="topnav__search">
-        <input type="text" placeholder="Search here..." />
-        <i className="bx bx-search"></i>
-      </div>
+      <Typography>Masjid Finder Pakistan</Typography>
       <div className="topnav__right">
         <div className="topnav__right-item">
           {/* dropdown here */}
@@ -66,7 +63,7 @@ const Topnav = (props) => {
             renderItems={() => RenderUserMenu()}
           />
         </div>
-        <div className="topnav__right-item">
+        {/* <div className="topnav__right-item">
           <Dropdown
             icon="bx bx-bell"
             badge="12"
@@ -74,11 +71,10 @@ const Topnav = (props) => {
             renderItems={(item, index) => renderNotificationItem(item, index)}
             renderFooter={() => <Link to="/">View All</Link>}
           />
-          {/* dropdown here */}
         </div>
         <div className="topnav__right-item">
           <ThemeMenu />
-        </div>
+        </div> */}
       </div>
     </div>
   );
