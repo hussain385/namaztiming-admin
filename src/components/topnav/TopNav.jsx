@@ -53,7 +53,16 @@ const Topnav = (props) => {
       <div onClick={() => props.clickOpen()}>
         <i style={{ fontSize: 25 }} className="fas fa-bars"></i>
       </div>
-      <Typography>Masjid Finder Pakistan</Typography>
+      <Link className="heading" to="/">
+        <Typography
+          sx={{
+            fontSize: "30px",
+            fontWeight: "bold",
+          }}
+        >
+          Masjid Finder Pakistan
+        </Typography>
+      </Link>
       <div className="topnav__right">
         <div className="topnav__right-item">
           {/* dropdown here */}

@@ -14,7 +14,6 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import geohash from "ngeohash";
 import { useSelector } from "react-redux";
-import { useSnackbar } from "notistack";
 import Loader from "react-loader-spinner";
 
 const ERROR = {
@@ -24,11 +23,6 @@ const ERROR = {
 };
 
 const FormsTable = (props) => {
-  const { enqueueSnackbar } = useSnackbar();
-
-  const handleClickVariant = (variant) => () => {
-    enqueueSnackbar("This is a success message!", { variant });
-  };
   useFirestoreConnect([
     {
       collection: "users",
@@ -141,6 +135,7 @@ const FormsTable = (props) => {
               resetForm({ values: "" });
               setImage("");
               setSubmitting(false);
+              props.handleToast();
             });
         } else if (props.variant === "edit") {
           firestore
@@ -159,6 +154,7 @@ const FormsTable = (props) => {
             .then(() => {
               props.preButton?.onClick();
               setSubmitting(false);
+              props.handleToast();
             });
         }
       }}

@@ -19,9 +19,7 @@ const renderBody = (item, index) => (
 );
 
 function MasjidList(props) {
-  const populates = [
-    { child: "adminId", root: "users", childAlias: "user" },
-  ];
+  const populates = [{ child: "adminId", root: "users", childAlias: "user" }];
   useFirestoreConnect([
     {
       collection: "Masjid",
@@ -43,6 +41,7 @@ function MasjidList(props) {
                 <Table
                   limit="10"
                   edit={true}
+                  isAddMasjid={true}
                   headData={customerTableHead}
                   renderHead={(item, index) => renderHead(item, index)}
                   renderBody={(item, index) => renderBody(item, index)}

@@ -7,8 +7,13 @@ import FormsTable from "../FormsTable/FormsTable";
 import _ from "lodash";
 import geohash from "ngeohash";
 import firebase from "firebase/compat";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
-const RenderBody = ({ item, index }) => {
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+const RenderBody = ({ handleToast, item, index }) => {
   const { isModalOpen, openModal, closeModal } = useModal();
   const Firestore = useFirestore();
   if (!item) {
@@ -17,15 +22,13 @@ const RenderBody = ({ item, index }) => {
 
   function onSubmit(values) {
     const data = _.omit(values, ["latitude", "longitude"]);
-    Firestore
-      .update("Masjid/" + item.id, {
-        ...data,
-        g: {
-          geopoint: new Firestore.GeoPoint(values.latitude, values.longitude),
-          geohash: geohash.encode(values.latitude, values.longitude, 9),
-        },
-      })
-      .then((value) => closeModal());
+    Firestore.update("Masjid/" + item.id, {
+      ...data,
+      g: {
+        geopoint: new Firestore.GeoPoint(values.latitude, values.longitude),
+        geohash: geohash.encode(values.latitude, values.longitude, 9),
+      },
+    }).then((value) => closeModal());
   }
 
   return (
@@ -46,11 +49,15 @@ const RenderBody = ({ item, index }) => {
           </button>
           <button
             onClick={async () => {
-                await Firestore.delete("Masjid/" + item.id).catch((e) => {
-                    console.error(e);
-                });
-                await firebase.storage().refFromURL(item.pictureURL).delete().catch(reason => console.error(reason))
-                window.location.reload(false);
+              await Firestore.delete("Masjid/" + item.id).catch((e) => {
+                console.error(e);
+              });
+              await firebase
+                .storage()
+                .refFromURL(item.pictureURL)
+                .delete()
+                .catch((reason) => console.error(reason));
+              window.location.reload(false);
             }}
             className="buttonStyle"
             style={{ backgroundColor: "darkred", marginLeft: 15 }}
@@ -62,10 +69,12 @@ const RenderBody = ({ item, index }) => {
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
         <FormsTable
           masjidData={item}
+          handleToast={() => handleToast()}
           preButton={{ onClick: closeModal, text: "Close" }}
           onSubmit={onSubmit}
           Label="Save Changes"
-         variant={'edit'}/>
+          variant={"edit"}
+        />
       </Modal>
     </>
   );
@@ -90,7 +99,19 @@ const Table = (props) => {
   }
 
   const [currPage, setCurrPage] = useState(0);
+  const [open, setOpen] = React.useState(false);
 
+  const handleToast = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   const selectPage = (page) => {
     const start = Number(props.limit) * page;
     const end = start + Number(props.limit);
@@ -110,6 +131,30 @@ const Table = (props) => {
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        autoHideDuration={1500}
+        onClose={handleClose}
+      >
+        {props.isAddMasjid ? (
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Details were saved successfully!
+          </Alert>
+        ) : (
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Details were edited successfully!
+          </Alert>
+        )}
+      </Snackbar>
       <div className="table-wrapper">
         <table>
           {props.headData && props.renderHead ? (
@@ -126,7 +171,11 @@ const Table = (props) => {
               {props.edit ? (
                 <>
                   {dataShow.map((item, index) => (
-                    <RenderBody index={index} item={item} />
+                    <RenderBody
+                      handleToast={() => handleToast()}
+                      index={index}
+                      item={item}
+                    />
                   ))}
                 </>
               ) : (

@@ -4,6 +4,12 @@ import "./adminTable.css";
 import "react-simple-hook-modal/dist/styles.css";
 import { useFirestore } from "react-redux-firebase";
 import Forms from "../Forms/Forms";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 // import {useFirebase} from "react-redux-firebase"
 
 const MyComponent = (props) => {
@@ -40,7 +46,11 @@ const MyComponent = (props) => {
         isOpen={isModalOpen}
         transition={ModalTransition.BOTTOM_UP}
       >
-        <Forms closeModal={() => closeModal()} item={props.item} />
+        <Forms
+          handleToast={() => props.handleToast()}
+          closeModal={() => closeModal()}
+          item={props.item}
+        />
       </Modal>
     </>
   );
@@ -74,6 +84,19 @@ const AdminTable = (props) => {
 
     setCurrPage(page);
   };
+  const [open, setOpen] = React.useState(false);
+
+  const handleToast = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   useEffect(() => {
     setDataShow(
@@ -85,6 +108,16 @@ const AdminTable = (props) => {
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        autoHideDuration={1500}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          Email was send successfully!
+        </Alert>
+      </Snackbar>
       <div className="table-wrapper">
         <table>
           {props.headData && props.renderHead ? (
@@ -99,7 +132,12 @@ const AdminTable = (props) => {
           {props.bodyData && props.renderBody ? (
             <tbody>
               {dataShow.map((item, index) => (
-                <MyComponent key={index} index={index} item={item} />
+                <MyComponent
+                  handleToast={() => handleToast()}
+                  key={index}
+                  index={index}
+                  item={item}
+                />
               ))}
             </tbody>
           ) : null}

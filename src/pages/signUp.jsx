@@ -3,18 +3,19 @@ import "./login.css";
 import { useUser } from "reactfire";
 import firebase from "firebase/compat";
 import { useHistory } from "react-router-dom";
-import {
-  Card,
-  CardHeader,
-  Container,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Card, CardHeader, Container, TextField } from "@mui/material";
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik } from "formik";
 import * as PropTypes from "prop-types";
+import BoxSignup from "../components/BoxSignup/BoxSignUp";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Redirect from "react-dom"
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 const ERROR = {
   color: "darkred",
   fontSize: 12,
@@ -46,7 +47,19 @@ function SignUp() {
   // const [render, setRender] = useState(null);
   const db = firebase.firestore();
   const history = useHistory();
+  const [open, setOpen] = React.useState(false);
 
+  const handleToast = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   useEffect(() => {
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
       // Additional state parameters can also be passed via URL.
@@ -98,7 +111,8 @@ function SignUp() {
   // }
 
   if (error) {
-    return <div>{JSON.stringify(error)}</div>;
+    // return <div>{JSON.stringify(error)}</div>;
+    return <BoxSignup title={JSON.stringify(error)} />;
   }
 
   if (status === "loading") {
@@ -106,10 +120,11 @@ function SignUp() {
   }
 
   if (status === "error") {
-    return <span>Error</span>;
+    return <BoxSignup title="Error! Something went wrong please try again" />;
   }
   if (userError) {
-    return <div>{JSON.stringify(userError)}</div>;
+    return <BoxSignup title={JSON.stringify(userError)} />;
+    // return <div>{JSON.stringify(userError)}</div>;
   }
 
   if (
@@ -147,6 +162,20 @@ function SignUp() {
         maxWidth={"xs"}
         sx={{ display: "flex", height: "100vh" }}
       >
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={open}
+          autoHideDuration={1500}
+          onClose={handleClose}
+        >
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Successfully password saved!
+          </Alert>
+        </Snackbar>
         <Formik
           initialValues={{
             password: "",
@@ -172,15 +201,16 @@ function SignUp() {
                     isAdmin: false,
                   })
                   .then((r) => {
-                    // resetAndRoute();
-                    
-                      db.collection("Masjid")
-                        .doc(params.get("masjidId"))
-                        .update({
-                          adminId: user.uid,
-                        })
-                        .then((value) => setSubmitting(false));
-                    
+                    db.collection("Masjid")
+                      .doc(params.get("masjidId"))
+                      .update({
+                        adminId: user.uid,
+                      })
+                      .then((value) => {
+                        setSubmitting(false);
+                        handleToast();
+                        return (<Redirect to="/home" />);
+                      });
                   });
               });
           }}
@@ -204,9 +234,10 @@ function SignUp() {
                 width: "100%",
                 alignItems: "center",
                 p: 4,
+                borderRadius: "10px",
               }}
             >
-              <CardHeader title={"Set Password"} />
+              <CardHeader title={"Set Your Password"} />
               <TextField
                 margin={"normal"}
                 label={"Password"}
@@ -234,7 +265,6 @@ function SignUp() {
                 fullWidth
               />
               {errors.firebase && <p style={ERROR}>{errors.firebase}</p>}
-              {/*{authError && <p style={ERROR}>{JSON.stringify(authError)}</p>}*/}
               <LoadingButton
                 onClick={handleSubmit}
                 type={"submit"}
@@ -264,13 +294,11 @@ function SignUp() {
   }
 
   return (
-    <Container
-      sx={{
-        textAlign: "center",
-      }}
-    >
-      <Typography>Something Went wrong please check your link</Typography>
-    </Container>
+    // <Container>
+    <BoxSignup title="Something Went wrong please check your link" />
+
+    /* <Typography>Something Went wrong please check your link</Typography> */
+    /* </Container> */
   );
 }
 

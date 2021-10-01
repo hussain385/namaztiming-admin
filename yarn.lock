@@ -4229,7 +4229,6 @@ __metadata:
     lodash: ^4.17.21
     moment: ^2.29.1
     ngeohash: ^0.6.3
-    notistack: ^2.0.2
     postcss: ^8.3.6
     prop-types: ^15.7.2
     react: ^17.0.2
@@ -5695,7 +5694,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0, clsx@npm:^1.1.1":
+"clsx@npm:^1.1.1":
   version: 1.1.1
   resolution: "clsx@npm:1.1.1"
   checksum: ff052650329773b9b245177305fc4c4dc3129f7b2be84af4f58dc5defa99538c61d4207be7419405a5f8f3d92007c954f4daba5a7b74e563d5de71c28c830063
@@ -11642,27 +11641,6 @@ fsevents@^1.2.7:
   version: 3.3.0
   resolution: "normalize-url@npm:3.3.0"
   checksum: f6aa4a1a94c3b799812f3e7fc987fb4599d869bfa8e9a160b6f2c5a2b4e62ada998d64dca30d9e20769d8bd95d3da1da3d4841dba2cc3c4d85364e1eb46219a2
-  languageName: node
-  linkType: hard
-
-"notistack@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "notistack@npm:2.0.2"
-  dependencies:
-    clsx: ^1.1.0
-    hoist-non-react-statics: ^3.3.0
-  peerDependencies:
-    "@emotion/react": ^11.4.1
-    "@emotion/styled": ^11.3.0
-    "@mui/material": ^5.0.0
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  peerDependenciesMeta:
-    "@emotion/react":
-      optional: true
-    "@emotion/styled":
-      optional: true
-  checksum: e37c8339ffe4f6bdd20a91cc74101fbafa5081146a49daed7885f7aefd68aacb7462867bf3c42108131cf31c71ccc2e5cee71914272a56fa67cb489026b43933
   languageName: node
   linkType: hard
 

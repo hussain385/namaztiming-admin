@@ -4,7 +4,7 @@ import Sidebar from "../sidebar/Sidebar";
 import TopNav from "../topnav/TopNav";
 import { useDispatch, useSelector } from "react-redux";
 import ThemeAction from "../../redux/actions/ThemeAction";
-import { SnackbarProvider } from 'notistack';
+import Stack from "@mui/material/Stack";
 
 const Layout = (props) => {
   const themeReducer = useSelector((state) => state.ThemeReducer);
@@ -21,7 +21,7 @@ const Layout = (props) => {
   }, [dispatch]);
 
   return (
-    <SnackbarProvider maxSnack={1}>
+    <Stack spacing={2} sx={{ width: "100%" }}>
       <div className={`layout ${themeReducer.mode} ${themeReducer.color}`}>
         {open && <Sidebar clickOpen={() => clickOpen()} {...props.extra} />}
         <div className="layout__content">
@@ -39,7 +39,7 @@ const Layout = (props) => {
           )}
         </div>
       </div>
-    </SnackbarProvider>
+    </Stack>
   );
 };
 

@@ -82,3 +82,10 @@
   font-size: 1rem;
   font-weight: 600;
 }
+
+.heading {
+  color: var(--txt-color);
+}
+.heading:hover {
+  color: var(--main-color);
+}

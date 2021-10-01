@@ -7,47 +7,6 @@ import Table from "../components/table/Table";
 import { populate, useFirestoreConnect } from "react-redux-firebase";
 import _ from "lodash";
 
-const chartOptions = {
-  series: [
-    {
-      name: "Masjid Live",
-      data: [40, 70, 20, 90, 36, 80, 30, 91, 60],
-    },
-    {
-      name: "Requests",
-      data: [40, 30, 70, 80, 40, 16, 40, 20, 51, 10],
-    },
-  ],
-  options: {
-    color: ["#6ab04c", "#2980b9"],
-    chart: {
-      background: "transparent",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-      ],
-    },
-    grid: {
-      show: false,
-    },
-  },
-};
-
 const topCustomers = {
   head: ["ID", "name", "address", "admin"],
 };
@@ -94,54 +53,89 @@ const Dashboard = () => {
       <div className="row">
         <div className="screenStyle">
           <div className="row">
-            <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
-                count={masjidData.length}
-                title="No. Of Masjid"
-              />
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                style={{ color: "#455560" }}
+                to="masjidlist"
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={masjidData.length}
+                  title="No. Of Masjid Registered"
+                />
+              </Link>
             </div>
-            <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
-                count={RequestsLength || 0}
-                title="No. Of Requests"
-              />
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                to="request"
+                style={{ color: "#455560" }}
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={RequestsLength || 0}
+                  title="No. Of Masjid Requests"
+                />
+              </Link>
             </div>
-            <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
-                count={AnnouncementLength || 0}
-                title="News & Announcement"
-              />
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                to="masjidlist"
+                style={{ color: "#455560" }}
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={AnnouncementLength || 0}
+                  title="News & Announcement"
+                />
+              </Link>
             </div>
-            <div className="col-6">
-              <StatusCard
-                icon="fas fa-mosque"
-                count={adminRequests || 0}
-                title="No. Of admin Requests"
-              />
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                to="admin-request"
+                style={{ color: "#455560" }}
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={adminRequests || 0}
+                  title="No. Of admin Requests"
+                />
+              </Link>
             </div>
-          </div>
-          <div className="col-6">
-            <div className="card full-height">
-              {/* chart */}
-              <Chart
-                options={
-                  themeReducer === "theme-mode-dark"
-                    ? {
-                        ...chartOptions.options,
-                        theme: { mode: "dark" },
-                      }
-                    : {
-                        ...chartOptions.options,
-                        theme: { mode: "light" },
-                      }
-                }
-                series={chartOptions.series}
-                type="line"
-                height="100%"
-              />
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                to="masjidlist"
+                style={{ color: "#455560" }}
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={adminRequests || 0}
+                  title="Edit Time Request"
+                />
+              </Link>
+            </div>
+            <div className="col-4">
+              <Link
+                // onClick={() => props.clickOpen()}
+                to="masjidlist"
+                style={{ color: "#455560" }}
+                // key={index}
+              >
+                <StatusCard
+                  icon="fas fa-mosque"
+                  count={adminRequests || 0}
+                  title="No. Of admin Requests"
+                />
+              </Link>
             </div>
           </div>
         </div>
