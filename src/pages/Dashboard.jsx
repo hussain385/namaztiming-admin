@@ -29,23 +29,22 @@ const Dashboard = () => {
       collection: "Masjid",
       populates,
     },
-  ]);
-  useFirestoreConnect([
     {
       collection: "adminRequest",
     },
-  ]);
-  useFirestoreConnect([
+    // {
+    //   collection: "requests",
+    // },
     {
-      collection: "requests",
+      collection: "newMasjid",
     },
-  ]);
+  ],);
+
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
-  const timeRequest = populate(firestore, "requests");
-  const requestData = _.map(timeRequest, (data, id) => ({ ...data, id: id }));
-
+  // const requestData = firestore.ordered.requests
+  const newMasjidLength = firestore.ordered.newMasjid
   const RequestsLength = _.sum(
     _.map(masjid, (data) => data.requestList?.length)
   );
@@ -83,7 +82,7 @@ const Dashboard = () => {
               >
                 <StatusCard
                   icon="fas fa-mosque"
-                  count={RequestsLength || 0}
+                  count={newMasjidLength?.length || 0}
                   title="No. Of Masjid Requests"
                 />
               </Link>
@@ -125,7 +124,7 @@ const Dashboard = () => {
               >
                 <StatusCard
                   icon="fas fa-mosque"
-                  count={requestData.length || 0}
+                  count={RequestsLength || 0}
                   title="Edit Time Request"
                 />
               </Link>
