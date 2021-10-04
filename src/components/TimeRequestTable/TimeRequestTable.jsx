@@ -6,6 +6,7 @@ import { LocalizationProvider, MobileTimePicker } from "@mui/lab";
 import DateAdapter from "@mui/lab/AdapterMoment";
 import moment from "moment";
 import Loader from "react-loader-spinner";
+import {useFirestore} from "react-redux-firebase";
 
 const ERROR = {
   color: "darkred",
@@ -20,6 +21,7 @@ const INPUT = {
   width: "100%",
 };
 const TimeRequestTable = (props) => {
+    const firestore = useFirestore()
   return (
     <div>
       <Formik
@@ -49,7 +51,15 @@ const TimeRequestTable = (props) => {
             .required("Your Phone no. is required"),
         })}
         onSubmit={(values) => {
-          console.log("values");
+            firestore.update('Masjid/' + props.masjidId, {
+                timeStamp: firestore.Timestamp.now(),
+                requestList: firestore.FieldValue.arrayRemove(props.data.id),
+                timing: {
+                    ...values.timing,
+                }
+            }).then(() => {
+                firestore.delete('requests/' + props.data.id).then(()=> props.preButton.onClick())
+            })
         }}
       >
         {({
@@ -84,6 +94,7 @@ const TimeRequestTable = (props) => {
                   onChange={(event) => {
                     setFieldValue("userName", event.target.value);
                   }}
+                  onBlur={handleBlur}
                   error={touched.userName && Boolean(errors.userName)}
                   helperText={touched.userName && errors.userName}
                   fullWidth
@@ -94,6 +105,7 @@ const TimeRequestTable = (props) => {
                   label="User Phone"
                   name={"userPhone"}
                   value={values.userPhone}
+                  onBlur={handleBlur}
                   onChange={(event) => {
                     setFieldValue("userPhone", event.target.value);
                   }}

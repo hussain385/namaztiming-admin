@@ -50,7 +50,7 @@ const TimeRequests = () => {
   const timeRequest = populate(firestore, "requestList", populates);
   const requestData = [];
   _.forEach(timeRequest, (data, id) => {
-    if (data.requests) {
+    if (data.requests?.length >= 1) {
       requestData.push({ ...data, id: id });
     }
   });

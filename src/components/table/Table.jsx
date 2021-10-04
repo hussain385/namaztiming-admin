@@ -28,12 +28,6 @@ const RenderCusomerBody = ({ item, index }) => {
           <button onClick={openModal} className="buttonStyle">
             View
           </button>
-          <button
-            className="buttonStyle"
-            style={{ backgroundColor: "darkred", marginLeft: 15 }}
-          >
-            Delete
-          </button>
         </td>
       </tr>
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
@@ -53,7 +47,7 @@ const RenderCusomerBody = ({ item, index }) => {
             <tbody>
               <>
                 {item.requests.map((values, index) => (
-                  <TimeRequest item={values} index={index} />
+                  <TimeRequest item={values} index={index} masjidId={item.id}/>
                 ))}
               </>
             </tbody>
@@ -107,7 +101,7 @@ const RenderBody = ({ handleToast, item, index }) => {
   return (
     <>
       <tr key={index}>
-        <td>{index + 1}</td>
+        {/*<td>{index + 1}</td>*/}
         <td>{item.name}</td>
         <td style={{ width: "30vw" }}>{item.address}</td>
         <td
