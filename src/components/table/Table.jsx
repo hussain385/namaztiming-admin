@@ -9,10 +9,43 @@ import geohash from "ngeohash";
 import firebase from "firebase/compat";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import TimeRequestTable from "../TimeRequestTable/TimeRequestTable";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+const RenderCusomerBody = ({ item, index }) => {
+  console.log(item);
+  const { isModalOpen, openModal, closeModal } = useModal();
+  return (
+    <>
+      <tr key={index}>
+        <td>{index + 1}</td>
+        <td>{item.userName}</td>
+        <td>{item.userPhone}</td>
+        <td>
+          <button onClick={openModal} className="buttonStyle">
+            View
+          </button>
+          <button
+            className="buttonStyle"
+            style={{ backgroundColor: "darkred", marginLeft: 15 }}
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <Modal id="any-unique-identifier" isOpen={isModalOpen}>
+        <TimeRequestTable
+          preButton={{ onClick: closeModal, text: "Close" }}
+          data={item}
+        />
+      </Modal>
+    </>
+  );
+};
+
 const RenderBody = ({ handleToast, item, index }) => {
   const { isModalOpen, openModal, closeModal } = useModal();
   const Firestore = useFirestore();
@@ -180,7 +213,23 @@ const Table = (props) => {
                 </>
               ) : (
                 <>
-                  {dataShow.map((item, index) => props.renderBody(item, index))}
+                  {props.timeRequest ? (
+                    <>
+                      {dataShow.map((item, index) => (
+                        <RenderCusomerBody
+                          handleToast={() => handleToast()}
+                          index={index}
+                          item={item}
+                        />
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {dataShow.map((item, index) =>
+                        props.renderBody(item, index)
+                      )}
+                    </>
+                  )}
                 </>
               )}
             </tbody>

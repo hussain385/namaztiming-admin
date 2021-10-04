@@ -16,7 +16,7 @@ import { AuthProvider, useFirebaseApp } from "reactfire";
 import { getAuth } from "@firebase/auth";
 import ForgotPassword from "../pages/forgotPassword";
 import SuccessPage from "../pages/SuccessPage";
-
+import TimeRequests from "../pages/TimeRequests";
 // import {getAuth} from "firebase/auth";
 
 function PrivateRoute({ children, ...rest }) {
@@ -81,6 +81,9 @@ const Routes = () => {
         </PrivateRoute>
         <PrivateRoute path="/add-masjid" exact>
           <AddMasjid />
+        </PrivateRoute>
+        <PrivateRoute path="/time-requests" exact>
+          <TimeRequests />
         </PrivateRoute>
         <PrivateRoute path="/">
           <NotFound />

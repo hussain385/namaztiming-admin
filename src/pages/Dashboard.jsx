@@ -35,9 +35,17 @@ const Dashboard = () => {
       collection: "adminRequest",
     },
   ]);
+  useFirestoreConnect([
+    {
+      collection: "requests",
+    },
+  ]);
   const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, "Masjid", populates);
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
+  const timeRequest = populate(firestore, "requests");
+  const requestData = _.map(timeRequest, (data, id) => ({ ...data, id: id }));
+
   const RequestsLength = _.sum(
     _.map(masjid, (data) => data.requestList?.length)
   );
@@ -45,8 +53,7 @@ const Dashboard = () => {
     _.map(masjid, (data) => data.announcementList?.length)
   );
   const adminRequests = firestore.ordered.adminRequest?.length;
-  const themeReducer = useSelector((state) => state.ThemeReducer.mode);
-  console.log(AnnouncementLength, adminRequests, RequestsLength);
+
   return (
     <div>
       <h2 className="page-header">Dashboard</h2>
@@ -112,13 +119,13 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="masjidlist"
+                to="time-requests"
                 style={{ color: "#455560" }}
                 // key={index}
               >
                 <StatusCard
                   icon="fas fa-mosque"
-                  count={adminRequests || 0}
+                  count={requestData.length || 0}
                   title="Edit Time Request"
                 />
               </Link>

@@ -23,5 +23,10 @@
     "display_name": "Add Masjid",
     "route": "/add-masjid",
     "icon": "far fa-building"
+  },
+  {
+    "display_name": "Edit Time Requests",
+    "route": "/time-requests",
+    "icon": "far fa-clock"
   }
 ]
