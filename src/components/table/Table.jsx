@@ -10,20 +10,20 @@ import firebase from "firebase/compat";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import TimeRequestTable from "../TimeRequestTable/TimeRequestTable";
+import TimeRequest from "./TimeRequest";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const RenderCusomerBody = ({ item, index }) => {
-  console.log(item);
   const { isModalOpen, openModal, closeModal } = useModal();
   return (
     <>
       <tr key={index}>
         <td>{index + 1}</td>
-        <td>{item.userName}</td>
-        <td>{item.userPhone}</td>
+        <td>{item.name}</td>
+        <td>{item.address}</td>
         <td>
           <button onClick={openModal} className="buttonStyle">
             View
@@ -37,10 +37,50 @@ const RenderCusomerBody = ({ item, index }) => {
         </td>
       </tr>
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
-        <TimeRequestTable
+        {/* <TimeRequestTable
           preButton={{ onClick: closeModal, text: "Close" }}
           data={item}
-        />
+        /> */}
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User Name</th>
+                <th>{""}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <>
+                {item.requests.map((values, index) => (
+                  <TimeRequest item={values} index={index} />
+                ))}
+              </>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            marginTop: 20,
+            justifyContent: "flex-end",
+          }}
+        >
+          <button
+            style={{
+              width: 70,
+              color: "white",
+              borderRadius: 7,
+              height: 30,
+              marginRight: 20,
+              backgroundColor: "darkred",
+            }}
+            onClick={closeModal}
+          >
+            Close
+          </button>
+        </div>
       </Modal>
     </>
   );
