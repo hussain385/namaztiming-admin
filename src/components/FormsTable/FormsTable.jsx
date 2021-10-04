@@ -69,16 +69,16 @@ const FormsTable = (props) => {
         latitude: masjidData?.g?.geopoint._lat || "",
         longitude: masjidData?.g?.geopoint._long || "",
         timing: {
-          isha: masjidData?.timing?.isha || moment.utc().format("hh:mm A"),
-          fajar: masjidData?.timing?.fajar || moment.utc().format("hh:mm A"),
-          zohar: masjidData?.timing?.zohar || moment.utc().format("hh:mm A"),
-          asar: masjidData?.timing?.asar || moment.utc().format("hh:mm A"),
-          magrib: masjidData?.timing?.magrib || moment.utc().format("hh:mm A"),
-          jummah: masjidData?.timing?.jummah || moment.utc().format("hh:mm A"),
+          isha: masjidData?.timing?.isha || null,
+          fajar: masjidData?.timing?.fajar || null,
+          zohar: masjidData?.timing?.zohar || null,
+          asar: masjidData?.timing?.asar || null,
+          magrib: masjidData?.timing?.magrib || null,
+          jummah: masjidData?.timing?.jummah || null,
           eidUlAddah:
-            masjidData?.timing?.eidUlAddah || moment.utc().format("hh:mm A"),
+            masjidData?.timing?.eidUlAddah || null,
           eidUlFitr:
-            masjidData?.timing?.eidUlFitr || moment.utc().format("hh:mm A"),
+            masjidData?.timing?.eidUlFitr || null,
         },
       }}
       validationSchema={MasjidSchema}
