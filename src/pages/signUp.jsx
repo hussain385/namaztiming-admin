@@ -3,10 +3,10 @@ import "./login.css";
 import { useUser } from "reactfire";
 import firebase from "firebase/compat";
 import { useHistory } from "react-router-dom";
-import { Card, CardHeader, Container, TextField } from "@mui/material";
+import {Card, CardHeader, Container, TextField, Typography} from "@mui/material";
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
-import { Form, Formik } from "formik";
+import {ErrorMessage, Form, Formik} from "formik";
 import * as PropTypes from "prop-types";
 import BoxSignup from "../components/BoxSignup/BoxSignUp";
 import Snackbar from "@mui/material/Snackbar";
@@ -19,8 +19,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const ERROR = {
   color: "darkred",
   fontSize: 12,
-  marginTop: -25,
-  marginLeft: 50,
+  // marginTop: -25,
+  // marginLeft: 50,
   marginBottom: 25,
 };
 
@@ -48,7 +48,6 @@ function SignUp() {
   const db = firebase.firestore();
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
-
   const handleToast = () => {
     setOpen(true);
   };
@@ -61,6 +60,9 @@ function SignUp() {
     setOpen(false);
   };
   useEffect(() => {
+    if (user){
+      return null
+    }
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
       // Additional state parameters can also be passed via URL.
       // This can be used to continue the user's intended action before triggering
@@ -96,7 +98,7 @@ function SignUp() {
           // result.additionalUserInfo.isNewUser
         })
         .catch((error) => {
-          console.log(error.message);
+          console.error(error.message);
           setError(error.message);
           // Some error occurred, you can inspect the code: error.code
           // Common errors could be invalid email and invalid or expired OTPs.
@@ -110,8 +112,7 @@ function SignUp() {
   //     })
   // }
 
-  if (error) {
-    // return <div>{JSON.stringify(error)}</div>;
+  if (error && !user) {
     return <BoxSignup title={JSON.stringify(error)} />;
   }
 
@@ -122,9 +123,8 @@ function SignUp() {
   if (status === "error") {
     return <BoxSignup title="Error! Something went wrong please try again" />;
   }
-  if (userError) {
+  if (userError && !user) {
     return <BoxSignup title={JSON.stringify(userError)} />;
-    // return <div>{JSON.stringify(userError)}</div>;
   }
 
   if (
@@ -152,7 +152,7 @@ function SignUp() {
               history.push("/done");
             })
             .catch((reason) => {
-              console.log(reason);
+              console.error(reason);
             });
         }
       });
@@ -191,7 +191,7 @@ function SignUp() {
             firebase
               .auth()
               .currentUser.updatePassword(values.password)
-              .then((r) => {
+              .then(() => {
                 db.collection("users")
                   .doc(user.uid)
                   .set({
@@ -200,18 +200,28 @@ function SignUp() {
                     email: decodeURI(params.get("userEmail")),
                     isAdmin: false,
                   })
-                  .then((r) => {
+                  .then(() => {
                     db.collection("Masjid")
                       .doc(params.get("masjidId"))
                       .update({
                         adminId: user.uid,
                       })
-                      .then((value) => {
+                      .then(() => {
                         setSubmitting(false);
                         handleToast();
+                        setSubmitting(false);
                         return (<Redirect to="/home" />);
+                      }, reason => {
+                        setSubmitting(false);
+                        setFieldError('Firebase', reason.message)
                       });
+                  }, reason => {
+                    setSubmitting(false);
+                    setFieldError('Firebase', reason.message)
                   });
+              }, reason => {
+                setSubmitting(false);
+                setFieldError('Firebase', reason.message)
               });
           }}
         >
@@ -264,7 +274,7 @@ function SignUp() {
                 helperText={touched.confirmPassword && errors.confirmPassword}
                 fullWidth
               />
-              {errors.firebase && <p style={ERROR}>{errors.firebase}</p>}
+              {errors.Firebase && <Typography style={ERROR}>{errors.Firebase}</Typography>}
               <LoadingButton
                 onClick={handleSubmit}
                 type={"submit"}
@@ -295,7 +305,7 @@ function SignUp() {
 
   return (
     // <Container>
-    <BoxSignup title="Something Went wrong please check your link" />
+    <BoxSignup title="Please wait while we proceed / Something Went wrong please check your link" />
 
     /* <Typography>Something Went wrong please check your link</Typography> */
     /* </Container> */

@@ -19,6 +19,7 @@ const INPUT = {
 };
 
 const Forms = (props) => {
+    const firestore = useFirestore()
   return (
     <Formik
       initialValues={{
@@ -39,6 +40,13 @@ const Forms = (props) => {
           .required("Your Phone no. is required"),
       })}
       onSubmit={async (values, { setSubmitting }) => {
+          if (props.item.masjid?.adminId) {
+              return alert('This masjid have an admin already')
+              firestore.update('Masjid/' + props.item.masjid.id, {
+                  adminId: firestore.FieldValue.delete()
+              })
+          }
+          setSubmitting(true);
         const actionCodeSettings = {
           url: encodeURI(
             `https://masjid-finder-pakistan.web.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${values.userEmail}`
@@ -46,7 +54,7 @@ const Forms = (props) => {
           handleCodeInApp: true,
           dynamicLinkDomain: "namaztimings.page.link",
         };
-        firebase
+        await firebase
           .auth()
           .sendSignInLinkToEmail(values.userEmail, actionCodeSettings)
           .then((value) => {
@@ -54,7 +62,6 @@ const Forms = (props) => {
             setSubmitting(false);
             props.handleToast()
           });
-        console.log(values);
       }}
     >
       {({
