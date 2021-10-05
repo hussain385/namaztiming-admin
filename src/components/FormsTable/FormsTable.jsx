@@ -594,7 +594,6 @@ const FormsTable = (props) => {
                       />
                     </div>
                   </div>
-                  {errors.timing && <p>{JSON.stringify(errors.timing)}</p>}
                   <Box
                     style={{
                       display: "flex",

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./requestTable.css";
 import "react-simple-hook-modal/dist/styles.css";
-import { Backdrop, Box, Modal, Slide } from "@mui/material";
+import { Backdrop, Box, Modal, Slide, Snackbar } from "@mui/material";
 import FormsTable from "../FormsTable/FormsTable";
 import { useFirestore } from "react-redux-firebase";
 import firebase from "firebase/compat";
+import MuiAlert from "@mui/material/Alert";
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const MyComponent = (props) => {
   const [model, setModel] = useState(false);
@@ -13,7 +17,7 @@ const MyComponent = (props) => {
 
   async function onDelete() {
     await Firestore.delete(`newMasjid/${props.item.id}`);
-    await firebase.storage().refFromURL(props.item.pictureURL).delete()
+    await firebase.storage().refFromURL(props.item.pictureURL).delete();
     window.location.reload(false);
   }
 
@@ -57,8 +61,10 @@ const MyComponent = (props) => {
           >
             <FormsTable
               masjidData={props.item}
+              handleToast={() => props.handleToast()}
               preButton={{ onClick: () => setModel(false), text: "cancel" }}
-             variant={"request"}/>
+              variant={"request"}
+            />
           </Box>
         </Slide>
       </Modal>
@@ -94,6 +100,19 @@ const RequestTable = (props) => {
 
     setCurrPage(page);
   };
+  const [open, setOpen] = React.useState(false);
+
+  const handleToast = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   useEffect(() => {
     setDataShow(
@@ -105,6 +124,30 @@ const RequestTable = (props) => {
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        autoHideDuration={1500}
+        onClose={handleClose}
+      >
+        {props.isAddMasjid ? (
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Masjid Add Successfully.
+          </Alert>
+        ) : (
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Details were edited successfully!
+          </Alert>
+        )}
+      </Snackbar>
       <div className="table-wrapper">
         <table>
           {props.headData && props.renderHead ? (
@@ -119,7 +162,12 @@ const RequestTable = (props) => {
           {props.bodyData && props.renderBody ? (
             <tbody>
               {dataShow.map((item, index) => (
-                <MyComponent index={index} item={item} key={index} />
+                <MyComponent
+                  handleToast={() => handleToast()}
+                  index={index}
+                  item={item}
+                  key={index}
+                />
               ))}
             </tbody>
           ) : null}

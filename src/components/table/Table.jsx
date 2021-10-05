@@ -9,7 +9,6 @@ import geohash from "ngeohash";
 import firebase from "firebase/compat";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import TimeRequestTable from "../TimeRequestTable/TimeRequestTable";
 import TimeRequest from "./TimeRequest";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -31,10 +30,6 @@ const RenderCusomerBody = ({ item, index }) => {
         </td>
       </tr>
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
-        {/* <TimeRequestTable
-          preButton={{ onClick: closeModal, text: "Close" }}
-          data={item}
-        /> */}
         <div className="table-wrapper">
           <table>
             <thead>
@@ -47,7 +42,7 @@ const RenderCusomerBody = ({ item, index }) => {
             <tbody>
               <>
                 {item.requests.map((values, index) => (
-                  <TimeRequest item={values} index={index} masjidId={item.id}/>
+                  <TimeRequest item={values} index={index} masjidId={item.id} />
                 ))}
               </>
             </tbody>

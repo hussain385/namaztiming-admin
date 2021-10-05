@@ -147,9 +147,7 @@ function SignUp() {
               adminId: user.uid,
             })
             .then((e) => {
-              // setSent(true);
-              console.log(e);
-              history.push("/done");
+              history.push("/success-page");
             })
             .catch((reason) => {
               console.error(reason);

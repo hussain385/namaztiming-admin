@@ -19,7 +19,7 @@ const INPUT = {
 };
 
 const Forms = (props) => {
-    const firestore = useFirestore()
+  const firestore = useFirestore();
   return (
     <Formik
       initialValues={{
@@ -40,13 +40,18 @@ const Forms = (props) => {
           .required("Your Phone no. is required"),
       })}
       onSubmit={async (values, { setSubmitting }) => {
-          if (props.item.masjid?.adminId) {
-              return alert('This masjid have an admin already')
-              firestore.update('Masjid/' + props.item.masjid.id, {
-                  adminId: firestore.FieldValue.delete()
-              })
-          }
-          setSubmitting(true);
+        if (props.item.masjid?.adminId) {
+          if (
+            window.confirm(
+              "This masjid already have a admin. Do you want to continue?"
+            )
+          ) {
+            firestore.update("Masjid/" + props.item.masjid.id, {
+              adminId: firestore.FieldValue.delete(),
+            });
+          } else return null;
+        }
+        setSubmitting(true);
         const actionCodeSettings = {
           url: encodeURI(
             `https://masjid-finder-pakistan.web.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${values.userEmail}`
@@ -60,7 +65,7 @@ const Forms = (props) => {
           .then((value) => {
             props.closeModal();
             setSubmitting(false);
-            props.handleToast()
+            props.handleToast();
           });
       }}
     >
