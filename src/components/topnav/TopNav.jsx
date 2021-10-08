@@ -56,8 +56,8 @@ const Topnav = props => {
       <Link className="heading" to="/">
         <Typography
           sx={{
-            fontSize: '30px',
-            fontWeight: 'bold',
+            fontSize: '30px !important',
+            fontWeight: 'bold !important',
           }}
         >
           Masjid Finder Pakistan

@@ -10,7 +10,7 @@ import firebase from 'firebase/compat';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TimeRequest from './TimeRequest';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -62,6 +62,9 @@ const RenderCusomerBody = ({ masjidData, index }) => {
         rows={masjidData}
         pageSize={10}
         autoHeight={true}
+        components={{
+          Toolbar: GridToolbar,
+        }}
       />
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
         <div className="table-wrapper">
@@ -158,6 +161,9 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
         rows={masjidData}
         pageSize={10}
         autoHeight={true}
+        components={{
+          Toolbar: GridToolbar,
+        }}
       />
       <Modal id="any-unique-identifier" isOpen={isModalOpen}>
         <FormsTable

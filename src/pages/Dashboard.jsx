@@ -27,14 +27,13 @@ const Dashboard = () => {
   useFirestoreConnect([
     {
       collection: 'Masjid',
-      populates,
     },
     {
       collection: 'adminRequest',
     },
-    // {
-    //   collection: "requests",
-    // },
+    {
+      collection: 'users',
+    },
     {
       collection: 'newMasjid',
     },
@@ -45,6 +44,7 @@ const Dashboard = () => {
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
   // const requestData = firestore.ordered.requests
   const newMasjidLength = firestore.ordered.newMasjid;
+  const adminUsers = firestore.ordered.users;
   const RequestsLength = _.sum(_.map(masjid, data => data.requestList?.length));
   const AnnouncementLength = _.sum(
     _.map(masjid, data => data.announcementList?.length),
@@ -88,7 +88,7 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="masjidlist"
+                to="#"
                 style={{ color: '#455560' }}
                 // key={index}
               >
@@ -130,14 +130,14 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="masjidlist"
+                to="#"
                 style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard
                   icon="fas fa-mosque"
-                  count={adminRequests || 0}
-                  title="No. Of admin Requests"
+                  count={adminUsers?.length || 0}
+                  title="Total no. of current Admins"
                 />
               </Link>
             </div>
@@ -154,6 +154,7 @@ const Dashboard = () => {
                 renderHead={(item, index) => renderCusomerHead(item, index)}
                 bodyData={masjidData}
                 edit={false}
+                limit={10}
                 renderBody={(item, index) => renderCusomerBody(item, index)}
               />
             </div>
