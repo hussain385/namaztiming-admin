@@ -124,6 +124,9 @@ const Forms = props => {
           </div>
           <p>{props.item.masjid?.name}</p>
           <p>{props.item.masjid?.address}</p>
+          {props.item.masjid?.adminId && (
+            <p style={ERROR}>Already Have an Admin</p>
+          )}
           <div
             style={{
               display: 'flex',
