@@ -305,9 +305,10 @@ const Table = props => {
               //   ))}
               // </>
               <>
-                {props.bodyData
-                  .slice(0, Number(props.limit))
-                  .map((item, index) => props.renderBody(item, index))}
+                {(props.limit && props.bodyData
+                  ? props.bodyData.slice(0, Number(props.limit))
+                  : props.bodyData
+                ).map((item, index) => props.renderBody(item, index))}
               </>
             )}
           </>
