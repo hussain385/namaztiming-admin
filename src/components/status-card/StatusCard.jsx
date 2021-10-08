@@ -1,11 +1,11 @@
-import React from "react";
-import "./statuscard.css";
+import React from 'react';
+import './statuscard.css';
 
-const StatusCard = (props) => {
+const StatusCard = props => {
   return (
     <div className="status-card">
       <div className="status-card__icon">
-        <i style={{ fontSize: "40px" }} className={props.icon}></i>
+        <i style={{ fontSize: '40px' }} className={props.icon}></i>
       </div>
       <div className="status-card__info">
         <h4>{props.count}</h4>

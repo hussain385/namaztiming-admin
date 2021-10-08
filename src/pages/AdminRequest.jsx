@@ -1,11 +1,17 @@
-import React from "react";
-import { populate, useFirestoreConnect } from "react-redux-firebase";
-import { ModalProvider } from "react-simple-hook-modal";
-import { useSelector } from "react-redux";
-import AdminTable from "../components/admin-request/AdminTable";
-import _ from "lodash";
+import React from 'react';
+import { populate, useFirestoreConnect } from 'react-redux-firebase';
+import { ModalProvider } from 'react-simple-hook-modal';
+import { useSelector } from 'react-redux';
+import AdminTable from '../components/admin-request/AdminTable';
+import _ from 'lodash';
 
-const customerTableHead = ["ID", "Masjid Name", "User Name", "User Contact", ""];
+const customerTableHead = [
+  'ID',
+  'Masjid Name',
+  'User Name',
+  'User Contact',
+  '',
+];
 
 const renderHead = (item, index) => <th key={index}>{item}</th>;
 
@@ -18,19 +24,18 @@ const renderBody = (item, index) => (
   </tr>
 );
 
-
 const AdminRequest = () => {
   const populates = [
-    { child: "masjidID", root: "Masjid", childAlias: "masjid" }, // replace owner with user object
+    { child: 'masjidID', root: 'Masjid', childAlias: 'masjid' }, // replace owner with user object
   ];
   useFirestoreConnect([
     {
-      collection: "adminRequest",
+      collection: 'adminRequest',
       populates,
     },
   ]);
-  const firestore = useSelector((state) => state.firestore);
-  const masjid = populate(firestore, "adminRequest", populates);
+  const firestore = useSelector(state => state.firestore);
+  const masjid = populate(firestore, 'adminRequest', populates);
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
   // const masjidData = firestore.ordered.adminRequest;
   console.log(masjidData);

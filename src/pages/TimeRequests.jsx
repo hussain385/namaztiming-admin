@@ -1,14 +1,14 @@
-import React from "react";
-import Table from "../components/table/Table";
-import { populate, useFirestoreConnect } from "react-redux-firebase";
-import { useSelector } from "react-redux";
-import _ from "lodash";
-import "../components/table/table.css";
-import { ModalProvider } from "react-simple-hook-modal";
-import "react-simple-hook-modal/dist/styles.css";
+import React from 'react';
+import Table from '../components/table/Table';
+import { populate, useFirestoreConnect } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
+import '../components/table/table.css';
+import { ModalProvider } from 'react-simple-hook-modal';
+import 'react-simple-hook-modal/dist/styles.css';
 
 const topCustomers = {
-  head: ["ID", "Name", "Address", ""],
+  head: ['ID', 'Name', 'Address', ''],
 };
 
 const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
@@ -36,18 +36,18 @@ const RenderCusomerBody = (item, index) => {
 };
 
 const TimeRequests = () => {
-  const firestore = useSelector((state) => state.firestore);
+  const firestore = useSelector(state => state.firestore);
   const populates = [
-    { child: "requestList", root: "requests", childAlias: "requests" },
+    { child: 'requestList', root: 'requests', childAlias: 'requests' },
   ];
   useFirestoreConnect([
     {
-      collection: "Masjid",
+      collection: 'Masjid',
       populates,
-      storeAs: "requestList",
+      storeAs: 'requestList',
     },
   ]);
-  const timeRequest = populate(firestore, "requestList", populates);
+  const timeRequest = populate(firestore, 'requestList', populates);
   const requestData = [];
   _.forEach(timeRequest, (data, id) => {
     if (data.requests?.length >= 1) {

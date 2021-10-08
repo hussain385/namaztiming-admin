@@ -1,23 +1,29 @@
-import React, { useEffect, useState } from "react";
-import "./login.css";
-import { useUser } from "reactfire";
-import firebase from "firebase/compat";
-import { useHistory } from "react-router-dom";
-import {Card, CardHeader, Container, TextField, Typography} from "@mui/material";
-import * as Yup from "yup";
-import { LoadingButton } from "@mui/lab";
-import {ErrorMessage, Form, Formik} from "formik";
-import * as PropTypes from "prop-types";
-import BoxSignup from "../components/BoxSignup/BoxSignUp";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import Redirect from "react-dom"
+import React, { useEffect, useState } from 'react';
+import './login.css';
+import { useUser } from 'reactfire';
+import firebase from 'firebase/compat';
+import { useHistory } from 'react-router-dom';
+import {
+  Card,
+  CardHeader,
+  Container,
+  TextField,
+  Typography,
+} from '@mui/material';
+import * as Yup from 'yup';
+import { LoadingButton } from '@mui/lab';
+import { ErrorMessage, Form, Formik } from 'formik';
+import * as PropTypes from 'prop-types';
+import BoxSignup from '../components/BoxSignup/BoxSignUp';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Redirect from 'react-dom';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 const ERROR = {
-  color: "darkred",
+  color: 'darkred',
   fontSize: 12,
   // marginTop: -25,
   // marginLeft: 50,
@@ -25,10 +31,10 @@ const ERROR = {
 };
 
 const SetPasswordSchema = Yup.object().shape({
-  password: Yup.string().required("Password is required"),
+  password: Yup.string().required('Password is required'),
   confirmPassword: Yup.string()
-    .required("Password Confirmation is required")
-    .oneOf([Yup.ref("password"), null], "password must match"),
+    .required('Password Confirmation is required')
+    .oneOf([Yup.ref('password'), null], 'password must match'),
 });
 
 Formik.propTypes = {
@@ -53,15 +59,15 @@ function SignUp() {
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
 
     setOpen(false);
   };
   useEffect(() => {
-    if (user){
-      return null
+    if (user) {
+      return null;
     }
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
       // Additional state parameters can also be passed via URL.
@@ -69,11 +75,11 @@ function SignUp() {
       // the sign-in operation.
       // Get the email if available. This should be available if the user completes
       // the flow on the same device where they started it.
-      let email = window.localStorage.getItem("emailForSignIn");
+      let email = window.localStorage.getItem('emailForSignIn');
       if (!email) {
         // User opened the link on a different device. To prevent session fixation
         // attacks, ask the user to provide the associated email again. For example:
-        email = params.get("userEmail") || "";
+        email = params.get('userEmail') || '';
       }
       // The client SDK will parse the code from the link for you.
       firebase
@@ -90,14 +96,14 @@ function SignUp() {
           //     profile: {email: result.user.email}
           // })
 
-          window.localStorage.removeItem("emailForSignIn");
+          window.localStorage.removeItem('emailForSignIn');
           // You can access the new user via result.user
           // Additional user info profile not available via:
           // result.additionalUserInfo.profile == null
           // You can check if the user is new or existing:
           // result.additionalUserInfo.isNewUser
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error.message);
           setError(error.message);
           // Some error occurred, you can inspect the code: error.code
@@ -116,11 +122,11 @@ function SignUp() {
     return <BoxSignup title={JSON.stringify(error)} />;
   }
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return <span>Loading...</span>;
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return <BoxSignup title="Error! Something went wrong please try again" />;
   }
   if (userError && !user) {
@@ -128,40 +134,40 @@ function SignUp() {
   }
 
   if (
-    status === "success" &&
-    params.get("userName") &&
-    params.get("userPhone") &&
-    params.get("masjidId") &&
+    status === 'success' &&
+    params.get('userName') &&
+    params.get('userPhone') &&
+    params.get('masjidId') &&
     user
   ) {
-    db.collection("users")
+    db.collection('users')
       .doc(user.uid)
       .get()
-      .then((value) => {
+      .then(value => {
         console.log(value);
         if (value.exists) {
-          console.log("exist");
-          db.collection("Masjid")
-            .doc(params.get("masjidId"))
+          console.log('exist');
+          db.collection('Masjid')
+            .doc(params.get('masjidId'))
             .update({
               adminId: user.uid,
             })
-            .then((e) => {
-              history.push("/success-page");
+            .then(e => {
+              history.push('/success-page');
             })
-            .catch((reason) => {
+            .catch(reason => {
               console.error(reason);
             });
         }
       });
     return (
       <Container
-        component={"main"}
-        maxWidth={"xs"}
-        sx={{ display: "flex", height: "100vh" }}
+        component={'main'}
+        maxWidth={'xs'}
+        sx={{ display: 'flex', height: '100vh' }}
       >
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={open}
           autoHideDuration={1500}
           onClose={handleClose}
@@ -169,15 +175,15 @@ function SignUp() {
           <Alert
             onClose={handleClose}
             severity="success"
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             Successfully password saved!
           </Alert>
         </Snackbar>
         <Formik
           initialValues={{
-            password: "",
-            confirmPassword: "",
+            password: '',
+            confirmPassword: '',
           }}
           validationSchema={SetPasswordSchema}
           onSubmit={(values, { setSubmitting, setFieldError }) => {
@@ -189,38 +195,47 @@ function SignUp() {
             firebase
               .auth()
               .currentUser.updatePassword(values.password)
-              .then(() => {
-                db.collection("users")
-                  .doc(user.uid)
-                  .set({
-                    name: decodeURI(params.get("userName")),
-                    phone: decodeURI(params.get("userPhone")),
-                    email: decodeURI(params.get("userEmail")),
-                    isAdmin: false,
-                  })
-                  .then(() => {
-                    db.collection("Masjid")
-                      .doc(params.get("masjidId"))
-                      .update({
-                        adminId: user.uid,
-                      })
-                      .then(() => {
+              .then(
+                () => {
+                  db.collection('users')
+                    .doc(user.uid)
+                    .set({
+                      name: decodeURI(params.get('userName')),
+                      phone: decodeURI(params.get('userPhone')),
+                      email: decodeURI(params.get('userEmail')),
+                      isAdmin: false,
+                    })
+                    .then(
+                      () => {
+                        db.collection('Masjid')
+                          .doc(params.get('masjidId'))
+                          .update({
+                            adminId: user.uid,
+                          })
+                          .then(
+                            () => {
+                              setSubmitting(false);
+                              handleToast();
+                              setSubmitting(false);
+                              return <Redirect to="/home" />;
+                            },
+                            reason => {
+                              setSubmitting(false);
+                              setFieldError('Firebase', reason.message);
+                            },
+                          );
+                      },
+                      reason => {
                         setSubmitting(false);
-                        handleToast();
-                        setSubmitting(false);
-                        return (<Redirect to="/home" />);
-                      }, reason => {
-                        setSubmitting(false);
-                        setFieldError('Firebase', reason.message)
-                      });
-                  }, reason => {
-                    setSubmitting(false);
-                    setFieldError('Firebase', reason.message)
-                  });
-              }, reason => {
-                setSubmitting(false);
-                setFieldError('Firebase', reason.message)
-              });
+                        setFieldError('Firebase', reason.message);
+                      },
+                    );
+                },
+                reason => {
+                  setSubmitting(false);
+                  setFieldError('Firebase', reason.message);
+                },
+              );
           }}
         >
           {({
@@ -236,20 +251,20 @@ function SignUp() {
             <Card
               component={Form}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                margin: "auto",
-                width: "100%",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                margin: 'auto',
+                width: '100%',
+                alignItems: 'center',
                 p: 4,
-                borderRadius: "10px",
+                borderRadius: '10px',
               }}
             >
-              <CardHeader title={"Set Your Password"} />
+              <CardHeader title={'Set Your Password'} />
               <TextField
-                margin={"normal"}
-                label={"Password"}
-                name={"password"}
+                margin={'normal'}
+                label={'Password'}
+                name={'password'}
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -259,9 +274,9 @@ function SignUp() {
                 fullWidth
               />
               <TextField
-                margin={"normal"}
-                label={"Confirm Password"}
-                name={"confirmPassword"}
+                margin={'normal'}
+                label={'Confirm Password'}
+                name={'confirmPassword'}
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -272,11 +287,13 @@ function SignUp() {
                 helperText={touched.confirmPassword && errors.confirmPassword}
                 fullWidth
               />
-              {errors.Firebase && <Typography style={ERROR}>{errors.Firebase}</Typography>}
+              {errors.Firebase && (
+                <Typography style={ERROR}>{errors.Firebase}</Typography>
+              )}
               <LoadingButton
                 onClick={handleSubmit}
-                type={"submit"}
-                variant={"contained"}
+                type={'submit'}
+                variant={'contained'}
                 loading={isSubmitting}
               >
                 Submit

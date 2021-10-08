@@ -1,14 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Chart from "react-apexcharts";
-import { useSelector } from "react-redux";
-import StatusCard from "../components/status-card/StatusCard";
-import Table from "../components/table/Table";
-import { populate, useFirestoreConnect } from "react-redux-firebase";
-import _ from "lodash";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Chart from 'react-apexcharts';
+import { useSelector } from 'react-redux';
+import StatusCard from '../components/status-card/StatusCard';
+import Table from '../components/table/Table';
+import { populate, useFirestoreConnect } from 'react-redux-firebase';
+import _ from 'lodash';
 
 const topCustomers = {
-  head: ["ID", "name", "address", "admin"],
+  head: ['ID', 'name', 'address', 'admin'],
 };
 
 const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
@@ -23,33 +23,31 @@ const renderCusomerBody = (item, index) => (
 );
 
 const Dashboard = () => {
-  const populates = [{ child: "adminId", root: "users", childAlias: "user" }];
+  const populates = [{ child: 'adminId', root: 'users', childAlias: 'user' }];
   useFirestoreConnect([
     {
-      collection: "Masjid",
+      collection: 'Masjid',
       populates,
     },
     {
-      collection: "adminRequest",
+      collection: 'adminRequest',
     },
     // {
     //   collection: "requests",
     // },
     {
-      collection: "newMasjid",
+      collection: 'newMasjid',
     },
-  ],);
+  ]);
 
-  const firestore = useSelector((state) => state.firestore);
-  const masjid = populate(firestore, "Masjid", populates);
+  const firestore = useSelector(state => state.firestore);
+  const masjid = populate(firestore, 'Masjid', populates);
   const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
   // const requestData = firestore.ordered.requests
-  const newMasjidLength = firestore.ordered.newMasjid
-  const RequestsLength = _.sum(
-    _.map(masjid, (data) => data.requestList?.length)
-  );
+  const newMasjidLength = firestore.ordered.newMasjid;
+  const RequestsLength = _.sum(_.map(masjid, data => data.requestList?.length));
   const AnnouncementLength = _.sum(
-    _.map(masjid, (data) => data.announcementList?.length)
+    _.map(masjid, data => data.announcementList?.length),
   );
   const adminRequests = firestore.ordered.adminRequest?.length;
 
@@ -62,7 +60,7 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 to="masjidlist"
                 // key={index}
               >
@@ -77,7 +75,7 @@ const Dashboard = () => {
               <Link
                 // onClick={() => props.clickOpen()}
                 to="request"
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard
@@ -91,7 +89,7 @@ const Dashboard = () => {
               <Link
                 // onClick={() => props.clickOpen()}
                 to="masjidlist"
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard
@@ -105,7 +103,7 @@ const Dashboard = () => {
               <Link
                 // onClick={() => props.clickOpen()}
                 to="admin-request"
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard
@@ -119,7 +117,7 @@ const Dashboard = () => {
               <Link
                 // onClick={() => props.clickOpen()}
                 to="time-requests"
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard
@@ -133,7 +131,7 @@ const Dashboard = () => {
               <Link
                 // onClick={() => props.clickOpen()}
                 to="masjidlist"
-                style={{ color: "#455560" }}
+                style={{ color: '#455560' }}
                 // key={index}
               >
                 <StatusCard

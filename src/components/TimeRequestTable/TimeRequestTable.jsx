@@ -1,15 +1,15 @@
-import React from "react";
-import { Field, Formik } from "formik";
-import * as Yup from "yup";
-import { Grid, TextField } from "@mui/material";
-import { LocalizationProvider, MobileTimePicker } from "@mui/lab";
-import DateAdapter from "@mui/lab/AdapterMoment";
-import moment from "moment";
-import Loader from "react-loader-spinner";
-import {useFirestore} from "react-redux-firebase";
+import React from 'react';
+import { Field, Formik } from 'formik';
+import * as Yup from 'yup';
+import { Grid, TextField } from '@mui/material';
+import { LocalizationProvider, MobileTimePicker } from '@mui/lab';
+import DateAdapter from '@mui/lab/AdapterMoment';
+import moment from 'moment';
+import Loader from 'react-loader-spinner';
+import { useFirestore } from 'react-redux-firebase';
 
 const ERROR = {
-  color: "darkred",
+  color: 'darkred',
   fontSize: 12,
   marginTop: 5,
 };
@@ -17,11 +17,11 @@ const ERROR = {
 const INPUT = {
   borderRadius: 5,
   padding: 10,
-  backgroundColor: "#eeee",
-  width: "100%",
+  backgroundColor: '#eeee',
+  width: '100%',
 };
-const TimeRequestTable = (props) => {
-    const firestore = useFirestore()
+const TimeRequestTable = props => {
+  const firestore = useFirestore();
   return (
     <div>
       <Formik
@@ -40,26 +40,30 @@ const TimeRequestTable = (props) => {
           },
         }}
         validationSchema={Yup.object().shape({
-          userName: Yup.string().required("Name is required"),
+          userName: Yup.string().required('Name is required'),
           userPhone: Yup.string()
             .matches(
               /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/,
-              "Phone number is not valid"
+              'Phone number is not valid',
             )
-            .min(11, "phone no. is short, please check again")
-            .max(16, "phone no. is long, please check again")
-            .required("Your Phone no. is required"),
+            .min(11, 'phone no. is short, please check again')
+            .max(16, 'phone no. is long, please check again')
+            .required('Your Phone no. is required'),
         })}
-        onSubmit={(values) => {
-            firestore.update('Masjid/' + props.masjidId, {
-                timeStamp: firestore.Timestamp.now(),
-                requestList: firestore.FieldValue.arrayRemove(props.data.id),
-                timing: {
-                    ...values.timing,
-                }
-            }).then(() => {
-                firestore.delete('requests/' + props.data.id).then(()=> props.preButton.onClick())
+        onSubmit={values => {
+          firestore
+            .update('Masjid/' + props.masjidId, {
+              timeStamp: firestore.Timestamp.now(),
+              requestList: firestore.FieldValue.arrayRemove(props.data.id),
+              timing: {
+                ...values.timing,
+              },
             })
+            .then(() => {
+              firestore
+                .delete('requests/' + props.data.id)
+                .then(() => props.preButton.onClick());
+            });
         }}
       >
         {({
@@ -74,13 +78,13 @@ const TimeRequestTable = (props) => {
           /* and other goodies */
         }) => (
           <>
-            <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
               Time Edit Request
             </h1>
             <Grid
               style={{
-                height: "63vh",
-                overflowY: "scroll",
+                height: '63vh',
+                overflowY: 'scroll',
                 paddingRight: 10,
               }}
               spacing={2}
@@ -89,10 +93,10 @@ const TimeRequestTable = (props) => {
               <Grid item xs={12} md={6}>
                 <TextField
                   label="User Name"
-                  name={"userName"}
+                  name={'userName'}
                   value={values.userName}
-                  onChange={(event) => {
-                    setFieldValue("userName", event.target.value);
+                  onChange={event => {
+                    setFieldValue('userName', event.target.value);
                   }}
                   onBlur={handleBlur}
                   error={touched.userName && Boolean(errors.userName)}
@@ -103,11 +107,11 @@ const TimeRequestTable = (props) => {
               <Grid item xs={12} md={6}>
                 <TextField
                   label="User Phone"
-                  name={"userPhone"}
+                  name={'userPhone'}
                   value={values.userPhone}
                   onBlur={handleBlur}
-                  onChange={(event) => {
-                    setFieldValue("userPhone", event.target.value);
+                  onChange={event => {
+                    setFieldValue('userPhone', event.target.value);
                   }}
                   error={touched.userPhone && Boolean(errors.userPhone)}
                   helperText={touched.userPhone && errors.userPhone}
@@ -120,28 +124,28 @@ const TimeRequestTable = (props) => {
                     <p>Namaz Timings</p>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>Fajar</p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.fajar"}
+                          name={'timing.fajar'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.fajar",
-                              moment(e).format("hh:mm A")
+                              'timing.fajar',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.fajar, "hh:mm A").isValid()
-                              ? moment(values.timing.fajar, "hh:mm A")
+                            moment(values.timing.fajar, 'hh:mm A').isValid()
+                              ? moment(values.timing.fajar, 'hh:mm A')
                               : values.timing.fajar
                           }
                         />
@@ -152,28 +156,28 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>Zohar</p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.zohar"}
+                          name={'timing.zohar'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.zohar",
-                              moment(e).format("hh:mm A")
+                              'timing.zohar',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.zohar, "hh:mm A").isValid()
-                              ? moment(values.timing.zohar, "hh:mm A")
+                            moment(values.timing.zohar, 'hh:mm A').isValid()
+                              ? moment(values.timing.zohar, 'hh:mm A')
                               : values.timing.zohar
                           }
                         />
@@ -184,28 +188,28 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>Asar</p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.asar"}
+                          name={'timing.asar'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.asar",
-                              moment(e).format("hh:mm A")
+                              'timing.asar',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.asar, "hh:mm A").isValid()
-                              ? moment(values.timing.asar, "hh:mm A")
+                            moment(values.timing.asar, 'hh:mm A').isValid()
+                              ? moment(values.timing.asar, 'hh:mm A')
                               : values.timing.asar
                           }
                         />
@@ -216,28 +220,28 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>Magrib</p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.magrib"}
+                          name={'timing.magrib'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.magrib",
-                              moment(e).format("hh:mm A")
+                              'timing.magrib',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.magrib, "hh:mm A").isValid()
-                              ? moment(values.timing.magrib, "hh:mm A")
+                            moment(values.timing.magrib, 'hh:mm A').isValid()
+                              ? moment(values.timing.magrib, 'hh:mm A')
                               : values.timing.magrib
                           }
                         />
@@ -248,28 +252,28 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>Isha</p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.isha"}
+                          name={'timing.isha'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.isha",
-                              moment(e).format("hh:mm A")
+                              'timing.isha',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.isha, "hh:mm A").isValid()
-                              ? moment(values.timing.isha, "hh:mm A")
+                            moment(values.timing.isha, 'hh:mm A').isValid()
+                              ? moment(values.timing.isha, 'hh:mm A')
                               : values.timing.isha
                           }
                         />
@@ -280,30 +284,30 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>
                           Jumma'h Namaz
                         </p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.jummah"}
+                          name={'timing.jummah'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.jummah",
-                              moment(e).format("hh:mm A")
+                              'timing.jummah',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.jummah, "hh:mm A").isValid()
-                              ? moment(values.timing.jummah, "hh:mm A")
+                            moment(values.timing.jummah, 'hh:mm A').isValid()
+                              ? moment(values.timing.jummah, 'hh:mm A')
                               : null
                           }
                         />
@@ -311,33 +315,33 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>
                           Eid ul Addah
                         </p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.eidUlAddah"}
+                          name={'timing.eidUlAddah'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.eidUlAddah",
-                              moment(e).format("hh:mm A")
+                              'timing.eidUlAddah',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
                             moment(
                               values.timing.eidUlAddah,
-                              "hh:mm A"
+                              'hh:mm A',
                             ).isValid()
-                              ? moment(values.timing.eidUlAddah, "hh:mm A")
+                              ? moment(values.timing.eidUlAddah, 'hh:mm A')
                               : null
                           }
                         />
@@ -345,30 +349,30 @@ const TimeRequestTable = (props) => {
                     </div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         paddingBlockEnd: 10,
                       }}
                     >
-                      <div style={{ alignSelf: "center" }}>
+                      <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>
                           Eid ul Fitr
                         </p>
                       </div>
                       <div>
                         <Field
-                          name={"timing.eidUlFitr"}
+                          name={'timing.eidUlFitr'}
                           component={MobileTimePicker}
-                          renderInput={(params) => <TextField {...params} />}
-                          onChange={(e) =>
+                          renderInput={params => <TextField {...params} />}
+                          onChange={e =>
                             setFieldValue(
-                              "timing.eidUlFitr",
-                              moment(e).format("hh:mm A")
+                              'timing.eidUlFitr',
+                              moment(e).format('hh:mm A'),
                             )
                           }
                           value={
-                            moment(values.timing.eidUlFitr, "hh:mm A").isValid()
-                              ? moment(values.timing.eidUlFitr, "hh:mm A")
+                            moment(values.timing.eidUlFitr, 'hh:mm A').isValid()
+                              ? moment(values.timing.eidUlFitr, 'hh:mm A')
                               : null
                           }
                         />
@@ -381,19 +385,19 @@ const TimeRequestTable = (props) => {
             </Grid>
             <div
               style={{
-                display: "flex",
+                display: 'flex',
                 marginTop: 20,
-                justifyContent: "flex-end",
+                justifyContent: 'flex-end',
               }}
             >
               <button
                 style={{
                   width: 70,
-                  color: "white",
+                  color: 'white',
                   borderRadius: 7,
                   height: 30,
                   marginRight: 20,
-                  backgroundColor: "darkred",
+                  backgroundColor: 'darkred',
                 }}
                 onClick={props.preButton.onClick}
               >
@@ -403,8 +407,8 @@ const TimeRequestTable = (props) => {
                 style={{
                   paddingRight: 10,
                   paddingLeft: 10,
-                  color: "white",
-                  backgroundColor: "green",
+                  color: 'white',
+                  backgroundColor: 'green',
                   borderRadius: 7,
                   height: 30,
                 }}

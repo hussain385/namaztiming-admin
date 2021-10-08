@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Modal, ModalTransition, useModal } from "react-simple-hook-modal";
-import "./adminTable.css";
-import "react-simple-hook-modal/dist/styles.css";
-import { useFirestore } from "react-redux-firebase";
-import Forms from "../Forms/Forms";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+import React, { useEffect, useState } from 'react';
+import { Modal, ModalTransition, useModal } from 'react-simple-hook-modal';
+import './adminTable.css';
+import 'react-simple-hook-modal/dist/styles.css';
+import { useFirestore } from 'react-redux-firebase';
+import Forms from '../Forms/Forms';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 // import {useFirebase} from "react-redux-firebase"
 
-const MyComponent = (props) => {
+const MyComponent = props => {
   const { isModalOpen, openModal, closeModal } = useModal();
   const firestore = useFirestore();
   // const firebase = useFirebase();
@@ -23,19 +23,19 @@ const MyComponent = (props) => {
         <td>{props.item.masjid?.name}</td>
         <td>{props.item.userName}</td>
         <td>{props.item.userPhone}</td>
-        <td style={{ justifyContent: "center", textAlign: "center" }}>
+        <td style={{ justifyContent: 'center', textAlign: 'center' }}>
           <button onClick={openModal} className="buttonStyle">
             View
           </button>
           <button
             onClick={() => {
-              firestore.delete("adminRequest/" + props.item.id).catch((e) => {
+              firestore.delete('adminRequest/' + props.item.id).catch(e => {
                 console.log(e);
               });
               window.location.reload(false);
             }}
             className="buttonStyle"
-            style={{ backgroundColor: "darkred", marginLeft: 15 }}
+            style={{ backgroundColor: 'darkred', marginLeft: 15 }}
           >
             Delete
           </button>
@@ -56,7 +56,7 @@ const MyComponent = (props) => {
   );
 };
 
-const AdminTable = (props) => {
+const AdminTable = props => {
   const initDataShow =
     props.limit && props.bodyData
       ? props.bodyData.slice(0, Number(props.limit))
@@ -76,7 +76,7 @@ const AdminTable = (props) => {
 
   const [currPage, setCurrPage] = useState(0);
 
-  const selectPage = (page) => {
+  const selectPage = page => {
     const start = Number(props.limit) * page;
     const end = start + Number(props.limit);
 
@@ -91,7 +91,7 @@ const AdminTable = (props) => {
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
 
@@ -102,19 +102,19 @@ const AdminTable = (props) => {
     setDataShow(
       props.limit && props.bodyData
         ? props.bodyData.slice(0, Number(props.limit))
-        : props.bodyData
+        : props.bodyData,
     );
   }, [props.bodyData, props.limit]);
 
   return (
     <div>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={open}
         autoHideDuration={1500}
         onClose={handleClose}
       >
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           Email was send successfully!
         </Alert>
       </Snackbar>
@@ -124,7 +124,7 @@ const AdminTable = (props) => {
             <thead>
               <tr>
                 {props.headData.map((item, index) =>
-                  props.renderHead(item, index)
+                  props.renderHead(item, index),
                 )}
               </tr>
             </thead>
@@ -149,7 +149,7 @@ const AdminTable = (props) => {
             <div
               key={index}
               className={`table__pagination-item ${
-                currPage === index ? "active" : ""
+                currPage === index ? 'active' : ''
               }`}
               onClick={() => selectPage(index)}
             >

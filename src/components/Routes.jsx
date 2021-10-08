@@ -1,33 +1,33 @@
-import React from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import Request from "../pages/Request";
-import { useSelector } from "react-redux";
-import { isEmpty, isLoaded } from "react-redux-firebase";
-import MasjidList from "../pages/masjid-list";
-import Login from "../pages/Login";
-import Layout from "./layout/Layout";
-import NotFound from "../pages/not-found";
-import Loading from "../pages/loading";
-import AdminRequest from "../pages/AdminRequest";
-import AddMasjid from "../pages/AddMasjid";
-import SignUp from "../pages/signUp";
-import { AuthProvider, useFirebaseApp } from "reactfire";
-import { getAuth } from "@firebase/auth";
-import ForgotPassword from "../pages/forgotPassword";
-import SuccessPage from "../pages/SuccessPage";
-import TimeRequests from "../pages/TimeRequests";
+import React from 'react';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import Dashboard from '../pages/Dashboard';
+import Request from '../pages/Request';
+import { useSelector } from 'react-redux';
+import { isEmpty, isLoaded } from 'react-redux-firebase';
+import MasjidList from '../pages/masjid-list';
+import Login from '../pages/Login';
+import Layout from './layout/Layout';
+import NotFound from '../pages/not-found';
+import Loading from '../pages/loading';
+import AdminRequest from '../pages/AdminRequest';
+import AddMasjid from '../pages/AddMasjid';
+import SignUp from '../pages/signUp';
+import { AuthProvider, useFirebaseApp } from 'reactfire';
+import { getAuth } from '@firebase/auth';
+import ForgotPassword from '../pages/forgotPassword';
+import SuccessPage from '../pages/SuccessPage';
+import TimeRequests from '../pages/TimeRequests';
 // import {getAuth} from "firebase/auth";
 
 function PrivateRoute({ children, ...rest }) {
   const { auth, profile, isInitializing } = useSelector(
-    (state) => state.firebase
+    state => state.firebase,
   );
 
   return (
     <Route
       {...rest}
-      render={(props) =>
+      render={props =>
         isInitializing || (isEmpty(profile) && !isLoaded(profile)) ? (
           <Layout extra={props}>
             <Loading />
@@ -37,7 +37,7 @@ function PrivateRoute({ children, ...rest }) {
         ) : (
           <Redirect
             to={{
-              pathname: "/login",
+              pathname: '/login',
               state: { from: props.location },
             }}
           />
