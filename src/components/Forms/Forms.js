@@ -4,6 +4,7 @@ import firebase from "firebase/compat";
 import * as Yup from "yup";
 import { useFirestore } from "react-redux-firebase";
 import Loader from "react-loader-spinner";
+import emailjs from "emailjs-com";
 
 const ERROR = {
   color: "darkred",
@@ -47,9 +48,31 @@ const Forms = (props) => {
             )
           ) {
             firestore.update("Masjid/" + props.item.masjid.id, {
-              adminId: firestore.FieldValue.delete(),
+              adminId: firestore.FieldValue.delete().then(() => {
+                props.handleToast();
+              }),
             });
           } else return null;
+        }
+        let newAdmin = 1;
+        let existingAdmin = 1;
+        if (newAdmin === existingAdmin) {
+          emailjs
+            .sendForm(
+              "YOUR_SERVICE_ID",
+              "YOUR_TEMPLATE_ID",
+              values,
+              "YOUR_USER_ID"
+            )
+            .then(
+              (result) => {
+                console.log(result.text);
+              },
+              (error) => {
+                console.log(error.text);
+              }
+            );
+          return null;
         }
         setSubmitting(true);
         const actionCodeSettings = {

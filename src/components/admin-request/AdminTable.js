@@ -28,11 +28,16 @@ const MyComponent = (props) => {
             View
           </button>
           <button
-            onClick={() => {
-              firestore.delete("adminRequest/" + props.item.id).catch((e) => {
-                console.log(e);
-              });
-              window.location.reload(false);
+            onClick={async () => {
+              await firestore
+                .delete("adminRequest/" + props.item.id)
+                .then(() => {
+                  alert("Request deleted successfully");
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+              window.location.reload(true);
             }}
             className="buttonStyle"
             style={{ backgroundColor: "darkred", marginLeft: 15 }}

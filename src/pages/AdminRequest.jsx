@@ -37,7 +37,7 @@ const AdminRequest = () => {
   return (
     <ModalProvider>
       <div>
-        <h2 className="page-header">Masjid Requests</h2>
+        <h2 className="page-header">Admin Requests</h2>
         <div className="row">
           <div className="col-12">
             <div className="card">

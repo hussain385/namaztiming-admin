@@ -111,9 +111,13 @@ const RenderBody = ({ handleToast, item, index }) => {
           </button>
           <button
             onClick={async () => {
-              await Firestore.delete("Masjid/" + item.id).catch((e) => {
-                console.error(e);
-              });
+              await Firestore.delete("Masjid/" + item.id)
+                .then(() => {
+                  alert("Request deleted successfully");
+                })
+                .catch((e) => {
+                  console.error(e);
+                });
               await firebase
                 .storage()
                 .refFromURL(item.pictureURL)

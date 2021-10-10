@@ -3,15 +3,21 @@ import "./login.css";
 import { useUser } from "reactfire";
 import firebase from "firebase/compat";
 import { useHistory } from "react-router-dom";
-import {Card, CardHeader, Container, TextField, Typography} from "@mui/material";
+import {
+  Card,
+  CardHeader,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
-import {ErrorMessage, Form, Formik} from "formik";
+import { ErrorMessage, Form, Formik } from "formik";
 import * as PropTypes from "prop-types";
 import BoxSignup from "../components/BoxSignup/BoxSignUp";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import Redirect from "react-dom"
+import Redirect from "react-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -60,8 +66,8 @@ function SignUp() {
     setOpen(false);
   };
   useEffect(() => {
-    if (user){
-      return null
+    if (user) {
+      return null;
     }
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
       // Additional state parameters can also be passed via URL.
@@ -113,7 +119,14 @@ function SignUp() {
   // }
 
   if (error && !user) {
-    return <BoxSignup title={JSON.stringify(error)} />;
+    return (
+      <BoxSignup
+        value="Link Invalid"
+        icon="far fa-times-circle"
+        color="#c34a4a"
+        title="This can happen if the link is malformed, expired, or has already been used."
+      />
+    );
   }
 
   if (status === "loading") {
@@ -121,10 +134,24 @@ function SignUp() {
   }
 
   if (status === "error") {
-    return <BoxSignup title="Error! Something went wrong please try again" />;
+    return (
+      <BoxSignup
+        value="Please try again"
+        icon="far fa-times-circle"
+        color="#c34a4a"
+        title="Error! Something went wrong please try again"
+      />
+    );
   }
   if (userError && !user) {
-    return <BoxSignup title={JSON.stringify(userError)} />;
+    return (
+      <BoxSignup
+        value="Please try again"
+        icon="far fa-times-circle"
+        color="#c34a4a"
+        title={JSON.stringify(userError)}
+      />
+    );
   }
 
   if (
@@ -147,7 +174,7 @@ function SignUp() {
               adminId: user.uid,
             })
             .then((e) => {
-              history.push("/success-page");
+              history.push("/done");
             })
             .catch((reason) => {
               console.error(reason);
@@ -185,42 +212,50 @@ function SignUp() {
               return null;
             }
             setSubmitting(true);
-
             firebase
               .auth()
               .currentUser.updatePassword(values.password)
-              .then(() => {
-                db.collection("users")
-                  .doc(user.uid)
-                  .set({
-                    name: decodeURI(params.get("userName")),
-                    phone: decodeURI(params.get("userPhone")),
-                    email: decodeURI(params.get("userEmail")),
-                    isAdmin: false,
-                  })
-                  .then(() => {
-                    db.collection("Masjid")
-                      .doc(params.get("masjidId"))
-                      .update({
-                        adminId: user.uid,
-                      })
-                      .then(() => {
+              .then(
+                () => {
+                  db.collection("users")
+                    .doc(user.uid)
+                    .set({
+                      name: decodeURI(params.get("userName")),
+                      phone: decodeURI(params.get("userPhone")),
+                      email: decodeURI(params.get("userEmail")),
+                      isAdmin: false,
+                    })
+                    .then(
+                      () => {
+                        db.collection("Masjid")
+                          .doc(params.get("masjidId"))
+                          .update({
+                            adminId: user.uid,
+                          })
+                          .then(
+                            () => {
+                              setSubmitting(false);
+                              handleToast();
+                              setSubmitting(false);
+                              return <Redirect to="/success-page" />;
+                            },
+                            (reason) => {
+                              setSubmitting(false);
+                              setFieldError("Firebase", reason.message);
+                            }
+                          );
+                      },
+                      (reason) => {
                         setSubmitting(false);
-                        handleToast();
-                        setSubmitting(false);
-                        return (<Redirect to="/home" />);
-                      }, reason => {
-                        setSubmitting(false);
-                        setFieldError('Firebase', reason.message)
-                      });
-                  }, reason => {
-                    setSubmitting(false);
-                    setFieldError('Firebase', reason.message)
-                  });
-              }, reason => {
-                setSubmitting(false);
-                setFieldError('Firebase', reason.message)
-              });
+                        setFieldError("Firebase", reason.message);
+                      }
+                    );
+                },
+                (reason) => {
+                  setSubmitting(false);
+                  setFieldError("Firebase", reason.message);
+                }
+              );
           }}
         >
           {({
@@ -272,7 +307,9 @@ function SignUp() {
                 helperText={touched.confirmPassword && errors.confirmPassword}
                 fullWidth
               />
-              {errors.Firebase && <Typography style={ERROR}>{errors.Firebase}</Typography>}
+              {errors.Firebase && (
+                <Typography style={ERROR}>{errors.Firebase}</Typography>
+              )}
               <LoadingButton
                 onClick={handleSubmit}
                 type={"submit"}
@@ -281,19 +318,6 @@ function SignUp() {
               >
                 Submit
               </LoadingButton>
-              {/*<Button*/}
-              {/*    onClick={handleSubmit}*/}
-              {/*    type="submit"*/}
-              {/*    className="submit"*/}
-              {/*    disabled={isSubmitting}*/}
-              {/*    variant={"contained"}*/}
-              {/*>*/}
-              {/*    {isSubmitting ? (*/}
-              {/*        <CircularProgress height={12} width={40}/>*/}
-              {/*    ) : (*/}
-              {/*        <p>Submit</p>*/}
-              {/*    )}*/}
-              {/*</Button>*/}
             </Card>
           )}
         </Formik>
@@ -303,8 +327,12 @@ function SignUp() {
 
   return (
     // <Container>
-    <BoxSignup title="Please wait while we proceed / Something Went wrong please check your link" />
-
+    <BoxSignup
+      value="Loading"
+      icon="far fa-clock"
+      color="#becc00"
+      title="Please wait while we proceed / Something Went wrong please check your link"
+    />
     /* <Typography>Something Went wrong please check your link</Typography> */
     /* </Container> */
   );
