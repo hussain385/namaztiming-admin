@@ -1,11 +1,11 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   getFirebase,
   actionTypes as rrfActionTypes,
   firebaseReducer,
 } from 'react-redux-firebase';
-import {firestoreReducer, constants as rfConstants} from 'redux-firestore';
-import ThemeReducer from "./reducers/ThemeReducer";
+import { firestoreReducer, constants as rfConstants } from 'redux-firestore';
+import ThemeReducer from './reducers/ThemeReducer';
 
 const reducer = combineReducers({
   ThemeReducer,
@@ -36,6 +36,6 @@ export const store = configureStore({
         ],
         ignoredPaths: ['firebase', 'firestore'],
       },
-      thunk: {extraArgument: {getFirebase}},
+      thunk: { extraArgument: { getFirebase } },
     }),
 });

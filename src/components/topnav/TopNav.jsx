@@ -1,22 +1,22 @@
-import React from "react";
+import React from 'react';
 
-import "./topnav.css";
+import './topnav.css';
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import Dropdown from "../dropdown/Dropdown";
+import Dropdown from '../dropdown/Dropdown';
 
-import ThemeMenu from "../thememenu/ThemeMenu";
-import { useFirebase } from "react-redux-firebase";
-import notifications from "../../assets/JsonData/notification.json";
-import { Typography } from "@mui/material";
-import user_image from "../../assets/images/tuat.png";
+import ThemeMenu from '../thememenu/ThemeMenu';
+import { useFirebase } from 'react-redux-firebase';
+import notifications from '../../assets/JsonData/notification.json';
+import { Typography } from '@mui/material';
+import user_image from '../../assets/images/tuat.png';
 
-import user_menu from "../../assets/JsonData/user_menus.json";
-import UserDropDown from "../User-dropdown/UserDropDown";
+import user_menu from '../../assets/JsonData/user_menus.json';
+import UserDropDown from '../User-dropdown/UserDropDown';
 
 const curr_user = {
-  display_name: "Admin Panel",
+  display_name: 'Admin Panel',
   image: user_image,
 };
 
@@ -27,7 +27,7 @@ const renderNotificationItem = (item, index) => (
   </div>
 );
 
-const renderUserToggle = (user) => (
+const renderUserToggle = user => (
   <div className="topnav__right-user">
     <div className="topnav__right-user__name">{user.display_name}</div>
   </div>
@@ -47,7 +47,7 @@ const RenderUserMenu = () => {
   );
 };
 
-const Topnav = (props) => {
+const Topnav = props => {
   return (
     <div className="topnav">
       <div onClick={() => props.clickOpen()}>
@@ -56,8 +56,8 @@ const Topnav = (props) => {
       <Link className="heading" to="/">
         <Typography
           sx={{
-            fontSize: "30px",
-            fontWeight: "bold",
+            fontSize: '30px !important',
+            fontWeight: 'bold !important',
           }}
         >
           Masjid Finder Pakistan

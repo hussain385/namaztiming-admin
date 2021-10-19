@@ -1,9 +1,7 @@
-import { Typography } from "@mui/material";
-import React from "react";
-import "./box.css";
+import React from 'react';
+import './box.css';
 
-const BoxSignup = (props) => {
-  console.log(props);
+const BoxSignup = props => {
   return (
     <div id="card" className="animated fadeIn">
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>

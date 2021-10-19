@@ -1,8 +1,8 @@
 // import { Typography } from "@mui/material";
-import React from "react";
-import "../components/BoxSignup/box.css";
+import React from 'react';
+import '../components/BoxSignup/box.css';
 
-const SuccessPage = (props) => {
+const SuccessPage = props => {
   return (
     <div id="card" className="animated fadeIn">
       <div id="upper-side">

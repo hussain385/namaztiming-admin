@@ -1,15 +1,15 @@
-import React from "react";
-import { useFirestoreConnect } from "react-redux-firebase";
-import { ModalProvider } from "react-simple-hook-modal";
-import { useSelector } from "react-redux";
-import RequestTable from "../components/requestTable/RequestTable";
+import React from 'react';
+import { useFirestoreConnect } from 'react-redux-firebase';
+import { ModalProvider } from 'react-simple-hook-modal';
+import { useSelector } from 'react-redux';
+import RequestTable from '../components/requestTable/RequestTable';
 
 const customerTableHead = [
-  "ID",
-  "Masjid name",
-  "User Name",
-  "User Contact",
-  "",
+  'ID',
+  'Masjid name',
+  'User Name',
+  'User Contact',
+  '',
 ];
 
 const renderHead = (item, index) => <th key={index}>{item}</th>;
@@ -26,10 +26,10 @@ const renderBody = (item, index) => (
 const Request = () => {
   useFirestoreConnect([
     {
-      collection: "newMasjid",
+      collection: 'newMasjid',
     },
   ]);
-  const firestore = useSelector((state) => state.firestore);
+  const firestore = useSelector(state => state.firestore);
   // const masjid = populate(firestore, 'Masjid', populates);
   const masjidData = firestore.ordered.newMasjid;
   return (

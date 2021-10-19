@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import "./requestTable.css";
-import "react-simple-hook-modal/dist/styles.css";
-import { Backdrop, Box, Modal, Slide, Snackbar } from "@mui/material";
-import FormsTable from "../FormsTable/FormsTable";
-import { useFirestore } from "react-redux-firebase";
-import firebase from "firebase/compat";
-import MuiAlert from "@mui/material/Alert";
+import React, { useEffect, useState } from 'react';
+import './requestTable.css';
+import 'react-simple-hook-modal/dist/styles.css';
+import { Backdrop, Box, Modal, Slide, Snackbar } from '@mui/material';
+import FormsTable from '../FormsTable/FormsTable';
+import { useFirestore } from 'react-redux-firebase';
+import firebase from 'firebase/compat';
+import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const MyComponent = (props) => {
+const MyComponent = props => {
   const [model, setModel] = useState(false);
   const Firestore = useFirestore();
 
@@ -30,14 +30,14 @@ const MyComponent = (props) => {
         <td>{props.item.name}</td>
         <td>{props.item.user.name}</td>
         <td>{props.item.user.phone}</td>
-        <td style={{ justifyContent: "center", textAlign: "center" }}>
+        <td style={{ justifyContent: 'center', textAlign: 'center' }}>
           <button onClick={() => setModel(true)} className="buttonStyle">
             View
           </button>
           <button
             onClick={onDelete}
             className="buttonStyle"
-            style={{ backgroundColor: "darkred", marginLeft: 15 }}
+            style={{ backgroundColor: 'darkred', marginLeft: 15 }}
           >
             Delete
           </button>
@@ -53,10 +53,10 @@ const MyComponent = (props) => {
         <Slide in={model} direction="up" timeout={100}>
           <Box
             sx={{
-              position: "absolute",
+              position: 'absolute',
               margin: 10,
-              bgcolor: "background.paper",
-              borderRadius: "10px",
+              bgcolor: 'background.paper',
+              borderRadius: '10px',
               boxShadow: 24,
               p: 4,
             }}
@@ -64,8 +64,8 @@ const MyComponent = (props) => {
             <FormsTable
               masjidData={props.item}
               handleToast={() => props.handleToast()}
-              preButton={{ onClick: () => setModel(false), text: "cancel" }}
-              variant={"request"}
+              preButton={{ onClick: () => setModel(false), text: 'cancel' }}
+              variant={'request'}
             />
           </Box>
         </Slide>
@@ -74,7 +74,7 @@ const MyComponent = (props) => {
   );
 };
 
-const RequestTable = (props) => {
+const RequestTable = props => {
   const initDataShow =
     props.limit && props.bodyData
       ? props.bodyData.slice(0, Number(props.limit))
@@ -94,7 +94,7 @@ const RequestTable = (props) => {
 
   const [currPage, setCurrPage] = useState(0);
 
-  const selectPage = (page) => {
+  const selectPage = page => {
     const start = Number(props.limit) * page;
     const end = start + Number(props.limit);
 
@@ -109,7 +109,7 @@ const RequestTable = (props) => {
   };
 
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
+    if (reason === 'clickaway') {
       return;
     }
 
@@ -120,14 +120,14 @@ const RequestTable = (props) => {
     setDataShow(
       props.limit && props.bodyData
         ? props.bodyData.slice(0, Number(props.limit))
-        : props.bodyData
+        : props.bodyData,
     );
   }, [props.bodyData, props.limit]);
 
   return (
     <div>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={open}
         autoHideDuration={1500}
         onClose={handleClose}
@@ -136,7 +136,7 @@ const RequestTable = (props) => {
           <Alert
             onClose={handleClose}
             severity="success"
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             Masjid Add Successfully.
           </Alert>
@@ -144,7 +144,7 @@ const RequestTable = (props) => {
           <Alert
             onClose={handleClose}
             severity="success"
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             Details were edited successfully!
           </Alert>
@@ -156,7 +156,7 @@ const RequestTable = (props) => {
             <thead>
               <tr>
                 {props.headData.map((item, index) =>
-                  props.renderHead(item, index)
+                  props.renderHead(item, index),
                 )}
               </tr>
             </thead>
@@ -181,7 +181,7 @@ const RequestTable = (props) => {
             <div
               key={index}
               className={`table__pagination-item ${
-                currPage === index ? "active" : ""
+                currPage === index ? 'active' : ''
               }`}
               onClick={() => selectPage(index)}
             >
