@@ -30,11 +30,11 @@ const MyComponent = props => {
           <button
             onClick={async () => {
               await firestore
-                .delete("adminRequest/" + props.item.id)
+                .delete('adminRequest/' + props.item.id)
                 .then(() => {
-                  alert("Request deleted successfully");
+                  alert('Request deleted successfully');
                 })
-                .catch((e) => {
+                .catch(e => {
                   console.log(e);
                 });
               window.location.reload(true);

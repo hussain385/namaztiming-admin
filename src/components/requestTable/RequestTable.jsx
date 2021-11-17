@@ -17,7 +17,7 @@ const MyComponent = props => {
 
   async function onDelete() {
     await Firestore.delete(`newMasjid/${props.item.id}`).then(() => {
-      alert("Request deleted successfully");
+      alert('Request deleted successfully');
     });
     await firebase.storage().refFromURL(props.item.pictureURL).delete();
     window.location.reload(false);

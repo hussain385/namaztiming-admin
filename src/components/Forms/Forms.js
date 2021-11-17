@@ -1,10 +1,10 @@
-import { Formik } from "formik";
-import React from "react";
-import firebase from "firebase/compat";
-import * as Yup from "yup";
-import { useFirestore } from "react-redux-firebase";
-import Loader from "react-loader-spinner";
-import emailjs from "emailjs-com";
+import { Formik } from 'formik';
+import React from 'react';
+import firebase from 'firebase/compat';
+import * as Yup from 'yup';
+import { useFirestore } from 'react-redux-firebase';
+import Loader from 'react-loader-spinner';
+import emailjs from 'emailjs-com';
 
 const ERROR = {
   color: 'darkred',
@@ -47,7 +47,7 @@ const Forms = props => {
               'This masjid already have a admin. Do you want to continue?',
             )
           ) {
-            firestore.update("Masjid/" + props.item.masjid.id, {
+            firestore.update('Masjid/' + props.item.masjid.id, {
               adminId: firestore.FieldValue.delete().then(() => {
                 props.handleToast();
               }),
@@ -59,18 +59,18 @@ const Forms = props => {
         if (newAdmin === existingAdmin) {
           emailjs
             .sendForm(
-              "YOUR_SERVICE_ID",
-              "YOUR_TEMPLATE_ID",
+              'YOUR_SERVICE_ID',
+              'YOUR_TEMPLATE_ID',
               values,
-              "YOUR_USER_ID"
+              'YOUR_USER_ID',
             )
             .then(
-              (result) => {
+              result => {
                 console.log(result.text);
               },
-              (error) => {
+              error => {
                 console.log(error.text);
-              }
+              },
             );
           return null;
         }

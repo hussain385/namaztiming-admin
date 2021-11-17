@@ -1,7 +1,7 @@
 .inputFormik {
   border-radius: 5;
   padding: 10;
-  border-color: "grey";
+  border-color: 'grey';
 }
 
 .table-wrapper {
@@ -40,7 +40,6 @@ tbody > tr:hover {
   padding-block: 7px;
   border-radius: 10px;
 }
-
 
 .table__pagination {
   display: flex;

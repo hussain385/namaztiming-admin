@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import "./login.css";
-import { useUser } from "reactfire";
-import firebase from "firebase/compat";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import './login.css';
+import { useUser } from 'reactfire';
+import firebase from 'firebase/compat';
+import { useHistory } from 'react-router-dom';
 import {
   Card,
   CardHeader,
   Container,
   TextField,
   Typography,
-} from "@mui/material";
-import * as Yup from "yup";
-import { LoadingButton } from "@mui/lab";
-import { ErrorMessage, Form, Formik } from "formik";
-import * as PropTypes from "prop-types";
-import BoxSignup from "../components/BoxSignup/BoxSignUp";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import Redirect from "react-dom";
+} from '@mui/material';
+import * as Yup from 'yup';
+import { LoadingButton } from '@mui/lab';
+import { ErrorMessage, Form, Formik } from 'formik';
+import * as PropTypes from 'prop-types';
+import BoxSignup from '../components/BoxSignup/BoxSignUp';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Redirect from 'react-dom';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -133,7 +133,7 @@ function SignUp() {
     return <span>Loading...</span>;
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <BoxSignup
         value="Please try again"
@@ -227,8 +227,8 @@ function SignUp() {
                     })
                     .then(
                       () => {
-                        db.collection("Masjid")
-                          .doc(params.get("masjidId"))
+                        db.collection('Masjid')
+                          .doc(params.get('masjidId'))
                           .update({
                             adminId: user.uid,
                           })
@@ -239,22 +239,22 @@ function SignUp() {
                               setSubmitting(false);
                               return <Redirect to="/success-page" />;
                             },
-                            (reason) => {
+                            reason => {
                               setSubmitting(false);
-                              setFieldError("Firebase", reason.message);
-                            }
+                              setFieldError('Firebase', reason.message);
+                            },
                           );
                       },
-                      (reason) => {
+                      reason => {
                         setSubmitting(false);
-                        setFieldError("Firebase", reason.message);
-                      }
+                        setFieldError('Firebase', reason.message);
+                      },
                     );
                 },
-                (reason) => {
+                reason => {
                   setSubmitting(false);
-                  setFieldError("Firebase", reason.message);
-                }
+                  setFieldError('Firebase', reason.message);
+                },
               );
           }}
         >

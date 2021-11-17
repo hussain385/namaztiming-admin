@@ -6,7 +6,7 @@ const BoxSignup = props => {
     <div id="card" className="animated fadeIn">
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>
         <i
-          style={{ fontSize: "100px", marginBottom: "10px" }}
+          style={{ fontSize: '100px', marginBottom: '10px' }}
           class={props.icon}
         ></i>
         <h3 id="status">{props.value}</h3>

@@ -1,16 +1,16 @@
 .layout {
-    color: var(--txt-color);
+  color: var(--txt-color);
 }
 
 .layout__content {
-    background-color: var(--second-bg);
-    min-height: 100vh;
+  background-color: var(--second-bg);
+  min-height: 100vh;
 }
 
 .layout__content-main {
-    padding: 30px;
+  padding: 30px;
 }
 
 .layout__content-main1 {
-    padding: 30px;
+  padding: 30px;
 }
