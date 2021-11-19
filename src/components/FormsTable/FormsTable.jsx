@@ -327,6 +327,12 @@ const FormsTable = props => {
                     backgroundColor: 'darkred',
                   }}
                   onClick={() => {
+                    if (props.variant === 'request') {
+                      setFieldValue('userName', '');
+                      setFieldValue('userEmail', '');
+                      setFieldValue('userPhone', '');
+                      return null;
+                    }
                     firestore
                       .collection('Masjid')
                       .doc(masjidData.id)
