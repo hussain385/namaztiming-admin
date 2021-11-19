@@ -6,15 +6,14 @@ const prettierOptions = JSON.parse(
 );
 
 module.exports = {
-  extends: ['react-app', 'prettier'],
-  plugins: ['prettier'],
-  rules: {
-    'prettier/prettier': ['error', prettierOptions],
-  },
+  extends: ['plugin:react-hooks/recommended', 'prettier'],
+  plugins: ['react-hooks', 'prettier'],
+  rules: {},
   overrides: [
     {
       files: ['**/*.ts?(x)'],
       rules: { 'prettier/prettier': ['warn', prettierOptions] },
     },
   ],
+  parser: 'babel-eslint',
 };

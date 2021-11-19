@@ -11,7 +11,7 @@ import DateAdapter from '@mui/lab/AdapterMoment';
 import { Autocomplete, Box, Grid, TextField } from '@mui/material';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import _, { isNull } from 'lodash';
 import geohash from 'ngeohash';
 import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
@@ -37,6 +37,7 @@ const FormsTable = props => {
   const firestore = useFirestore();
   const users = useSelector(state => state.firestore.ordered.users);
   const loading = users ? users.length === 0 : true;
+  const [edit, setEdit] = useState(false);
 
   const onImageChange = async (event, setFieldValue) => {
     if (event.target.files && event.target.files[0]) {
@@ -220,6 +221,9 @@ const FormsTable = props => {
                   return option;
                 }}
                 value={values.userName}
+                disabled={
+                  (masjidData?.user?.name || masjidData?.userName) && !edit
+                }
                 renderInput={params => (
                   <TextField
                     {...params}
@@ -240,6 +244,9 @@ const FormsTable = props => {
                 fullWidth
                 options={users && users}
                 loading={loading}
+                disabled={
+                  (masjidData?.user?.email || masjidData?.userEmail) && !edit
+                }
                 onChange={(event, value) => {
                   if (!value) {
                     return setFieldValue('userEmail', '');
@@ -280,6 +287,9 @@ const FormsTable = props => {
               <TextField
                 label="Admin Phone."
                 name={'userPhone'}
+                disabled={
+                  (masjidData?.user?.phone || masjidData?.userPhone) && !edit
+                }
                 value={values.userPhone}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -288,6 +298,57 @@ const FormsTable = props => {
                 fullWidth
               />
             </Grid>
+            {!(
+              _.isUndefined(masjidData?.user?.email) &&
+              _.isUndefined(masjidData?.userEmail)
+            ) && (
+              <Grid item xs={12}>
+                <button
+                  style={{
+                    width: 70,
+                    color: 'white',
+                    borderRadius: 7,
+                    height: 30,
+                    marginRight: 20,
+                    backgroundColor: 'green',
+                  }}
+                  onClick={() => setEdit(prevState => !prevState)}
+                  type={'button'}
+                >
+                  {edit ? 'Cancel' : 'Edit'}
+                </button>
+                <button
+                  style={{
+                    width: 70,
+                    color: 'white',
+                    borderRadius: 7,
+                    height: 30,
+                    marginRight: 20,
+                    backgroundColor: 'darkred',
+                  }}
+                  onClick={() => {
+                    firestore
+                      .collection('Masjid')
+                      .doc(masjidData.id)
+                      .update({
+                        adminId: firestore.FieldValue.delete(),
+                      })
+                      .then(
+                        value => {
+                          console.log(value);
+                        },
+                        reason => {
+                          console.error(reason);
+                        },
+                      );
+                  }}
+                  type={'button'}
+                >
+                  Delete
+                </button>
+              </Grid>
+            )}
+
             <Grid item xs={12}>
               <TextField
                 label="Google Link"

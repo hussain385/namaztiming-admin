@@ -37,7 +37,7 @@ const MyComponent = props => {
                 .catch(e => {
                   console.log(e);
                 });
-              window.location.reload(true);
+              window.location.reload();
             }}
             className="buttonStyle"
             style={{ backgroundColor: 'darkred', marginLeft: 15 }}
