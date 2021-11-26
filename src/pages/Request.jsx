@@ -4,25 +4,6 @@ import { ModalProvider } from 'react-simple-hook-modal';
 import { useSelector } from 'react-redux';
 import RequestTable from '../components/requestTable/RequestTable';
 
-const customerTableHead = [
-  'ID',
-  'Masjid name',
-  'User Name',
-  'User Contact',
-  '',
-];
-
-const renderHead = (item, index) => <th key={index}>{item}</th>;
-
-const renderBody = (item, index) => (
-  <tr key={index}>
-    <td>{item.id}</td>
-    <td>{item.name}</td>
-    <td>{item.address}</td>
-    <td>{item.user?.name}</td>
-  </tr>
-);
-
 const Request = () => {
   useFirestoreConnect([
     {
@@ -40,13 +21,7 @@ const Request = () => {
           <div className="col-12">
             <div className="card">
               <div className="card__body">
-                <RequestTable
-                  limit="10"
-                  headData={customerTableHead}
-                  renderHead={(item, index) => renderHead(item, index)}
-                  bodyData={masjidData || []}
-                  renderBody={(item, index) => renderBody(item, index)}
-                />
+                <RequestTable bodyData={masjidData || []} />
               </div>
             </div>
           </div>
