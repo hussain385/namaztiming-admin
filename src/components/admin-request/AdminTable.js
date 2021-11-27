@@ -3,17 +3,17 @@ import { Modal, ModalTransition, useModal } from 'react-simple-hook-modal';
 import './adminTable.css';
 import 'react-simple-hook-modal/dist/styles.css';
 import { useFirestore } from 'react-redux-firebase';
-import Forms from '../Forms/Forms';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Container } from '@mui/material';
+import Forms from '../Forms/Forms';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const AdminTable = props => {
+function AdminTable(props) {
   const [open, setOpen] = React.useState(false);
   const { isModalOpen, openModal, closeModal } = useModal();
   const firestore = useFirestore();
@@ -41,7 +41,7 @@ const AdminTable = props => {
             <button
               onClick={async () => {
                 await firestore
-                  .delete('adminRequest/' + params.row.id)
+                  .delete(`adminRequest/${params.row.id}`)
                   .then(() => {
                     alert('Request deleted successfully');
                     window.location.reload();
@@ -100,13 +100,13 @@ const AdminTable = props => {
         columns={column}
         rows={props.bodyData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
       />
     </div>
   );
-};
+}
 
 export default AdminTable;

@@ -9,17 +9,18 @@ const DECIMALS = '(\\.[0-9]+)?';
 const ZEROS = '(\\.0+)?';
 const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
 
+// eslint-disable-next-line import/prefer-default-export
 export const MasjidSchema = Yup.object().shape(
   {
     name: Yup.string().required('Masjid name is required'),
     address: Yup.string().required('Masjid address is required'),
     latitude: Yup.number().test('is-decimal', 'invalid decimal', value =>
-      (value + '').match(
+      `${value}`.match(
         `${SIGN}(90${ZEROS}|[1-8]\\d${DECIMALS}|\\d${DECIMALS})`,
       ),
     ),
     longitude: Yup.number().test('is-decimal', 'invalid decimal', value =>
-      (value + '').match(
+      `${value}`.match(
         `${SIGN}(180${ZEROS}|1[0-7]\\d${DECIMALS}|[1-9]\\d${DECIMALS}|\\d${DECIMALS})`,
       ),
     ),
@@ -35,10 +36,8 @@ export const MasjidSchema = Yup.object().shape(
         return Yup.string()
           .url()
           .validate(value)
-          .then(value => {
-            if (value) {
-              return true;
-            }
+          .then(value1 => {
+            return !!value1;
           });
       })
       .test('fileType', 'Unsupported File format', value => {
@@ -48,10 +47,8 @@ export const MasjidSchema = Yup.object().shape(
         return Yup.string()
           .url()
           .validate(value)
-          .then(value => {
-            if (value) {
-              return true;
-            }
+          .then(value2 => {
+            return !!value2;
           });
       })
       // .url("Not a valid url",)

@@ -1,12 +1,14 @@
 import React from 'react';
-import FormsTable from '../FormsTable/FormsTable';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import FormsTable from '../FormsTable/FormsTable';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
+  // eslint-disable-next-line react/jsx-props-no-spreading
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-const AddMasjidForm = () => {
+
+function AddMasjidForm() {
   const [open, setOpen] = React.useState(false);
 
   const handleToast = () => {
@@ -35,10 +37,10 @@ const AddMasjidForm = () => {
       <FormsTable
         handleToast={() => handleToast()}
         Label="Add Masjid"
-        variant={'new'}
+        variant="new"
       />
     </>
   );
-};
+}
 
 export default AddMasjidForm;

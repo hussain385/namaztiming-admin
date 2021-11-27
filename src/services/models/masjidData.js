@@ -1,5 +1,29 @@
 import PropTypes from 'prop-types';
 
+const Timing = PropTypes.shape({
+  isha: PropTypes.string.isRequired,
+  fajar: PropTypes.string.isRequired,
+  zohar: PropTypes.string.isRequired,
+  asar: PropTypes.string.isRequired,
+  magrib: PropTypes.string.isRequired,
+  jummah: PropTypes.string,
+  eidUlAddah: PropTypes.string,
+  eidUlFitr: PropTypes.string,
+});
+
+export const MasjidFormModel = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  address: PropTypes.string.isRequired,
+  gLink: PropTypes.string,
+  pictureURL: PropTypes.string,
+  userEmail: PropTypes.string,
+  userName: PropTypes.string,
+  userPhone: PropTypes.string,
+  latitude: PropTypes.string.isRequired,
+  longitude: PropTypes.string.isRequired,
+  timing: Timing.isRequired,
+});
+
 export const MasjidDataModel = PropTypes.shape({
   user: PropTypes.shape({
     id: PropTypes.string,
@@ -20,11 +44,5 @@ export const MasjidDataModel = PropTypes.shape({
   pictureURL: PropTypes.string,
   address: PropTypes.string,
   id: PropTypes.string,
-  timing: PropTypes.shape({
-    isha: PropTypes.string,
-    fajar: PropTypes.string,
-    zohar: PropTypes.string,
-    asar: PropTypes.string,
-    magrib: PropTypes.string,
-  }),
+  timing: Timing,
 });

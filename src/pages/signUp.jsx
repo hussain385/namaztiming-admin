@@ -12,14 +12,15 @@ import {
 } from '@mui/material';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
-import { ErrorMessage, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as PropTypes from 'prop-types';
-import BoxSignup from '../components/BoxSignup/BoxSignUp';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Redirect from 'react-dom';
+import BoxSignup from '../components/BoxSignup/BoxSignUp';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
+  // eslint-disable-next-line react/jsx-props-no-spreading
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 const ERROR = {
@@ -103,13 +104,14 @@ function SignUp() {
           // You can check if the user is new or existing:
           // result.additionalUserInfo.isNewUser
         })
-        .catch(error => {
-          console.error(error.message);
-          setError(error.message);
+        .catch(error1 => {
+          console.error(error1.message);
+          setError(error1.message);
           // Some error occurred, you can inspect the code: error.code
           // Common errors could be invalid email and invalid or expired OTPs.
         });
     }
+    return null;
   }, []);
 
   // function resetAndRoute() {
@@ -173,7 +175,7 @@ function SignUp() {
             .update({
               adminId: user.uid,
             })
-            .then(e => {
+            .then(() => {
               history.push('/success-page');
             })
             .catch(reason => {
@@ -183,8 +185,8 @@ function SignUp() {
       });
     return (
       <Container
-        component={'main'}
-        maxWidth={'xs'}
+        component="main"
+        maxWidth="xs"
         sx={{ display: 'flex', height: '100vh' }}
       >
         <Snackbar
@@ -256,6 +258,7 @@ function SignUp() {
                   setFieldError('Firebase', reason.message);
                 },
               );
+            return null;
           }}
         >
           {({
@@ -280,11 +283,11 @@ function SignUp() {
                 borderRadius: '10px',
               }}
             >
-              <CardHeader title={'Set Your Password'} />
+              <CardHeader title="Set Your Password" />
               <TextField
-                margin={'normal'}
-                label={'Password'}
-                name={'password'}
+                margin="normal"
+                label="Password"
+                name="password"
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -294,9 +297,9 @@ function SignUp() {
                 fullWidth
               />
               <TextField
-                margin={'normal'}
-                label={'Confirm Password'}
-                name={'confirmPassword'}
+                margin="normal"
+                label="Confirm Password"
+                name="confirmPassword"
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -312,8 +315,8 @@ function SignUp() {
               )}
               <LoadingButton
                 onClick={handleSubmit}
-                type={'submit'}
-                variant={'contained'}
+                type="submit"
+                variant="contained"
                 loading={isSubmitting}
               >
                 Submit

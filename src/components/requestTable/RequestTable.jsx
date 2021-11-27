@@ -9,18 +9,19 @@ import {
   Slide,
   Snackbar,
 } from '@mui/material';
-import FormsTable from '../FormsTable/FormsTable';
 import { useFirestore } from 'react-redux-firebase';
 import firebase from 'firebase/compat';
 import MuiAlert from '@mui/material/Alert';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import FormsTable from '../FormsTable/FormsTable';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const Alert = React.forwardRef((props, ref) => (
+  <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+));
 
-const RequestTable = props => {
+function RequestTable(props) {
   const [open, setOpen] = React.useState(false);
+  // eslint-disable-next-line react/prop-types,react/destructuring-assignment
   console.log(props.bodyData);
   const handleToast = () => {
     setOpen(true);
@@ -55,68 +56,67 @@ const RequestTable = props => {
       field: 'userName',
       headerName: 'User Name',
       flex: 1,
-      valueGetter: params => {
-        return params.row.user.name;
-      },
+      valueGetter: params => params.row.user.name,
     },
     {
       field: 'userPhone',
       headerName: 'User Contact',
       flex: 1,
-      valueGetter: params => {
-        return params.row.user.phone;
-      },
+      valueGetter: params => params.row.user.phone,
     },
     {
       field: 'actions',
       headerName: 'Action',
       flex: 1,
-      renderCell: params => {
-        return (
-          <Container>
-            <button onClick={() => setModel(true)} className="buttonStyle">
-              View
-            </button>
-            <button
-              onClick={onDelete}
-              className="buttonStyle"
-              style={{ backgroundColor: 'darkred', marginLeft: 15 }}
-            >
-              Delete
-            </button>
-            <Modal
-              id="any-unique-identifier"
-              open={model}
-              onClose={() => setModel(false)}
-              closeAfterTransition
-              BackdropComponent={Backdrop}
-            >
-              <Slide in={model} direction="up" timeout={100}>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    margin: 10,
-                    bgcolor: 'background.paper',
-                    borderRadius: '10px',
-                    boxShadow: 24,
-                    p: 4,
+      renderCell: params => (
+        <Container>
+          <button
+            onClick={() => setModel(true)}
+            className="buttonStyle"
+            type="button"
+          >
+            View
+          </button>
+          <button
+            onClick={onDelete}
+            className="buttonStyle"
+            style={{ backgroundColor: 'darkred', marginLeft: 15 }}
+            type="button"
+          >
+            Delete
+          </button>
+          <Modal
+            id="any-unique-identifier"
+            open={model}
+            onClose={() => setModel(false)}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+          >
+            <Slide in={model} direction="up" timeout={100}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  margin: 10,
+                  bgcolor: 'background.paper',
+                  borderRadius: '10px',
+                  boxShadow: 24,
+                  p: 4,
+                }}
+              >
+                <FormsTable
+                  masjidData={params.row}
+                  handleToast={() => handleToast()}
+                  preButton={{
+                    onClick: () => setModel(false),
+                    text: 'cancel',
                   }}
-                >
-                  <FormsTable
-                    masjidData={params.row}
-                    handleToast={() => handleToast()}
-                    preButton={{
-                      onClick: () => setModel(false),
-                      text: 'cancel',
-                    }}
-                    variant={'request'}
-                  />
-                </Box>
-              </Slide>
-            </Modal>
-          </Container>
-        );
-      },
+                  variant="request"
+                />
+              </Box>
+            </Slide>
+          </Modal>
+        </Container>
+      ),
     },
   ];
 
@@ -150,53 +150,19 @@ const RequestTable = props => {
         columns={column}
         rows={props.bodyData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
       />
-      {/*<div className="table-wrapper">*/}
-      {/*  <table>*/}
-      {/*    {props.headData && props.renderHead ? (*/}
-      {/*      <thead>*/}
-      {/*        <tr>*/}
-      {/*          {props.headData.map((item, index) =>*/}
-      {/*            props.renderHead(item, index),*/}
-      {/*          )}*/}
-      {/*        </tr>*/}
-      {/*      </thead>*/}
-      {/*    ) : null}*/}
-      {/*    {props.bodyData && props.renderBody ? (*/}
-      {/*      <tbody>*/}
-      {/*        {dataShow.map((item, index) => (*/}
-      {/*          <MyComponent*/}
-      {/*            handleToast={() => handleToast()}*/}
-      {/*            index={index}*/}
-      {/*            item={item}*/}
-      {/*            key={index}*/}
-      {/*          />*/}
-      {/*        ))}*/}
-      {/*      </tbody>*/}
-      {/*    ) : null}*/}
-      {/*  </table>*/}
-      {/*</div>*/}
-      {/*{pages > 1 ? (*/}
-      {/*  <div className="table__pagination">*/}
-      {/*    {range.map((item, index) => (*/}
-      {/*      <div*/}
-      {/*        key={index}*/}
-      {/*        className={`table__pagination-item ${*/}
-      {/*          currPage === index ? 'active' : ''*/}
-      {/*        }`}*/}
-      {/*        onClick={() => selectPage(index)}*/}
-      {/*      >*/}
-      {/*        {item + 1}*/}
-      {/*      </div>*/}
-      {/*    ))}*/}
-      {/*  </div>*/}
-      {/*) : null}*/}
     </div>
   );
-};
+}
+
+// RequestTable.propTypes = {
+//   bodyData: PropTypes.objectOf(
+//
+//   ).isRequired,
+// };
 
 export default RequestTable;

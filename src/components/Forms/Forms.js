@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { useFirestore } from 'react-redux-firebase';
 import Loader from 'react-loader-spinner';
 import emailjs from 'emailjs-com';
+import { MasjidFormModel } from '../../services/models';
 
 const ERROR = {
   color: 'darkred',
@@ -19,7 +20,7 @@ const INPUT = {
   width: '100%',
 };
 
-const Forms = props => {
+function Forms(props) {
   const firestore = useFirestore();
   return (
     <Formik
@@ -44,25 +45,25 @@ const Forms = props => {
         if (props.item.masjid?.adminId) {
           if (
             window.confirm(
-              'This masjid already have a admin. Do you want to continue?',
+             "This masjid already have a admin. Do you want to continue?",
             )
           ) {
-            firestore.update('Masjid/' + props.item.masjid.id, {
+            firestore.update(`Masjid/${props.item.masjid.id}`, {
               adminId: firestore.FieldValue.delete().then(() => {
                 props.handleToast();
-              }),
+              },
             });
           } else return null;
         }
-        let newAdmin = 1;
-        let existingAdmin = 1;
+        const newAdmin = 1;
+        const existingAdmin = 1;
         if (newAdmin === existingAdmin) {
           emailjs
             .sendForm(
-              'YOUR_SERVICE_ID',
-              'YOUR_TEMPLATE_ID',
+             "YOUR_SERVICE_ID"',
+             "YOUR_TEMPLATE_ID"',
               values,
-              'YOUR_USER_ID',
+             "YOUR_USER_ID",
             )
             .then(
               result => {
@@ -194,6 +195,10 @@ const Forms = props => {
       )}
     </Formik>
   );
+}
+
+Forms.propTypes = {
+  item: MasjidFormModel.isRequired
 };
 
 export default Forms;

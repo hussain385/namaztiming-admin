@@ -5,16 +5,17 @@ import {
   useFirestoreConnect,
 } from 'react-redux-firebase';
 import { Field, Formik } from 'formik';
-import { MasjidSchema } from '../../services/validation';
 import { LocalizationProvider, MobileTimePicker } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import { Autocomplete, Box, Grid, TextField } from '@mui/material';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import _, { isNull } from 'lodash';
+import _ from 'lodash';
 import geohash from 'ngeohash';
 import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
+import { MasjidSchema } from '../../services/validation';
+import { MasjidDataModel, MasjidFormModel } from '../../services/models';
 
 const ERROR = {
   color: 'darkred',
@@ -22,7 +23,11 @@ const ERROR = {
   marginTop: 5,
 };
 
-const FormsTable = props => {
+Formik.propTypes = {
+  initialValues: MasjidFormModel,
+};
+
+function FormsTable({ masjidData, variant, preButton, handleToast, Label }) {
   useFirestoreConnect([
     {
       collection: 'users',
@@ -30,7 +35,6 @@ const FormsTable = props => {
   ]);
 
   // const {masjidData, preButton: {onClick: preButtonClick, text: preButtonText}, onSubmit} = props
-  const masjidData = props.masjidData || null;
   const firebase = useFirebase();
   const filePath = 'MasjidUploads';
   const [image, setImage] = useState(masjidData?.pictureURL);
@@ -43,33 +47,33 @@ const FormsTable = props => {
     if (event.target.files && event.target.files[0]) {
       console.log(event.target.files[0]);
       setImage(URL.createObjectURL(event.target.files[0]));
-      setFieldValue('pictureURL', event.target.files[0]);
+      setFieldVa"pictureURL"URL', event.target.files[0]);
     }
   };
 
-  function onFileDelete(setFieldValue) {
-    if (!(masjidData.pictureURL instanceof File)) {
-      // firebase.storage()
-      return firebase.deleteFile(masjidData.pictureURL).then(() => {
-        setFieldValue('pictureURL', '');
-        setImage('');
-      });
-    }
-    setImage('');
-  }
+  // function onFileDelete(setFieldValue) {
+  //   if (!(masjidData.pictureURL instanceof File)) {
+  //     // firebase.storage()
+  //     return firebase.deleteFile(masjidData.pictureURL).then(() => {
+  //       setFieldValue('pictureURL', '');
+  //       setImage('');
+  //     });
+  //   }
+  //   setImage('');
+  // }
 
   return (
     <Formik
       initialValues={{
-        name: masjidData?.name || '',
-        address: masjidData?.address || '',
-        gLink: masjidData?.gLink || '',
+        name: masjidData?.name""| '',
+        address: masjidData?.address""| '',
+        gLink: masjidData?.gLink""| '',
         pictureURL: masjidData?.pictureURL,
-        userEmail: masjidData?.user?.email || masjidData?.userEmail || '',
-        userName: masjidData?.user?.name || masjidData?.userName || '',
-        userPhone: masjidData?.user?.phone || masjidData?.userPhone || '',
-        latitude: masjidData?.g?.geopoint._lat || '',
-        longitude: masjidData?.g?.geopoint._long || '',
+        userEmail: masjidData?.user?.email || masjidData?.userEmail""| '',
+        userName: masjidData?.user?.name || masjidData?.userName""| '',
+        userPhone: masjidData?.user?.phone || masjidData?.userPhone""| '',
+        latitude: masjidData?.g?.geopoint.latitude""| '',
+        longitude: masjidData?.g?.geopoint.longitude""| '',
         timing: {
           isha: masjidData?.timing?.isha || null,
           fajar: masjidData?.timing?.fajar || null,
@@ -78,20 +82,20 @@ const FormsTable = props => {
           magrib: masjidData?.timing?.magrib || null,
           jummah: masjidData?.timing?.jummah || null,
           eidUlAddah: masjidData?.timing?.eidUlAddah || null,
-          eidUlFitr: masjidData?.timing?.eidUlFitr || null,
-        },
+          eidUlFitr: masjidData?.timing?.eidUlFitr || ull,
+       },
       }}
       validationSchema={MasjidSchema}
       validateOnChange={false}
-      validateOnBlur={true}
+      validateOnBlur
       onSubmit={async (values, { resetForm, setSubmitting }) => {
         const filter = [
-          'latitude',
-          'longitude',
-          'pictureURL',
-          'userName',
-          'userEmail',
-          'userPhone',
+          "latitude",
+          "longitude",
+          "pictureURL",
+          "userName",
+          "userEmail",
+          "userPhone"
         ];
         const data = _.omit(values, filter);
         let pictureURL;
@@ -99,7 +103,7 @@ const FormsTable = props => {
           try {
             const uploadedRef = await firebase.uploadFile(
               filePath,
-              values.pictureURL,
+              values.pictureURL
             );
             pictureURL =
               await uploadedRef.uploadTaskSnaphot.ref.getDownloadURL();
@@ -109,52 +113,52 @@ const FormsTable = props => {
         } else {
           pictureURL = values.pictureURL;
         }
-        if (props.variant === 'new' || props.variant === 'request') {
+        if (variant === "new" || variant === "request") {
           firestore
-            .add('Masjid', {
+            .add("Masjid", {
               ...data,
               pictureURL,
               g: {
                 geopoint: new firestore.GeoPoint(
                   values.latitude,
-                  values.longitude,
+                  values.longitude
                 ),
-                geohash: geohash.encode(values.latitude, values.longitude, 9),
+                geohash: geohash.encode(values.latitude, values.longitude, 9)
               },
               timeStamp: firestore.Timestamp.now(),
             })
             .then(async () => {
-              if (props.variant === 'request') {
+              if (variant === "request") {
                 await firestore
-                  .delete({ collection: 'newMasjid', doc: masjidData.id })
-                  .then(value => {
+                  .delete({ collection: "newMasjid", doc: masjidData.id })
+                  .then(() => {
                     setSubmitting(false);
-                    props.preButton?.onClick();
+                    preButton?.onClick();
                   });
               }
-              resetForm({ values: '' });
-              setImage('');
+              resetForm({ values: "" });
+              setImage("");
               setSubmitting(false);
-              props.handleToast();
+              handleToast();
             });
-        } else if (props.variant === 'edit') {
+        } else if (variant === "edit") {
           firestore
-            .update('Masjid/' + masjidData.id, {
+            .update(`Masjid/${masjidData.id}`, {
               ...data,
               pictureURL,
               g: {
                 geopoint: new firestore.GeoPoint(
                   values.latitude,
-                  values.longitude,
+                  values.longitude
                 ),
-                geohash: geohash.encode(values.latitude, values.longitude, 9),
+                geohash: geohash.encode(values.latitude, values.longitude, 9)
               },
-              timeStamp: firestore.Timestamp.now(),
+              timeStamp: firestore.Timestamp.now()
             })
             .then(() => {
-              props.preButton?.onClick();
+              preButton?.onClick();
               setSubmitting(false);
-              props.handleToast();
+              handleToast();
             });
         }
       }}
@@ -183,7 +187,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Masjid Name"
-                name={'name'}
+                name="name"
                 value={values.name}
                 onChange={event => {
                   setFieldValue('name', event.target.value);
@@ -210,6 +214,7 @@ const FormsTable = props => {
                   } else {
                     setFieldValue('userName', value);
                   }
+                  return null;
                 }}
                 onInputChange={(event, value) => {
                   setFieldValue('userName', value);
@@ -226,9 +231,10 @@ const FormsTable = props => {
                 }
                 renderInput={params => (
                   <TextField
+                    /* eslint-disable-next-line react/jsx-props-no-spreading */
                     {...params}
                     label="Admin Name"
-                    name={'userName'}
+                    name="userName"
                     error={touched.userName && Boolean(errors.userName)}
                     helperText={touched.userName && errors.userName}
                     InputProps={{
@@ -258,6 +264,7 @@ const FormsTable = props => {
                   } else {
                     setFieldValue('userEmail', value);
                   }
+                  return null;
                 }}
                 onInputChange={(event, value) => {
                   setFieldValue('userEmail', value);
@@ -271,9 +278,10 @@ const FormsTable = props => {
                 value={values.userEmail}
                 renderInput={params => (
                   <TextField
+                    /* eslint-disable-next-line react/jsx-props-no-spreading */
                     {...params}
                     label="Admin Email"
-                    name={'userEmail'}
+                    name="userEmail"
                     error={touched.userEmail && Boolean(errors.userEmail)}
                     helperText={touched.userEmail && errors.userEmail}
                     InputProps={{
@@ -286,7 +294,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Admin Phone."
-                name={'userPhone'}
+                name="userPhone"
                 disabled={
                   (masjidData?.user?.phone || masjidData?.userPhone) && !edit
                 }
@@ -313,7 +321,7 @@ const FormsTable = props => {
                     backgroundColor: 'green',
                   }}
                   onClick={() => setEdit(prevState => !prevState)}
-                  type={'button'}
+                  type="button"
                 >
                   {edit ? 'Cancel' : 'Edit'}
                 </button>
@@ -327,10 +335,10 @@ const FormsTable = props => {
                     backgroundColor: 'darkred',
                   }}
                   onClick={() => {
-                    if (props.variant === 'request') {
-                      setFieldValue('userName', '');
-                      setFieldValue('userEmail', '');
-                      setFieldValue('userPhone', '');
+                    if (variant === "request") {
+                      setFieldValue("userName", "");
+                      setFieldValue("userEmail", "");
+                      setFieldValue("userPhone", "");
                       return null;
                     }
                     firestore
@@ -345,10 +353,11 @@ const FormsTable = props => {
                         },
                         reason => {
                           console.error(reason);
-                        },
+                        }
                       );
+                    return null;
                   }}
-                  type={'button'}
+                  type="button"
                 >
                   Delete
                 </button>
@@ -358,7 +367,7 @@ const FormsTable = props => {
             <Grid item xs={12}>
               <TextField
                 label="Google Link"
-                name={'gLink'}
+                name="gLink"
                 value={values.gLink}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -370,7 +379,7 @@ const FormsTable = props => {
             <Grid item xs={12}>
               <TextField
                 label="Masjid Address"
-                name={'address'}
+                name="address"
                 value={values.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -382,7 +391,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Latitude"
-                name={'latitude'}
+                name="latitude"
                 value={values.latitude}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -394,7 +403,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Longitude"
-                name={'longitude'}
+                name="longitude"
                 value={values.longitude}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -419,8 +428,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.fajar'}
+                        name="timing.fajar"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -451,8 +461,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.zohar'}
+                        name="timing.zohar"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -483,8 +494,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.asar'}
+                        name="timing.asar"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -515,8 +527,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.magrib'}
+                        name="timing.magrib"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -547,8 +560,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.isha'}
+                        name="timing.isha"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -576,13 +590,14 @@ const FormsTable = props => {
                   >
                     <div style={{ alignSelf: 'center' }}>
                       <p style={{ marginLeft: 10, marginTop: 10 }}>
-                        Jumma'h Namaz
+                        Jumma&aposh Namaz
                       </p>
                     </div>
                     <div>
                       <Field
-                        name={'timing.jummah'}
+                        name="timing.jummah"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -612,8 +627,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.eidUlAddah'}
+                        name="timing.eidUlAddah"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -643,8 +659,9 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.eidUlFitr'}
+                        name="timing.eidUlFitr"
                         component={MobileTimePicker}
+                        /* eslint-disable-next-line react/jsx-props-no-spreading */
                         renderInput={params => <TextField {...params} />}
                         onChange={e =>
                           setFieldValue(
@@ -712,20 +729,20 @@ const FormsTable = props => {
               justifyContent: 'flex-end',
             }}
           >
-            {props.preButton?.onClick && props.preButton?.text && (
+            {preButton?.onClick && preButton?.text && (
               <button
                 style={{
                   width: 70,
-                  color: 'white',
+                  color: "white",
                   borderRadius: 7,
                   height: 30,
                   marginRight: 20,
-                  backgroundColor: 'darkred',
+                  backgroundColor: "darkred"
                 }}
-                onClick={props.preButton?.onClick}
-                type={'button'}
+                onClick={preButton?.onClick}
+                type="button"
               >
-                {props.preButton?.text}
+                {preButton?.text}
               </button>
             )}
             <button
@@ -744,7 +761,7 @@ const FormsTable = props => {
               {isSubmitting ? (
                 <Loader type="Puff" color="white" height={12} width={40} />
               ) : (
-                <p>{props.Label ? props.Label : 'Accept Request'}</p>
+                <p>{Label || "Accept Request"}</p>
               )}
             </button>
           </div>
@@ -752,42 +769,23 @@ const FormsTable = props => {
       )}
     </Formik>
   );
-};
+}
 
 FormsTable.propTypes = {
-  masjidData: PropTypes.shape({
-    user: PropTypes.shape({
-      id: PropTypes.string,
-      phone: PropTypes.string,
-      name: PropTypes.string,
-      isAdmin: PropTypes.bool,
-      email: PropTypes.string,
-    }),
-    adminId: PropTypes.string,
-    name: PropTypes.string,
-    g: PropTypes.shape({
-      geohash: PropTypes.string,
-      geopoint: PropTypes.shape({
-        latitude: PropTypes.number,
-        longitude: PropTypes.number,
-      }),
-    }),
-    pictureURL: PropTypes.string,
-    address: PropTypes.string,
-    id: PropTypes.string,
-    timing: PropTypes.shape({
-      isha: PropTypes.string,
-      fajar: PropTypes.string,
-      zohar: PropTypes.string,
-      asar: PropTypes.string,
-      magrib: PropTypes.string,
-    }),
-  }),
+  masjidData: MasjidDataModel,
   preButton: PropTypes.shape({
     onClick: PropTypes.func.isRequired,
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired
   }),
-  variant: PropTypes.oneOf(['new', 'request', 'edit']).isRequired,
+  variant: PropTypes.oneOf(["new", "request", "edit"]).isRequired,
+  handleToast: PropTypes.func.isRequired,
+  Label: PropTypes.string
+};
+
+FormsTable.defaultProps = {
+  masjidData: null,
+  preButton: null,
+  Label: null
 };
 
 export default FormsTable;

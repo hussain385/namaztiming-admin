@@ -3,20 +3,22 @@ import { Modal, useModal } from 'react-simple-hook-modal';
 import 'react-simple-hook-modal/dist/styles.css';
 import { useFirestore } from 'react-redux-firebase';
 import './table.css';
-import FormsTable from '../FormsTable/FormsTable';
 import _ from 'lodash';
 import geohash from 'ngeohash';
 import firebase from 'firebase/compat';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import TimeRequest from './TimeRequest';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import PropTypes from 'prop-types';
+import TimeRequest from './TimeRequest';
+import FormsTable from '../FormsTable/FormsTable';
+import { MasjidSchema } from '../../services/validation';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const RenderCusomerBody = ({ masjidData, index }) => {
+function RenderCusomerBody({ masjidData, index }) {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [data, setData] = React.useState();
 
@@ -36,7 +38,7 @@ const RenderCusomerBody = ({ masjidData, index }) => {
               setData(params.row);
             }}
             // variant={'contained'}
-            className={'buttonStyle'}
+            className="buttonStyle"
           >
             View
           </button>
@@ -47,21 +49,21 @@ const RenderCusomerBody = ({ masjidData, index }) => {
 
   return (
     <>
-      {/*<tr key={index}>*/}
-      {/*  <td>{index + 1}</td>*/}
-      {/*  <td>{item.name}</td>*/}
-      {/*  <td>{item.address}</td>*/}
-      {/*  <td>*/}
-      {/*    <button onClick={openModal} className="buttonStyle">*/}
-      {/*      View*/}
-      {/*    </button>*/}
-      {/*  </td>*/}
-      {/*</tr>*/}
+      {/* <tr key={index}> */}
+      {/*  <td>{index + 1}</td> */}
+      {/*  <td>{item.name}</td> */}
+      {/*  <td>{item.address}</td> */}
+      {/*  <td> */}
+      {/*    <button onClick={openModal} className="buttonStyle"> */}
+      {/*      View */}
+      {/*    </button> */}
+      {/*  </td> */}
+      {/* </tr> */}
       <DataGrid
         columns={column}
         rows={masjidData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
@@ -73,15 +75,13 @@ const RenderCusomerBody = ({ masjidData, index }) => {
               <tr>
                 <th>ID</th>
                 <th>User Name</th>
-                <th>{''}</th>
+                <th />
               </tr>
             </thead>
             <tbody>
-              <>
-                {data?.requests.map((values, index) => (
-                  <TimeRequest item={values} index={index} masjidId={data.id} />
-                ))}
-              </>
+              {data?.requests.map((values, index) => (
+                <TimeRequest item={values} index={index} masjidId={data.id} />
+              ))}
             </tbody>
           </table>
         </div>
@@ -110,9 +110,9 @@ const RenderCusomerBody = ({ masjidData, index }) => {
       </Modal>
     </>
   );
-};
+}
 
-const RenderBody = ({ handleToast, masjidData, index }) => {
+function RenderBody({ handleToast, masjidData }) {
   const { isModalOpen, openModal, closeModal } = useModal();
   const Firestore = useFirestore();
   const [data, setData] = React.useState(null);
@@ -134,7 +134,8 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
               setData(params.row);
             }}
             // variant={'contained'}
-            className={'buttonStyle'}
+            type="button"
+            className="buttonStyle"
           >
             View
           </button>
@@ -144,14 +145,14 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
   ];
 
   function onSubmit(values) {
-    const data = _.omit(values, ['latitude', 'longitude']);
-    Firestore.update('Masjid/' + data.id, {
-      ...data,
+    const data1 = _.omit(values, ['latitude', 'longitude']);
+    Firestore.update(`Masjid/${data1.id}`, {
+      ...data1,
       g: {
         geopoint: new Firestore.GeoPoint(values.latitude, values.longitude),
         geohash: geohash.encode(values.latitude, values.longitude, 9),
       },
-    }).then(value => closeModal());
+    }).then(() => closeModal());
   }
 
   return (
@@ -160,7 +161,7 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
         columns={column}
         rows={masjidData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
@@ -172,15 +173,26 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
           preButton={{ onClick: closeModal, text: 'Close' }}
           onSubmit={onSubmit}
           Label="Save Changes"
-          variant={'edit'}
+          variant="edit"
         />
       </Modal>
     </>
   );
-};
+}
 
-const Table = props => {
-  console.log(props.bodyData);
+RenderBody.propTypes = {
+  handleToast: PropTypes.func.isRequired,
+  masjidData: PropTypes.arrayOf(MasjidSchema).isRequired,
+};
+function Table({
+  edit,
+  bodyData,
+  isAddMasjid,
+  limit,
+  renderBody,
+  timeRequest,
+}) {
+  console.log(bodyData);
   const { isModalOpen, openModal, closeModal } = useModal();
   const [open, setOpen] = React.useState(false);
 
@@ -196,74 +208,39 @@ const Table = props => {
     setOpen(false);
   };
 
-  // return (
-  //   <div>
-  //     <DataGrid
-  //       columns={column}
-  //       rows={props.bodyData}
-  //       pageSize={props.limit}
-  //       autoHeight={true}
-  //     />
-  //     <Modal id="any-unique-identifier" isOpen={isModalOpen}>
-  //       <FormsTable
-  //         masjidData={data}
-  //         handleToast={() => {}}
-  //         preButton={{ onClick: closeModal, text: 'Close' }}
-  //         onSubmit={() => {}}
-  //         Label="Save Changes"
-  //         variant={'edit'}
-  //       />
-  //     </Modal>
-  //   </div>
-  // );
-  // const initDataShow =
-  //   props.limit && props.bodyData
-  //     ? props.bodyData.slice(0, Number(props.limit))
-  //     : props.bodyData;
-  //
-  // const [dataShow, setDataShow] = useState(initDataShow);
-  //
-  // let pages = 1;
-  //
-  // let range = [];
-  //
-  // if (props.limit !== undefined) {
-  //   let page = Math.floor(props.bodyData.length / Number(props.limit));
-  //   pages = props.bodyData.length % Number(props.limit) === 0 ? page : page + 1;
-  //   range = [...Array(pages).keys()];
-  // }
-  //
-  // const [currPage, setCurrPage] = useState(0);
-  // const [open, setOpen] = React.useState(false);
-  //
-  // const handleToast = () => {
-  //   setOpen(true);
-  // };
-  //
-  // const handleClose = (event, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //
-  //   setOpen(false);
-  // };
-  // const selectPage = (page) => {
-  //   const start = Number(props.limit) * page;
-  //   const end = start + Number(props.limit);
-  //
-  //   setDataShow(props.bodyData.slice(start, end));
-  //
-  //   setCurrPage(page);
-  // };
-  //
-  // useEffect(() => {
-  //   setDataShow(
-  //     props.limit && props.bodyData
-  //       ? props.bodyData.slice(0, Number(props.limit))
-  //       : props.bodyData
-  //   );
-  // }, [props.bodyData, props.limit]);
-  //
+  if (edit) {
+    return (
+      <div>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={open}
+          autoHideDuration={1500}
+          onClose={handleClose}
+        >
+          {isAddMasjid ? (
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              sx={{ width: '100%' }}
+            >
+              Details were saved successfully!
+            </Alert>
+          ) : (
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              sx={{ width: '100%' }}
+            >
+              Details were edited successfully!
+            </Alert>
+          )}
+        </Snackbar>
+        <div>
+          <RenderBody masjidData={bodyData} handleToast={handleToast} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div>
       <Snackbar
@@ -272,7 +249,7 @@ const Table = props => {
         autoHideDuration={1500}
         onClose={handleClose}
       >
-        {props.isAddMasjid ? (
+        {isAddMasjid ? (
           <Alert
             onClose={handleClose}
             severity="success"
@@ -291,52 +268,39 @@ const Table = props => {
         )}
       </Snackbar>
       <div>
-        {props.edit ? (
-          <RenderBody masjidData={props.bodyData} handleToast={handleToast} />
+        {timeRequest ? (
+          <RenderCusomerBody
+            masjidData={bodyData}
+            handleToast={() => handleToast()}
+          />
         ) : (
           <>
-            {props.timeRequest ? (
-              <RenderCusomerBody
-                masjidData={props.bodyData}
-                handleToast={() => handleToast()}
-              />
-            ) : (
-              // <>
-              //   {dataShow.map((item, index) => (
-              //     <RenderCusomerBody
-              //       handleToast={() => handleToast()}
-              //       index={index}
-              //       item={item}
-              //     />
-              //   ))}
-              // </>
-              <>
-                {(props.limit && props.bodyData
-                  ? props.bodyData.slice(0, Number(props.limit))
-                  : props.bodyData
-                ).map((item, index) => props.renderBody(item, index))}
-              </>
-            )}
+            {(limit && bodyData
+              ? bodyData.slice(0, Number(limit))
+              : bodyData
+            ).map((item, index) => renderBody(item, index))}
           </>
         )}
       </div>
-      {/*{pages > 1 ? (*/}
-      {/*  <div className="table__pagination">*/}
-      {/*    {range.map((item, index) => (*/}
-      {/*      <div*/}
-      {/*        key={index}*/}
-      {/*        className={`table__pagination-item ${*/}
-      {/*          currPage === index ? 'active' : ''*/}
-      {/*        }`}*/}
-      {/*        onClick={() => selectPage(index)}*/}
-      {/*      >*/}
-      {/*        {item + 1}*/}
-      {/*      </div>*/}
-      {/*    ))}*/}
-      {/*  </div>*/}
-      {/*) : null}*/}
     </div>
   );
+}
+
+Table.propTypes = {
+  edit: PropTypes.bool,
+  bodyData: PropTypes.arrayOf(MasjidSchema).isRequired,
+  renderBody: PropTypes.func,
+  isAddMasjid: PropTypes.bool,
+  limit: PropTypes.number,
+  timeRequest: PropTypes.bool,
+};
+
+Table.defaultProps = {
+  edit: false,
+  isAddMasjid: false,
+  limit: 0,
+  renderBody: null,
+  timeRequest: false,
 };
 
 export default Table;

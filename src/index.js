@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import reportWebVitals from './reportWebVitals';
 // import { initializeApp } from "firebase/app"
 import firebase from 'firebase/compat';
 import 'firebase/firestore';
 import { Provider } from 'react-redux';
-import { store } from './redux/store';
 import { createFirestoreInstance } from 'redux-firestore';
 import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -14,10 +12,11 @@ import './assets/css/grid.css';
 import './assets/css/theme.css';
 import './assets/css/index.css';
 
-import Routes from './components/Routes';
-
 import { FirebaseAppProvider } from 'reactfire';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import Routes from './components/Routes';
+import { store } from './redux/store';
+import reportWebVitals from './reportWebVitals';
 import theme from './theme';
 
 const firebaseConfig = {
@@ -43,7 +42,7 @@ const rrfConfig = {
   useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
 };
 const rrfProps = {
-  firebase: firebase,
+  firebase,
   config: rrfConfig,
   dispatch: store.dispatch,
   createFirestoreInstance, // <- needed if using firestore

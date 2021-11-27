@@ -4,7 +4,7 @@ import { ModalProvider } from 'react-simple-hook-modal';
 import { useSelector } from 'react-redux';
 import RequestTable from '../components/requestTable/RequestTable';
 
-const Request = () => {
+function Request() {
   useFirestoreConnect([
     {
       collection: 'newMasjid',
@@ -29,6 +29,6 @@ const Request = () => {
       </div>
     </ModalProvider>
   );
-};
+}
 
 export default Request;
