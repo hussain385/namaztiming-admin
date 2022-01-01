@@ -60,7 +60,7 @@ const Topnav = props => {
             fontWeight: 'bold !important',
           }}
         >
-          Masjid Finder Pakistan
+          Namaz Timings
         </Typography>
       </Link>
       <div className="topnav__right">
