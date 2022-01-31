@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@date-io/moment": "^2.11.0",
+    "@emailjs/browser": "^3.4.0",
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@firebase/auth": "^0.19.3",

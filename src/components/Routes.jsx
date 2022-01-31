@@ -18,6 +18,7 @@ import ForgotPassword from '../pages/forgotPassword';
 import SuccessPage from '../pages/SuccessPage';
 import TimeRequests from '../pages/TimeRequests';
 import TermsCondition from "../pages/Terms&Condition";
+import ContactUs from "../pages/ContactUs";
 
 // import {getAuth} from "firebase/auth";
 
@@ -73,6 +74,9 @@ const Routes = () => {
                 </PrivateRoute>
                 <PrivateRoute path="/masjidList" exact>
                     <MasjidList/>
+                </PrivateRoute>
+                <PrivateRoute path="/contact-us" exact>
+                    <ContactUs/>
                 </PrivateRoute>
                 <PrivateRoute path="/request" exact>
                     <Request/>

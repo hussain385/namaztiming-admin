@@ -28,5 +28,10 @@
     "display_name": "Edit Time Requests",
     "route": "/time-requests",
     "icon": "far fa-clock"
+  },
+  {
+    "display_name": "Contact Us",
+    "route": "/contact-us",
+    "icon": "far fa-address-card"
   }
 ]

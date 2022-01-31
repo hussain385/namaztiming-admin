@@ -47,16 +47,6 @@ const RenderCusomerBody = ({ masjidData, index }) => {
 
   return (
     <>
-      {/*<tr key={index}>*/}
-      {/*  <td>{index + 1}</td>*/}
-      {/*  <td>{item.name}</td>*/}
-      {/*  <td>{item.address}</td>*/}
-      {/*  <td>*/}
-      {/*    <button onClick={openModal} className="buttonStyle">*/}
-      {/*      View*/}
-      {/*    </button>*/}
-      {/*  </td>*/}
-      {/*</tr>*/}
       <DataGrid
         columns={column}
         rows={masjidData}
@@ -195,75 +185,6 @@ const Table = props => {
 
     setOpen(false);
   };
-
-  // return (
-  //   <div>
-  //     <DataGrid
-  //       columns={column}
-  //       rows={props.bodyData}
-  //       pageSize={props.limit}
-  //       autoHeight={true}
-  //     />
-  //     <Modal id="any-unique-identifier" isOpen={isModalOpen}>
-  //       <FormsTable
-  //         masjidData={data}
-  //         handleToast={() => {}}
-  //         preButton={{ onClick: closeModal, text: 'Close' }}
-  //         onSubmit={() => {}}
-  //         Label="Save Changes"
-  //         variant={'edit'}
-  //       />
-  //     </Modal>
-  //   </div>
-  // );
-  // const initDataShow =
-  //   props.limit && props.bodyData
-  //     ? props.bodyData.slice(0, Number(props.limit))
-  //     : props.bodyData;
-  //
-  // const [dataShow, setDataShow] = useState(initDataShow);
-  //
-  // let pages = 1;
-  //
-  // let range = [];
-  //
-  // if (props.limit !== undefined) {
-  //   let page = Math.floor(props.bodyData.length / Number(props.limit));
-  //   pages = props.bodyData.length % Number(props.limit) === 0 ? page : page + 1;
-  //   range = [...Array(pages).keys()];
-  // }
-  //
-  // const [currPage, setCurrPage] = useState(0);
-  // const [open, setOpen] = React.useState(false);
-  //
-  // const handleToast = () => {
-  //   setOpen(true);
-  // };
-  //
-  // const handleClose = (event, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //
-  //   setOpen(false);
-  // };
-  // const selectPage = (page) => {
-  //   const start = Number(props.limit) * page;
-  //   const end = start + Number(props.limit);
-  //
-  //   setDataShow(props.bodyData.slice(start, end));
-  //
-  //   setCurrPage(page);
-  // };
-  //
-  // useEffect(() => {
-  //   setDataShow(
-  //     props.limit && props.bodyData
-  //       ? props.bodyData.slice(0, Number(props.limit))
-  //       : props.bodyData
-  //   );
-  // }, [props.bodyData, props.limit]);
-  //
   return (
     <div>
       <Snackbar
@@ -301,15 +222,6 @@ const Table = props => {
                 handleToast={() => handleToast()}
               />
             ) : (
-              // <>
-              //   {dataShow.map((item, index) => (
-              //     <RenderCusomerBody
-              //       handleToast={() => handleToast()}
-              //       index={index}
-              //       item={item}
-              //     />
-              //   ))}
-              // </>
               <>
                 {(props.limit && props.bodyData
                   ? props.bodyData.slice(0, Number(props.limit))
@@ -320,21 +232,6 @@ const Table = props => {
           </>
         )}
       </div>
-      {/*{pages > 1 ? (*/}
-      {/*  <div className="table__pagination">*/}
-      {/*    {range.map((item, index) => (*/}
-      {/*      <div*/}
-      {/*        key={index}*/}
-      {/*        className={`table__pagination-item ${*/}
-      {/*          currPage === index ? 'active' : ''*/}
-      {/*        }`}*/}
-      {/*        onClick={() => selectPage(index)}*/}
-      {/*      >*/}
-      {/*        {item + 1}*/}
-      {/*      </div>*/}
-      {/*    ))}*/}
-      {/*  </div>*/}
-      {/*) : null}*/}
     </div>
   );
 };
