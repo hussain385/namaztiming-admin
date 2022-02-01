@@ -15,6 +15,7 @@ import _, { isNull } from 'lodash';
 import geohash from 'ngeohash';
 import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
+import { sendNotification } from '../../services/pushNotification';
 
 const ERROR = {
   color: 'darkred',
@@ -128,7 +129,14 @@ const FormsTable = props => {
               if (props.variant === 'request') {
                 await firestore
                   .delete({ collection: 'newMasjid', doc: masjidData.id })
-                  .then(value => {
+                  .then(async value => {
+                    if (masjidData.token) {
+                      await sendNotification(
+                        masjidData.token,
+                        'Masjid has been added',
+                        'Your request for new Masjid has been approved',
+                      );
+                    }
                     setSubmitting(false);
                     props.preButton?.onClick();
                   });

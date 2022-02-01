@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { useFirestore } from 'react-redux-firebase';
 import Loader from 'react-loader-spinner';
 import emailjs from 'emailjs-com';
+import { sendNotification } from '../../services/pushNotification';
 
 const ERROR = {
   color: 'darkred',
@@ -47,7 +48,7 @@ const Forms = props => {
               'This masjid already have a admin. Do you want to continue?',
             )
           ) {
-            firestore.update('Masjid/' + props.item.masjid.id, {
+            await firestore.update('Masjid/' + props.item.masjid.id, {
               adminId: firestore.FieldValue.delete().then(() => {
                 props.handleToast();
               }),
@@ -90,6 +91,13 @@ const Forms = props => {
             setSubmitting(false);
             props.handleToast();
           });
+        if (props.item.token) {
+          await sendNotification(
+            props.item.token,
+            'Admin request has been approved',
+            `Congratulations you are now admin of ${props.item.masjid?.name} please check your email`,
+          );
+        }
       }}
     >
       {({
