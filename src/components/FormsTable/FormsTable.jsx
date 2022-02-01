@@ -92,6 +92,7 @@ const FormsTable = props => {
           'userName',
           'userEmail',
           'userPhone',
+          'token',
         ];
         const data = _.omit(values, filter);
         let pictureURL;
@@ -676,7 +677,7 @@ const FormsTable = props => {
                       <>
                         <img
                           alt="masjid"
-                          // style={{ alignSelf: "center" }}
+                          style={{ maxHeight: '100%', maxWidth: '100%' }}
                           width="auto"
                           height="auto"
                           src={image}

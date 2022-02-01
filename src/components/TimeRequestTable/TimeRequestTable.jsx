@@ -7,6 +7,7 @@ import DateAdapter from '@mui/lab/AdapterMoment';
 import moment from 'moment';
 import Loader from 'react-loader-spinner';
 import { useFirestore } from 'react-redux-firebase';
+import { sendNotification } from '../../services/pushNotification';
 
 const ERROR = {
   color: 'darkred',
@@ -22,6 +23,7 @@ const INPUT = {
 };
 const TimeRequestTable = props => {
   const firestore = useFirestore();
+
   return (
     <div>
       <Formik
@@ -59,7 +61,21 @@ const TimeRequestTable = props => {
                 ...values.timing,
               },
             })
-            .then(() => {
+            .then(async () => {
+              if (props.data.token) {
+                sendNotification(
+                  props.data.token,
+                  'Requested Time Has Been Updated',
+                  `your request from ${props.masjidName} has been approved and updated`,
+                ).then(
+                  value => {
+                    console.log(value);
+                  },
+                  reason => {
+                    console.error(reason);
+                  },
+                );
+              }
               firestore
                 .delete('requests/' + props.data.id)
                 .then(() => props.preButton.onClick());

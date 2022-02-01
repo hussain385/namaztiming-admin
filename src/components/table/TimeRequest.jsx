@@ -3,7 +3,7 @@ import { Modal, useModal } from 'react-simple-hook-modal';
 import TimeRequestTable from '../TimeRequestTable/TimeRequestTable';
 import { useFirestore } from 'react-redux-firebase';
 
-const TimeRequest = ({ index, item, masjidId }) => {
+const TimeRequest = ({ index, item, masjidId, masjidName }) => {
   const { isModalOpen, openModal, closeModal } = useModal();
   const firestore = useFirestore();
   console.log(item);
@@ -39,6 +39,7 @@ const TimeRequest = ({ index, item, masjidId }) => {
           preButton={{ onClick: closeModal, text: 'Close' }}
           data={item}
           masjidId={masjidId}
+          masjidName={masjidName}
         />
       </Modal>
     </>

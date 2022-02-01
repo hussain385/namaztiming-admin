@@ -69,7 +69,12 @@ const RenderCusomerBody = ({ masjidData, index }) => {
             <tbody>
               <>
                 {data?.requests.map((values, index) => (
-                  <TimeRequest item={values} index={index} masjidId={data.id} />
+                  <TimeRequest
+                    item={values}
+                    index={index}
+                    masjidId={data.id}
+                    masjidName={data.name}
+                  />
                 ))}
               </>
             </tbody>
