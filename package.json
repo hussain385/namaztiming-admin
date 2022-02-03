@@ -27,7 +27,6 @@
     "firebase": "^9.6.5",
     "font-awesome": "^4.7.0",
     "formik": "^2.2.9",
-    "husky": "^7.0.4",
     "lint-staged": "^11.2.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -60,7 +59,8 @@
     "lint": "yarn run eslint src",
     "prettify": "prettier --write .",
     "lint:fix": "yarn run eslint --fix src",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "husky install"
   },
   "browserslist": {
     "production": [
@@ -75,7 +75,8 @@
     ]
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4"
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "husky": "^7.0.0"
   },
   "engines": {
     "yarn": ">=1.22.10",

@@ -40,9 +40,9 @@ const RequestTable = props => {
   const Firestore = useFirestore();
 
   async function onDelete(item) {
-    console.log(item,"on delete"');
+    console.log(item, 'on delete');
     await Firestore.delete(`newMasjid/${item.id}`).then(() => {
-      alert"Request deleted successfully"');
+      alert('Request deleted successfully');
     });
     await firebase.storage().refFromURL(item.pictureURL).delete();
     // window.location.reload();
@@ -203,8 +203,8 @@ const RequestTable = props => {
 };
 
 export default compose(
-  firestoreConnect(() => ["newMasjid"]),
-  connect(({ firestore: { ordered } }, ownProps) => ({
-    bodyData: ordered.newMasjid
-  }))
+  firestoreConnect(() => ['newMasjid']),
+  connect(({ firestore: { ordered } }) => ({
+    bodyData: ordered.newMasjid,
+  })),
 )(RequestTable);
