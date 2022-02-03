@@ -50,18 +50,18 @@ const rrfProps = {
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ReactReduxFirebaseProvider {...rrfProps}>
-        <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Routes />
-          </ThemeProvider>
-        </FirebaseAppProvider>
-      </ReactReduxFirebaseProvider>
-    </Provider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routes />
+        </ThemeProvider>
+      </FirebaseAppProvider>
+    </ReactReduxFirebaseProvider>
+  </Provider>,
+  // </React.StrictMode>,
   document.getElementById('root'),
 );
 

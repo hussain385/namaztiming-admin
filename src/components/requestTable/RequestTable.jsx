@@ -10,10 +10,12 @@ import {
   Snackbar,
 } from '@mui/material';
 import FormsTable from '../FormsTable/FormsTable';
-import { useFirestore } from 'react-redux-firebase';
+import { firestoreConnect, useFirestore } from 'react-redux-firebase';
 import firebase from 'firebase/compat';
 import MuiAlert from '@mui/material/Alert';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -38,11 +40,12 @@ const RequestTable = props => {
   const Firestore = useFirestore();
 
   async function onDelete(item) {
+    console.log(item,"on delete"');
     await Firestore.delete(`newMasjid/${item.id}`).then(() => {
-      alert('Request deleted successfully');
+      alert"Request deleted successfully"');
     });
     await firebase.storage().refFromURL(item.pictureURL).delete();
-    window.location.reload();
+    // window.location.reload();
   }
 
   const column = [
@@ -78,7 +81,7 @@ const RequestTable = props => {
               View
             </button>
             <button
-              onClick={onDelete}
+              onClick={() => onDelete(params.row)}
               className="buttonStyle"
               style={{ backgroundColor: 'darkred', marginLeft: 15 }}
             >
@@ -148,7 +151,7 @@ const RequestTable = props => {
       </Snackbar>
       <DataGrid
         columns={column}
-        rows={props.bodyData}
+        rows={props.bodyData || []}
         pageSize={10}
         autoHeight={true}
         components={{
@@ -199,4 +202,9 @@ const RequestTable = props => {
   );
 };
 
-export default RequestTable;
+export default compose(
+  firestoreConnect(() => ["newMasjid"]),
+  connect(({ firestore: { ordered } }, ownProps) => ({
+    bodyData: ordered.newMasjid
+  }))
+)(RequestTable);
