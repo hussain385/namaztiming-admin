@@ -52,7 +52,9 @@ function SignUp() {
   const params = new URLSearchParams(window.location.search);
   const [error, setError] = useState(null);
   const firebase = useFirebase();
-  const { auth, profile } = useSelector(state => state.firebase);
+  const { auth, profile, isInitializing } = useSelector(
+    state => state.firebase,
+  );
   const firestore = useFirestore();
   const history = useNavigate();
   const [open, setOpen] = React.useState(false);
@@ -131,10 +133,10 @@ function SignUp() {
     );
   }
 
-  // if (status === 'loading') {
-  //   return <span>Loading...</span>;
-  // }
-  //
+  if (isInitializing) {
+    return <span>Loading...</span>;
+  }
+
   // if (status === 'error') {
   //   return (
   //     <BoxSignup

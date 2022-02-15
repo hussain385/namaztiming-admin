@@ -23,6 +23,7 @@ const ERROR = {
 };
 
 const Login = props => {
+  console.log(props);
   const { login, logout } = useFirebase();
   const { auth, profile } = useSelector(state => state.firebase);
   const navigate = useNavigate();
