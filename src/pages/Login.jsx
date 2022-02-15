@@ -25,7 +25,7 @@ const ERROR = {
 const Login = props => {
   const { login, logout } = useFirebase();
   const { auth, profile } = useSelector(state => state.firebase);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const themeReducer = useSelector(state => state.ThemeReducer);
   const dispatch = useDispatch();
@@ -41,17 +41,16 @@ const Login = props => {
     if (isLoaded(auth) && !isEmpty(auth)) {
       if (profile.isAdmin === false) {
         console.log('not an admin');
-        logout();
+        return logout();
       } else {
-        if (props.location.state) {
-          console.log('pushing to ' + props.location.state.from.pathname);
-          return history.push(props.location.state.from.pathname);
-          // console.log(props
-        }
+        // if (props?.location.state) {
+        //   console.log('pushing to ' + props.location.state.from.pathname);
+        //   return history.push(props.location.state.from.pathname);
+        //   // console.log(props
+        // }
         console.log('pushing to /');
-        return history.push('/');
+        return navigate('/', { replace: true });
       }
-      console.log('the current user:', auth);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.isAdmin]);

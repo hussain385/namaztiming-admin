@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './login.css';
-import { useUser } from 'reactfire';
-import firebase from 'firebase/compat';
-import { useHistory } from 'react-router-dom';
+// import { useUser } from 'reactfire';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardHeader,
@@ -18,6 +17,8 @@ import BoxSignup from '../components/BoxSignup/BoxSignUp';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Redirect from 'react-dom';
+import { useFirebase, useFirestore } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -47,12 +48,13 @@ Formik.propTypes = {
 };
 
 function SignUp() {
-  const { status, data: user, error: userError } = useUser();
+  // const { status, data: user, error: userError } = useUser();
   const params = new URLSearchParams(window.location.search);
   const [error, setError] = useState(null);
-  // const [render, setRender] = useState(null);
-  const db = firebase.firestore();
-  const history = useHistory();
+  const firebase = useFirebase();
+  const { auth, profile } = useSelector(state => state.firebase);
+  const firestore = useFirestore();
+  const history = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleToast = () => {
     setOpen(true);
@@ -66,7 +68,7 @@ function SignUp() {
     setOpen(false);
   };
   useEffect(() => {
-    if (user) {
+    if (auth) {
       return null;
     }
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
@@ -118,7 +120,7 @@ function SignUp() {
   //     })
   // }
 
-  if (error && !user) {
+  if (error && !auth) {
     return (
       <BoxSignup
         value="Link Invalid"
@@ -129,21 +131,22 @@ function SignUp() {
     );
   }
 
-  if (status === 'loading') {
-    return <span>Loading...</span>;
-  }
+  // if (status === 'loading') {
+  //   return <span>Loading...</span>;
+  // }
+  //
+  // if (status === 'error') {
+  //   return (
+  //     <BoxSignup
+  //       value="Please try again"
+  //       icon="far fa-times-circle"
+  //       color="#c34a4a"
+  //       title="Error! Something went wrong please try again"
+  //     />
+  //   );
+  // }
 
-  if (status === 'error') {
-    return (
-      <BoxSignup
-        value="Please try again"
-        icon="far fa-times-circle"
-        color="#c34a4a"
-        title="Error! Something went wrong please try again"
-      />
-    );
-  }
-  if (userError && !user) {
+  if (!auth) {
     return (
       <BoxSignup
         value="Please try again"
@@ -155,32 +158,32 @@ function SignUp() {
   }
 
   if (
-    status === 'success' &&
     params.get('userName') &&
     params.get('userPhone') &&
     params.get('masjidId') &&
-    user
+    auth
   ) {
-    db.collection('users')
-      .doc(user.uid)
-      .get()
-      .then(value => {
-        console.log(value);
-        if (value.exists) {
-          console.log('exist');
-          db.collection('Masjid')
-            .doc(params.get('masjidId'))
-            .update({
-              adminId: user.uid,
-            })
-            .then(e => {
-              history.push('/success-page');
-            })
-            .catch(reason => {
-              console.error(reason);
-            });
-        }
-      });
+    // db.collection('users')
+    //   .doc(user.uid)
+    //   .get()
+    //   .then(value => {
+    //     console.log(value);
+    if (profile) {
+      console.log('exist');
+      firestore
+        .collection('Masjid')
+        .doc(params.get('masjidId'))
+        .update({
+          adminId: auth.uid,
+        })
+        .then(e => {
+          history.push('/success-page');
+        })
+        .catch(reason => {
+          console.error(reason);
+        });
+    }
+    //   });
     return (
       <Container
         component={'main'}
@@ -217,9 +220,8 @@ function SignUp() {
               .currentUser.updatePassword(values.password)
               .then(
                 () => {
-                  db.collection('users')
-                    .doc(user.uid)
-                    .set({
+                  firebase
+                    .updateProfile({
                       name: decodeURI(params.get('userName')),
                       phone: decodeURI(params.get('userPhone')),
                       email: decodeURI(params.get('userEmail')),
@@ -227,10 +229,11 @@ function SignUp() {
                     })
                     .then(
                       () => {
-                        db.collection('Masjid')
+                        firestore
+                          .collection('Masjid')
                           .doc(params.get('masjidId'))
                           .update({
-                            adminId: user.uid,
+                            adminId: auth.uid,
                           })
                           .then(
                             () => {

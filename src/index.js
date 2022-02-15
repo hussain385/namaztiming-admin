@@ -21,12 +21,13 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import theme from './theme';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAq5zFrHz0lSjTiE1U43XEnaiR-D4I8sjY',
-  authDomain: 'fir-c232b.firebaseapp.com',
-  projectId: 'fir-c232b',
-  storageBucket: 'fir-c232b.appspot.com',
-  messagingSenderId: '84116374184',
-  appId: '1:84116374184:web:81f8d8c9f3be0781dd389d',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  // databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: 'G-8352Z31MRV',
 };
 
