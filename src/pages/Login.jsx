@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import './login.css';
 import { isEmpty, isLoaded, useFirebase } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 import { useDispatch } from 'react-redux';
 import ThemeAction from '../redux/actions/ThemeAction';
@@ -25,7 +25,7 @@ const ERROR = {
 const Login = props => {
   const { login, logout } = useFirebase();
   const { auth, profile } = useSelector(state => state.firebase);
-  const history = useHistory();
+  const history = useNavigate();
 
   const themeReducer = useSelector(state => state.ThemeReducer);
   const dispatch = useDispatch();

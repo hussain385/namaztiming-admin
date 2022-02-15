@@ -41,7 +41,7 @@
     "react-modal": "^3.14.3",
     "react-redux": "^7.2.6",
     "react-redux-firebase": "^3.11.0",
-    "react-router-dom": "^5.3.0",
+    "react-router-dom": "^6.2.1",
     "react-scripts": "4.0.3",
     "react-simple-hook-modal": "^1.1.0",
     "reactfire": "^4.2.1",

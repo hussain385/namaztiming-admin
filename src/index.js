@@ -14,7 +14,7 @@ import './assets/css/grid.css';
 import './assets/css/theme.css';
 import './assets/css/index.css';
 
-import Routes from './components/Routes';
+import Routers from './components/Routers';
 
 import { FirebaseAppProvider } from 'reactfire';
 import { CssBaseline, ThemeProvider } from '@mui/material';
@@ -56,7 +56,7 @@ ReactDOM.render(
       <FirebaseAppProvider firebaseConfig={firebaseConfig}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Routes />
+          <Routers />
         </ThemeProvider>
       </FirebaseAppProvider>
     </ReactReduxFirebaseProvider>

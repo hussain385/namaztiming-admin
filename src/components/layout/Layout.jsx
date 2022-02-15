@@ -10,6 +10,7 @@ const Layout = props => {
   const themeReducer = useSelector(state => state.ThemeReducer);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+
   const clickOpen = () => {
     setOpen(prevState => !prevState);
   };
@@ -23,7 +24,7 @@ const Layout = props => {
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>
       <div className={`layout ${themeReducer.mode} ${themeReducer.color}`}>
-        {open && <Sidebar clickOpen={() => clickOpen()} {...props.extra} />}
+        {open && <Sidebar clickOpen={() => clickOpen()} />}
         <div className="layout__content">
           <TopNav clickOpen={() => clickOpen()} />
           {open ? (
