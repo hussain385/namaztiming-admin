@@ -25,8 +25,8 @@ const SuccessPage = props => {
           <circle
             fill="none"
             stroke="#ffffff"
-            stroke-width="5"
-            stroke-miterlimit="10"
+            strokeWidth="5"
+            strokeMiterlimit="10"
             cx="109.486"
             cy="104.353"
             r="32.53"

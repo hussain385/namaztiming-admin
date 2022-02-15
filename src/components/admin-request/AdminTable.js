@@ -1,13 +1,18 @@
 import React from 'react';
-import { Modal, ModalTransition, useModal } from 'react-simple-hook-modal';
+import { Modal, ModalTransition } from 'react-simple-hook-modal';
 import './adminTable.css';
 import 'react-simple-hook-modal/dist/styles.css';
 import { useFirestore } from 'react-redux-firebase';
-import Forms from '../Forms/Forms';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Container } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setToggle,
+  setToggleWithData,
+  useGuiReducer,
+} from '../../redux/reducers/GuiReducer';
+import Forms from '../Forms/Forms';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -15,7 +20,10 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const AdminTable = props => {
   const [open, setOpen] = React.useState(false);
-  const { isModalOpen, openModal, closeModal } = useModal();
+  const { toggle, extras } = useSelector(useGuiReducer);
+  const dispatch = useDispatch();
+
+  // const { isModalOpen, openModal, closeModal } = useModal();
   const firestore = useFirestore();
   const column = [
     {
@@ -31,44 +39,35 @@ const AdminTable = props => {
     {
       field: 'actions',
       headerName: 'Action',
+      type: 'actions',
       flex: 1,
-      renderCell: params => {
-        return (
-          <Container>
-            <button onClick={openModal} className="buttonStyle">
-              View
-            </button>
-            <button
-              onClick={async () => {
-                await firestore
-                  .delete('adminRequest/' + params.row.id)
-                  .then(() => {
-                    alert('Request deleted successfully');
-                    window.location.reload();
-                  })
-                  .catch(e => {
-                    console.log(e);
-                  });
-              }}
-              className="buttonStyle"
-              style={{ backgroundColor: 'darkred', marginLeft: 15 }}
-            >
-              Delete
-            </button>
-            <Modal
-              id="any-unique-identifier"
-              isOpen={isModalOpen}
-              transition={ModalTransition.BOTTOM_UP}
-            >
-              <Forms
-                handleToast={() => handleToast()}
-                closeModal={() => closeModal()}
-                item={params.row}
-              />
-            </Modal>
-          </Container>
-        );
-      },
+      getActions: params => [
+        <button
+          onClick={() =>
+            dispatch(setToggleWithData({ toggle: true, data: params.row }))
+          }
+          className="buttonStyle"
+        >
+          View
+        </button>,
+        <button
+          onClick={async () => {
+            await firestore
+              .delete('adminRequest/' + params.row.id)
+              .then(() => {
+                alert('Request deleted successfully');
+                window.location.reload();
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          }}
+          className="buttonStyle"
+          style={{ backgroundColor: 'darkred', marginLeft: 15 }}
+        >
+          Delete
+        </button>,
+      ],
     },
   ];
 
@@ -105,6 +104,17 @@ const AdminTable = props => {
           Toolbar: GridToolbar,
         }}
       />
+      <Modal
+        isOpen={toggle}
+        transition={ModalTransition.BOTTOM_UP}
+        id={'anything'}
+      >
+        <Forms
+          handleToast={() => handleToast()}
+          closeModal={() => dispatch(setToggle(false))}
+          item={extras}
+        />
+      </Modal>
     </div>
   );
 };

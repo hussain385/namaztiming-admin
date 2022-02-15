@@ -25,7 +25,9 @@ const ERROR = {
 const Login = props => {
   console.log(props);
   const { login, logout } = useFirebase();
-  const { auth, profile } = useSelector(state => state.firebase);
+  const { auth, profile, isInitializing } = useSelector(
+    state => state.firebase,
+  );
   const navigate = useNavigate();
 
   const themeReducer = useSelector(state => state.ThemeReducer);
@@ -50,7 +52,10 @@ const Login = props => {
         //   // console.log(props
         // }
         console.log('pushing to /');
-        return navigate('/', { replace: true });
+
+        if (!isInitializing) {
+          return navigate('/', { replace: true });
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

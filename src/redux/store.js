@@ -1,17 +1,10 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import {
-  getFirebase,
   actionTypes as rrfActionTypes,
-  firebaseReducer,
+  getFirebase,
 } from 'react-redux-firebase';
-import { firestoreReducer, constants as rfConstants } from 'redux-firestore';
-import ThemeReducer from './reducers/ThemeReducer';
-
-const reducer = combineReducers({
-  ThemeReducer,
-  firebase: firebaseReducer,
-  firestore: firestoreReducer,
-});
+import { constants as rfConstants } from 'redux-firestore';
+import rootReducer from './reducers';
 
 // const persistConfig = {
 //   key: 'root',
@@ -22,7 +15,7 @@ const reducer = combineReducers({
 // const persistedReducer = persistReducer(persistConfig, reducer);
 
 export const store = configureStore({
-  reducer,
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -34,7 +27,16 @@ export const store = configureStore({
             type => `${rfConstants.actionsPrefix}/${type}`,
           ),
         ],
-        ignoredPaths: ['firebase', 'firestore'],
+        ignoredActionPaths: [
+          'payload.data.masjid.timeStamp',
+          'payload.data.masjid.g',
+        ],
+        ignoredPaths: [
+          'firebase',
+          'firestore',
+          'GuiReducer.extras.masjid.timeStamp',
+          'GuiReducer.extras.masjid.g',
+        ],
       },
       thunk: { extraArgument: { getFirebase } },
     }),

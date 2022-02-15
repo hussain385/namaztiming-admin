@@ -17,7 +17,12 @@ import BoxSignup from '../components/BoxSignup/BoxSignUp';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Redirect from 'react-dom';
-import { useFirebase, useFirestore } from 'react-redux-firebase';
+import {
+  isEmpty,
+  isLoaded,
+  useFirebase,
+  useFirestore,
+} from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -70,7 +75,8 @@ function SignUp() {
     setOpen(false);
   };
   useEffect(() => {
-    if (auth) {
+    if (isLoaded(auth) && !isEmpty(auth)) {
+      console.log('already logged in returning');
       return null;
     }
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
@@ -90,6 +96,7 @@ function SignUp() {
         .auth()
         .signInWithEmailLink(email, window.location.href)
         .then(async () => {
+          console.log('successfully signInWithEmailLink');
           // Clear email from storage.
           // const token = await result.user.getIdToken(true)
           // await firebase.auth().signOut()
@@ -163,7 +170,8 @@ function SignUp() {
     params.get('userName') &&
     params.get('userPhone') &&
     params.get('masjidId') &&
-    auth
+    isLoaded(auth) &&
+    !isEmpty(auth)
   ) {
     // db.collection('users')
     //   .doc(user.uid)
@@ -171,7 +179,7 @@ function SignUp() {
     //   .then(value => {
     //     console.log(value);
     if (profile) {
-      console.log('exist');
+      console.log('exist', auth, profile);
       firestore
         .collection('Masjid')
         .doc(params.get('masjidId'))
@@ -179,7 +187,7 @@ function SignUp() {
           adminId: auth.uid,
         })
         .then(e => {
-          history.push('/success-page');
+          history('/success-page');
         })
         .catch(reason => {
           console.error(reason);

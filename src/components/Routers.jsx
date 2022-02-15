@@ -22,7 +22,6 @@ import ContactUs from '../pages/ContactUs';
 // import {getAuth} from "firebase/auth";
 
 function RequireAuth(props) {
-  console.log(props);
   const { children } = props;
   const { auth, profile, isInitializing } = useSelector(
     state => state.firebase,
@@ -36,9 +35,7 @@ function RequireAuth(props) {
   } else if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
     return <Layout>{children}</Layout>;
   } else {
-    return (
-      <Navigate to={{ pathname: '/login', state: { from: props.location } }} />
-    );
+    return <Navigate to={{ pathname: '/login' }} />;
   }
 }
 
