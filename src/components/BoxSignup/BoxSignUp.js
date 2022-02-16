@@ -7,8 +7,8 @@ const BoxSignup = props => {
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>
         <i
           style={{ fontSize: '100px', marginBottom: '10px' }}
-          class={props.icon}
-        ></i>
+          className={props.icon}
+        />
         <h3 id="status">{props.value}</h3>
       </div>
       <div id="lower-side">

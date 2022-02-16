@@ -11,8 +11,6 @@ import Loading from '../pages/loading';
 import AdminRequest from '../pages/AdminRequest';
 import AddMasjid from '../pages/AddMasjid';
 import SignUp from '../pages/signUp';
-import { AuthProvider, useFirebaseApp } from 'reactfire';
-import { getAuth } from '@firebase/auth';
 import ForgotPassword from '../pages/forgotPassword';
 import SuccessPage from '../pages/SuccessPage';
 import TimeRequests from '../pages/TimeRequests';
@@ -68,8 +66,6 @@ function RequireAuth(props) {
 // }
 
 const Routers = () => {
-  const app = useFirebaseApp();
-  const auth = getAuth(app);
   return (
     <BrowserRouter>
       <Routes>

@@ -11,7 +11,7 @@ import DateAdapter from '@mui/lab/AdapterMoment';
 import { Autocomplete, Box, Grid, TextField } from '@mui/material';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import _, { isNull } from 'lodash';
+import _ from 'lodash';
 import geohash from 'ngeohash';
 import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
@@ -585,7 +585,7 @@ const FormsTable = props => {
                   >
                     <div style={{ alignSelf: 'center' }}>
                       <p style={{ marginLeft: 10, marginTop: 10 }}>
-                        Jumma'h Namaz
+                        Jumma&apos;h Namaz
                       </p>
                     </div>
                     <div>
