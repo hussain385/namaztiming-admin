@@ -22,7 +22,7 @@ const ERROR = {
   marginBottom: 25,
 };
 
-function Login(props) {
+const Login = props => {
   console.log(props);
   const { login, logout } = useFirebase();
   const { auth, profile, isInitializing } = useSelector(
@@ -58,6 +58,7 @@ function Login(props) {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.isAdmin]);
 
   return (
@@ -143,6 +144,6 @@ function Login(props) {
       </div>
     </div>
   );
-}
+};
 
 export default Login;
