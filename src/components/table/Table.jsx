@@ -6,7 +6,6 @@ import './table.css';
 import FormsTable from '../FormsTable/FormsTable';
 import _ from 'lodash';
 import geohash from 'ngeohash';
-import firebase from 'firebase/compat';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TimeRequest from './TimeRequest';
@@ -70,6 +69,7 @@ const RenderCusomerBody = ({ masjidData, index }) => {
               <>
                 {data?.requests.map((values, index) => (
                   <TimeRequest
+                    key={values.id}
                     item={values}
                     index={index}
                     masjidId={data.id}

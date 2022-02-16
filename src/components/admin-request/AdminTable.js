@@ -43,6 +43,7 @@ const AdminTable = props => {
       flex: 1,
       getActions: params => [
         <button
+          key={'view'}
           onClick={() =>
             dispatch(setToggleWithData({ toggle: true, data: params.row }))
           }
@@ -51,6 +52,7 @@ const AdminTable = props => {
           View
         </button>,
         <button
+          key={'delete'}
           onClick={async () => {
             await firestore
               .delete('adminRequest/' + params.row.id)

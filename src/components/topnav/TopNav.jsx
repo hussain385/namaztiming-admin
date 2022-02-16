@@ -3,12 +3,7 @@ import React from 'react';
 import './topnav.css';
 
 import { Link } from 'react-router-dom';
-
-import Dropdown from '../dropdown/Dropdown';
-
-import ThemeMenu from '../thememenu/ThemeMenu';
 import { useFirebase } from 'react-redux-firebase';
-import notifications from '../../assets/JsonData/notification.json';
 import { Typography } from '@mui/material';
 import user_image from '../../assets/images/tuat.png';
 
@@ -50,9 +45,9 @@ const RenderUserMenu = () => {
 const Topnav = props => {
   return (
     <div className="topnav">
-      <div onClick={() => props.clickOpen()}>
-        <i style={{ fontSize: 25 }} className="fas fa-bars"></i>
-      </div>
+      <button onClick={() => props.clickOpen()}>
+        <i style={{ fontSize: 25 }} className="fas fa-bars" />
+      </button>
       <Link className="heading" to="/">
         <Typography
           sx={{

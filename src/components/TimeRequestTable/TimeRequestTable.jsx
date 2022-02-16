@@ -307,7 +307,7 @@ const TimeRequestTable = props => {
                     >
                       <div style={{ alignSelf: 'center' }}>
                         <p style={{ marginLeft: 10, marginTop: 10 }}>
-                          Jumma'h Namaz
+                          Jumma&apos;h Namaz
                         </p>
                       </div>
                       <div>
