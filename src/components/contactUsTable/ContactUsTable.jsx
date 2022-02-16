@@ -25,33 +25,35 @@ const INPUT = {
   width: '100%',
 };
 
-const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-function RenderCusomerBody({ masjidData, handleToast, handleToast1 }) {
+const RenderCusomerBody = ({ masjidData, handleToast, handleToast1 }) => {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [data, setData] = React.useState();
 
   const column = [
     { field: 'userName', headerName: 'User Name', width: 400 },
-    {
-      field: 'userEmail', headerName: 'User Email', width: 400, flex: 1,
-    },
+    { field: 'userEmail', headerName: 'User Email', width: 400, flex: 1 },
     {
       field: 'actions',
       headerName: 'Actions',
       width: 120,
-      renderCell: (params) => (
-        <button
-          onClick={() => {
-            openModal();
-            setData(params.row);
-          }}
+      renderCell: params => {
+        return (
+          <button
+            onClick={() => {
+              openModal();
+              setData(params.row);
+            }}
             // variant={'contained'}
-          className="buttonStyle"
-        >
-          Reply
-        </button>
-      ),
+            className={'buttonStyle'}
+          >
+            Reply
+          </button>
+        );
+      },
     },
   ];
 
@@ -61,7 +63,7 @@ function RenderCusomerBody({ masjidData, handleToast, handleToast1 }) {
         columns={column}
         rows={masjidData}
         pageSize={10}
-        autoHeight
+        autoHeight={true}
         components={{
           Toolbar: GridToolbar,
         }}
@@ -76,23 +78,23 @@ function RenderCusomerBody({ masjidData, handleToast, handleToast1 }) {
       </Modal>
     </>
   );
-}
+};
 
-function MessageDisplay(props) {
+const MessageDisplay = props => {
   const { isModalOpen, openModal, closeModal } = useModal();
   return (
     <>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Contact Us</h1>
       <TextField
         label="User Email"
-        name="userEmail"
+        name={'userEmail'}
         value={props.data.userEmail}
         fullWidth
         disabled
       />
       <TextField
         label="Subject"
-        name="userSubject"
+        name={'userSubject'}
         value={props.data.options}
         fullWidth
         style={{ marginTop: '20px' }}
@@ -100,7 +102,7 @@ function MessageDisplay(props) {
       />
       <TextField
         label="Message"
-        name="userMessage"
+        name={'userMessage'}
         value={props.data.message}
         fullWidth
         multiline
@@ -152,9 +154,9 @@ function MessageDisplay(props) {
       </Modal>
     </>
   );
-}
+};
 
-function MessageReply(props) {
+const MessageReply = props => {
   return (
     <Formik
       initialValues={{
@@ -165,7 +167,7 @@ function MessageReply(props) {
       validationSchema={Yup.object().shape({
         userMessage: Yup.string().required('Message is required'),
       })}
-      onSubmit={(values) => {
+      onSubmit={values => {
         emailjs
           .send('service_nqjmqcg', 'template_vpq7rpr', {
             from_name: 'Admin',
@@ -177,7 +179,7 @@ function MessageReply(props) {
             props.handleToast();
             props.preButton.onClick();
           })
-          .catch((e) => {
+          .catch(e => {
             props.handleToast1();
             props.preButton.onClick();
           });
@@ -200,9 +202,9 @@ function MessageReply(props) {
           </h1>
           <TextField
             label="User Email"
-            name="userEmail"
+            name={'userEmail'}
             value={values.userEmail}
-            onChange={(event) => {
+            onChange={event => {
               setFieldValue('userEmail', event.target.value);
             }}
             onBlur={handleBlur}
@@ -213,9 +215,9 @@ function MessageReply(props) {
           />
           <TextField
             label="Subject"
-            name="userSubject"
+            name={'userSubject'}
             value={values.userSubject}
-            onChange={(event) => {
+            onChange={event => {
               setFieldValue('userSubject', event.target.value);
             }}
             onBlur={handleBlur}
@@ -226,9 +228,9 @@ function MessageReply(props) {
           />
           <TextField
             label="Message"
-            name="userMessage"
+            name={'userMessage'}
             value={values.userMessage}
-            onChange={(event) => {
+            onChange={event => {
               setFieldValue('userMessage', event.target.value);
             }}
             onBlur={handleBlur}
@@ -283,9 +285,9 @@ function MessageReply(props) {
       )}
     </Formik>
   );
-}
+};
 
-function ContactUsTable(props) {
+const ContactUsTable = props => {
   console.log(props.bodyData);
   const { isModalOpen, openModal, closeModal } = useModal();
   const [open, setOpen] = React.useState(false);
@@ -314,7 +316,6 @@ function ContactUsTable(props) {
 
     setOpen1(false);
   };
-
   return (
     <div>
       <Snackbar
@@ -348,6 +349,6 @@ function ContactUsTable(props) {
       </div>
     </div>
   );
-}
+};
 
 export default ContactUsTable;

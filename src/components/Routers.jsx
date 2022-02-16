@@ -1,11 +1,9 @@
 import React from 'react';
-import {
-  BrowserRouter, Navigate, Route, Routes,
-} from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { isEmpty, isLoaded } from 'react-redux-firebase';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import Request from '../pages/Request';
+import { useSelector } from 'react-redux';
+import { isEmpty, isLoaded } from 'react-redux-firebase';
 import MasjidList from '../pages/masjid-list';
 import Login from '../pages/Login';
 import Layout from './layout/Layout';
@@ -13,6 +11,8 @@ import Loading from '../pages/loading';
 import AdminRequest from '../pages/AdminRequest';
 import AddMasjid from '../pages/AddMasjid';
 import SignUp from '../pages/signUp';
+import { AuthProvider, useFirebaseApp } from 'reactfire';
+import { getAuth } from '@firebase/auth';
 import ForgotPassword from '../pages/forgotPassword';
 import SuccessPage from '../pages/SuccessPage';
 import TimeRequests from '../pages/TimeRequests';
@@ -24,7 +24,7 @@ import ContactUs from '../pages/ContactUs';
 function RequireAuth(props) {
   const { children } = props;
   const { auth, profile, isInitializing } = useSelector(
-    (state) => state.firebase,
+    state => state.firebase,
   );
   if (isInitializing || (isEmpty(profile) && !isLoaded(profile))) {
     return (
@@ -32,11 +32,11 @@ function RequireAuth(props) {
         <Loading />
       </Layout>
     );
-  }
-  if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
+  } else if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
     return <Layout>{children}</Layout>;
+  } else {
+    return <Navigate to={{ pathname: '/login' }} />;
   }
-  return <Navigate to={{ pathname: '/login' }} />;
 }
 
 // function PrivateRoute({ children, ...rest }) {
@@ -67,9 +67,9 @@ function RequireAuth(props) {
 //   );
 // }
 
-function Routers() {
-  // const app = useFirebaseApp();
-  // const auth = getAuth(app);
+const Routers = () => {
+  const app = useFirebaseApp();
+  const auth = getAuth(app);
   return (
     <BrowserRouter>
       <Routes>
@@ -78,74 +78,67 @@ function Routers() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/success-page" element={<SuccessPage />} />
         <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/contact-us" element={<ContactUs />} />
 
         <Route
           path="/"
-          element={(
+          element={
             <RequireAuth>
               <Dashboard />
             </RequireAuth>
-          )}
-        />
-        <Route
-          path="/contact-us"
-          element={(
-            <RequireAuth>
-              <ContactUs />
-            </RequireAuth>
-        )}
+          }
         />
         <Route
           path="/masjidList"
-          element={(
+          element={
             <RequireAuth>
               <MasjidList />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/request"
-          element={(
+          element={
             <RequireAuth>
               <Request />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/admin-request"
-          element={(
+          element={
             <RequireAuth>
               <AdminRequest />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/add-masjid"
-          element={(
+          element={
             <RequireAuth>
               <AddMasjid />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/time-requests"
-          element={(
+          element={
             <RequireAuth>
               <TimeRequests />
             </RequireAuth>
-          )}
+          }
         />
 
-        {/* <Route path="/"> */}
-        {/*  <NotFound /> */}
-        {/* </Route> */}
+        {/*<Route path="/">*/}
+        {/*  <NotFound />*/}
+        {/*</Route>*/}
       </Routes>
     </BrowserRouter>
   );
-}
+};
 
 export default Routers;

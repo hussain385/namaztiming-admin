@@ -1,14 +1,14 @@
 import React from 'react';
 import './box.css';
 
-function BoxSignup(props) {
+const BoxSignup = props => {
   return (
     <div id="card" className="animated fadeIn">
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>
         <i
           style={{ fontSize: '100px', marginBottom: '10px' }}
-          className={props.icon}
-        />
+          class={props.icon}
+        ></i>
         <h3 id="status">{props.value}</h3>
       </div>
       <div id="lower-side">
@@ -16,6 +16,6 @@ function BoxSignup(props) {
       </div>
     </div>
   );
-}
+};
 
 export default BoxSignup;

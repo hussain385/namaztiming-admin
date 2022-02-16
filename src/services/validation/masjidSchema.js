@@ -2,7 +2,8 @@ import * as Yup from 'yup';
 import moment from 'moment';
 import _ from 'lodash';
 
-const phoneRegExp = /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+const phoneRegExp =
+  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 const SIGN = '[\\+-]?';
 const DECIMALS = '(\\.[0-9]+)?';
 const ZEROS = '(\\.0+)?';
@@ -12,32 +13,46 @@ export const MasjidSchema = Yup.object().shape(
   {
     name: Yup.string().required('Masjid name is required'),
     address: Yup.string().required('Masjid address is required'),
-    latitude: Yup.number().test('is-decimal', 'invalid decimal', (value) => (`${value}`).match(
-      `${SIGN}(90${ZEROS}|[1-8]\\d${DECIMALS}|\\d${DECIMALS})`,
-    )),
-    longitude: Yup.number().test('is-decimal', 'invalid decimal', (value) => (`${value}`).match(
-      `${SIGN}(180${ZEROS}|1[0-7]\\d${DECIMALS}|[1-9]\\d${DECIMALS}|\\d${DECIMALS})`,
-    )),
+    latitude: Yup.number().test('is-decimal', 'invalid decimal', value =>
+      (value + '').match(
+        `${SIGN}(90${ZEROS}|[1-8]\\d${DECIMALS}|\\d${DECIMALS})`,
+      ),
+    ),
+    longitude: Yup.number().test('is-decimal', 'invalid decimal', value =>
+      (value + '').match(
+        `${SIGN}(180${ZEROS}|1[0-7]\\d${DECIMALS}|[1-9]\\d${DECIMALS}|\\d${DECIMALS})`,
+      ),
+    ),
     gLink: Yup.string().url().required('Masjid address is required'),
     pictureURL: Yup.mixed()
-      .test('isUndefined', 'Upload An Image', (value) => !(_.isUndefined(value) || _.isNull(value)))
-      .test('fileSize', 'File is too large', (value) => {
+      .test('isUndefined', 'Upload An Image', value => {
+        return !(_.isUndefined(value) || _.isNull(value));
+      })
+      .test('fileSize', 'File is too large', value => {
         if (value?.size) {
           return value.size <= 9000 * 1000;
         }
         return Yup.string()
           .url()
           .validate(value)
-          .then((imageSizeVal) => !!imageSizeVal);
+          .then(value => {
+            if (value) {
+              return true;
+            }
+          });
       })
-      .test('fileType', 'Unsupported File format', (value) => {
+      .test('fileType', 'Unsupported File format', value => {
         if (SUPPORTED_FORMATS.includes(value?.type)) {
           return true;
         }
         return Yup.string()
           .url()
           .validate(value)
-          .then((imageFileVal) => !!imageFileVal);
+          .then(value => {
+            if (value) {
+              return true;
+            }
+          });
       })
       // .url("Not a valid url",)
       .required("Masjid's pictureURL is required"),
@@ -70,22 +85,32 @@ export const MasjidSchema = Yup.object().shape(
     timing: Yup.object().shape({
       isha: Yup.string()
         .typeError('you must set Isha time')
-        .test('isDateTime', 'not a valid Time', (value) => moment(value, 'hh:mm A').isValid('you must set isha time')),
+        .test('isDateTime', 'not a valid Time', value =>
+          moment(value, 'hh:mm A').isValid('you must set isha time'),
+        ),
       fajar: Yup.string()
         .typeError('you must set Fajar time')
-        .test('isDateTime', 'not a valid Time', (value) => moment(value, 'hh:mm A').isValid()),
+        .test('isDateTime', 'not a valid Time', value =>
+          moment(value, 'hh:mm A').isValid(),
+        ),
       zohar: Yup.string()
         .typeError('you must set Zohar time')
-        .test('isDateTime', 'not a valid Time', (value) => moment(value, 'hh:mm A').isValid()),
+        .test('isDateTime', 'not a valid Time', value =>
+          moment(value, 'hh:mm A').isValid(),
+        ),
       asar: Yup.string()
         .typeError('you must set Asar time')
-        .test('isDateTime', 'not a valid Time', (value) => moment(value, 'hh:mm A').isValid()),
+        .test('isDateTime', 'not a valid Time', value =>
+          moment(value, 'hh:mm A').isValid(),
+        ),
       magrib: Yup.string()
         .typeError('you must set Magrib time')
-        .test('isDateTime', 'not a valid Time', (value) => moment(value, 'hh:mm A').isValid()),
+        .test('isDateTime', 'not a valid Time', value =>
+          moment(value, 'hh:mm A').isValid(),
+        ),
+      // jummuah: Yup.string().test('isDateTime','not a valid Time', value => moment(value, 'hh:mm A').isValid()),
     }),
   },
-
   [
     ['userPhone', 'userEmail'],
     ['userPhone', 'userName'],

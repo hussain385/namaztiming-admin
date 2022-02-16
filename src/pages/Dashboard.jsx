@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Chart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
-import { populate, useFirestoreConnect } from 'react-redux-firebase';
-import _ from 'lodash';
 import StatusCard from '../components/status-card/StatusCard';
 import Table from '../components/table/Table';
+import { populate, useFirestoreConnect } from 'react-redux-firebase';
+import _ from 'lodash';
 
 const topCustomers = {
   head: ['ID', 'name', 'address', 'admin'],
@@ -21,7 +22,7 @@ const renderCusomerBody = (item, index) => (
   </tr>
 );
 
-function Dashboard() {
+const Dashboard = () => {
   const populates = [{ child: 'adminId', root: 'users', childAlias: 'user' }];
   useFirestoreConnect([
     {
@@ -38,15 +39,15 @@ function Dashboard() {
     },
   ]);
 
-  const firestore = useSelector((state) => state.firestore);
+  const firestore = useSelector(state => state.firestore);
   const masjid = populate(firestore, 'Masjid', populates);
-  const masjidData = _.map(masjid, (data, id) => ({ ...data, id }));
+  const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
   // const requestData = firestore.ordered.requests
   const newMasjidLength = firestore.ordered.newMasjid;
   const adminUsers = firestore.ordered.users;
-  const RequestsLength = _.sum(_.map(masjid, (data) => data.requestList?.length));
+  const RequestsLength = _.sum(_.map(masjid, data => data.requestList?.length));
   const AnnouncementLength = _.sum(
-    _.map(masjid, (data) => data.announcementList?.length),
+    _.map(masjid, data => data.announcementList?.length),
   );
   const adminRequests = firestore.ordered.adminRequest?.length;
 
@@ -87,7 +88,7 @@ function Dashboard() {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="#body"
+                to="#"
                 style={{ color: '#455560' }}
                 // key={index}
               >
@@ -129,7 +130,7 @@ function Dashboard() {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="#body"
+                to="#"
                 style={{ color: '#455560' }}
                 // key={index}
               >
@@ -165,6 +166,6 @@ function Dashboard() {
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;

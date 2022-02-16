@@ -14,9 +14,11 @@ import {
 } from '../../redux/reducers/GuiReducer';
 import Forms from '../Forms/Forms';
 
-const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-function AdminTable(props) {
+const AdminTable = props => {
   const [open, setOpen] = React.useState(false);
   const { toggle, extras } = useSelector(useGuiReducer);
   const dispatch = useDispatch();
@@ -28,7 +30,9 @@ function AdminTable(props) {
       field: 'masjid.name',
       headerName: 'Masjid Name',
       flex: 2,
-      valueGetter: (params) => params.row.masjid.name,
+      valueGetter: params => {
+        return params.row.masjid.name;
+      },
     },
     { field: 'userName', headerName: 'User Name', flex: 1 },
     { field: 'userPhone', headerName: 'User Contact', flex: 1 },
@@ -37,9 +41,11 @@ function AdminTable(props) {
       headerName: 'Action',
       type: 'actions',
       flex: 1,
-      getActions: (params) => [
+      getActions: params => [
         <button
-          onClick={() => dispatch(setToggleWithData({ toggle: true, data: { admin: params.row } }))}
+          onClick={() =>
+            dispatch(setToggleWithData({ toggle: true, data: params.row }))
+          }
           className="buttonStyle"
         >
           View
@@ -47,12 +53,12 @@ function AdminTable(props) {
         <button
           onClick={async () => {
             await firestore
-              .delete(`adminRequest/${params.row.id}`)
+              .delete('adminRequest/' + params.row.id)
               .then(() => {
                 alert('Request deleted successfully');
                 window.location.reload();
               })
-              .catch((e) => {
+              .catch(e => {
                 console.log(e);
               });
           }}
@@ -93,7 +99,7 @@ function AdminTable(props) {
         columns={column}
         rows={props.bodyData}
         pageSize={10}
-        autoHeight
+        autoHeight={true}
         components={{
           Toolbar: GridToolbar,
         }}
@@ -101,16 +107,16 @@ function AdminTable(props) {
       <Modal
         isOpen={toggle}
         transition={ModalTransition.BOTTOM_UP}
-        id="anything"
+        id={'anything'}
       >
         <Forms
           handleToast={() => handleToast()}
           closeModal={() => dispatch(setToggle(false))}
-          item={extras.admin}
+          item={extras}
         />
       </Modal>
     </div>
   );
-}
+};
 
 export default AdminTable;

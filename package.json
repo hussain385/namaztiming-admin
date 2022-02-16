@@ -8,7 +8,6 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@firebase/auth": "^0.19.8",
-    "@fortawesome/fontawesome-free": "^5.15.4",
     "@hookform/resolvers": "^2.8.8",
     "@material-ui/core": "^4.12.3",
     "@mui/lab": "^5.0.0-alpha.69",
@@ -42,7 +41,7 @@
     "react-redux": "^7.2.6",
     "react-redux-firebase": "^3.11.0",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
+    "react-scripts": "4.0.3",
     "react-simple-hook-modal": "^1.1.0",
     "reactfire": "^4.2.1",
     "redux": "^4.1.2",
@@ -75,8 +74,8 @@
     ]
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "eslint": "^7.32.0",
-    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
@@ -91,7 +90,8 @@
   },
   "lint-staged": {
     "src/*.{ts,tsx,js,jsx}": [
-      "yarn lint:fix"
+      "yarn prettify",
+      "yarn lint"
     ],
     "*.{md,json}": [
       "prettier --write"

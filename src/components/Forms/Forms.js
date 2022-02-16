@@ -1,10 +1,12 @@
 import React from 'react';
+import firebase from 'firebase/compat';
 import { useFirestore } from 'react-redux-firebase';
 import Loader from 'react-loader-spinner';
+import emailjs from 'emailjs-com';
+import { sendNotification } from '../../services/pushNotification';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { sendNotification } from '../../services/pushNotification';
 
 const ERROR = {
   color: 'darkred',
@@ -19,7 +21,7 @@ const INPUT = {
   width: '100%',
 };
 
-function Forms(props) {
+const Forms = props => {
   const firestore = useFirestore();
   const schema = Yup.object().shape({
     userEmail: Yup.string()
@@ -56,7 +58,7 @@ function Forms(props) {
   });
   console.log(errors);
 
-  const submit = async (data) => {
+  const submit = async data => {
     console.log('clicked on submit');
     if (props.item.masjid?.adminId) {
       if (
@@ -64,15 +66,15 @@ function Forms(props) {
           'This masjid already have a admin. Do you want to continue?',
         )
       ) {
-        await firestore.update(`Masjid/${props.item.masjid.id}`, {
+        await firestore.update('Masjid/' + props.item.masjid.id, {
           adminId: firestore.FieldValue.delete().then(() => {
             props.handleToast();
           }),
         });
       } else return null;
     }
-    const newAdmin = 1;
-    const existingAdmin = 1;
+    let newAdmin = 1;
+    let existingAdmin = 1;
     // if (newAdmin === existingAdmin) {
     //   emailjs
     //     .sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', data, 'YOUR_USER_ID')
@@ -97,7 +99,7 @@ function Forms(props) {
     await firebase
       .auth()
       .sendSignInLinkToEmail(data.userEmail, actionCodeSettings)
-      .then((value) => {
+      .then(value => {
         props.closeModal();
         // setSubmitting(false);
         props.handleToast();
@@ -167,17 +169,17 @@ function Forms(props) {
         >
           Close
         </button>
-        {/* <input */}
-        {/*  type="submit" */}
-        {/*  style={{ */}
-        {/*    paddingRight: 10, */}
-        {/*    paddingLeft: 10, */}
-        {/*    color: 'white', */}
-        {/*    backgroundColor: 'green', */}
-        {/*    borderRadius: 7, */}
-        {/*    height: 30, */}
-        {/*  }} */}
-        {/* /> */}
+        {/*<input*/}
+        {/*  type="submit"*/}
+        {/*  style={{*/}
+        {/*    paddingRight: 10,*/}
+        {/*    paddingLeft: 10,*/}
+        {/*    color: 'white',*/}
+        {/*    backgroundColor: 'green',*/}
+        {/*    borderRadius: 7,*/}
+        {/*    height: 30,*/}
+        {/*  }}*/}
+        {/*/>*/}
         <button
           style={{
             paddingRight: 10,
@@ -200,6 +202,6 @@ function Forms(props) {
     </>
     // </form>
   );
-}
+};
 
 export default Forms;

@@ -26,10 +26,9 @@ function MasjidList() {
       populates,
     },
   ]);
-
-  const firestore = useSelector((state) => state.firestore);
+  const firestore = useSelector(state => state.firestore);
   const masjid = populate(firestore, 'Masjid', populates);
-  const masjidData = _.map(masjid, (data, id) => ({ ...data, id }));
+  const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
   console.log(masjidData);
   return (
     <ModalProvider>
@@ -41,8 +40,8 @@ function MasjidList() {
               <div className="card__body">
                 <Table
                   limit="10"
-                  edit
-                  isAddMasjid
+                  edit={true}
+                  isAddMasjid={true}
                   headData={customerTableHead}
                   renderHead={(item, index) => renderHead(item, index)}
                   renderBody={(item, index) => renderBody(item, index)}
