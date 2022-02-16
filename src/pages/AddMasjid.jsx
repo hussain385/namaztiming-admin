@@ -2,7 +2,7 @@ import React from 'react';
 import AddMasjidForm from '../components/addMasjidForm/AddMasjidForm';
 import { useFirestoreConnect } from 'react-redux-firebase';
 
-const AdminRequest = () => {
+function AdminRequest() {
   useFirestoreConnect([
     {
       collection: 'users',
@@ -22,6 +22,6 @@ const AdminRequest = () => {
       </div>
     </div>
   );
-};
+}
 
 export default AdminRequest;

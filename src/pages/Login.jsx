@@ -3,11 +3,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import './login.css';
 import { isEmpty, isLoaded, useFirebase } from 'react-redux-firebase';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
-import { useDispatch } from 'react-redux';
-import ThemeAction from '../redux/actions/ThemeAction';
 
 const LogInSchema = Yup.object().shape({
   email: Yup.string().email().required('Email is required'),
@@ -34,10 +32,10 @@ function Login(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const themeClass = localStorage.getItem('themeMode', 'theme-mode-light');
-    const colorClass = localStorage.getItem('colorMode', 'theme-mode-light');
-    dispatch(ThemeAction.setMode(themeClass));
-    dispatch(ThemeAction.setColor(colorClass));
+    // const themeClass = localStorage.getItem('themeMode', 'theme-mode-light');
+    // const colorClass = localStorage.getItem('colorMode', 'theme-mode-light');
+    // dispatch(ThemeAction.setMode(themeClass));
+    // dispatch(ThemeAction.setColor(colorClass));
   }, [dispatch]);
 
   useEffect(() => {
@@ -45,19 +43,19 @@ function Login(props) {
       if (profile.isAdmin === false) {
         console.log('not an admin');
         return logout();
-      } else {
-        // if (props?.location.state) {
-        //   console.log('pushing to ' + props.location.state.from.pathname);
-        //   return history.push(props.location.state.from.pathname);
-        //   // console.log(props
-        // }
-        console.log('pushing to /');
+      }
+      // if (props?.location.state) {
+      //   console.log('pushing to ' + props.location.state.from.pathname);
+      //   return history.push(props.location.state.from.pathname);
+      //   // console.log(props
+      // }
+      console.log('pushing to /');
 
-        if (!isInitializing) {
-          return navigate('/', { replace: true });
-        }
+      if (!isInitializing) {
+        return navigate('/', { replace: true });
       }
     }
+    return null;
   }, [profile.isAdmin]);
 
   return (
@@ -119,7 +117,7 @@ function Login(props) {
                   placeholder="Enter Your Password..."
                 />
                 <br />
-                {/*{JSON.stringify(values,null,2)}*/}
+                {/* {JSON.stringify(values,null,2)} */}
                 {errors.password && touched.password && (
                   <p style={ERROR}>{errors.password}</p>
                 )}

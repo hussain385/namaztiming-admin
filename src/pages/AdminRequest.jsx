@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-  firestoreConnect,
-  populate,
-  useFirestoreConnect,
-} from 'react-redux-firebase';
+import { firestoreConnect, populate } from 'react-redux-firebase';
 import { ModalProvider } from 'react-simple-hook-modal';
-import { connect, useSelector } from 'react-redux';
-import AdminTable from '../components/admin-request/AdminTable';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import { compose } from 'redux';
+import AdminTable from '../components/admin-request/AdminTable';
 
-const AdminRequest = ({ masjidData }) => {
+function AdminRequest({ masjidData }) {
   // const firestore = useSelector(state => state.firestore);
   // const masjid =
   // const masjidData =
@@ -32,7 +28,7 @@ const AdminRequest = ({ masjidData }) => {
       </div>
     </ModalProvider>
   );
-};
+}
 
 const populates = [
   { child: 'masjidID', root: 'Masjid', childAlias: 'masjid' }, // replace owner with user object
@@ -48,7 +44,7 @@ export default compose(
   connect(({ firestore }) => ({
     masjidData: _.map(
       populate(firestore, 'adminRequest', populates),
-      (data, id) => ({ ...data, id: id }),
+      (data, id) => ({ ...data, id }),
     ),
   })),
 )(AdminRequest);

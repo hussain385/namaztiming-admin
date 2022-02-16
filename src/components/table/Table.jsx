@@ -3,45 +3,48 @@ import { Modal, useModal } from 'react-simple-hook-modal';
 import 'react-simple-hook-modal/dist/styles.css';
 import { useFirestore } from 'react-redux-firebase';
 import './table.css';
-import FormsTable from '../FormsTable/FormsTable';
 import _ from 'lodash';
 import geohash from 'ngeohash';
-import firebase from 'firebase/compat';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import TimeRequest from './TimeRequest';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { useDispatch, useSelector } from 'react-redux';
+import TimeRequest from './TimeRequest';
+import FormsTable from '../FormsTable/FormsTable';
+import { setToggle, setToggleWithData, useGuiReducer } from '../../redux/reducers/GuiReducer';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 
-const RenderCusomerBody = ({ masjidData, index }) => {
-  const { isModalOpen, openModal, closeModal } = useModal();
-  const [data, setData] = React.useState();
+function RenderCusomerBody({ masjidData }) {
+  // const { isModalOpen, openModal, closeModal } = useModal();
+  // const [data, setData] = React.useState();
+  const { toggle, extras } = useSelector(useGuiReducer);
+  const dispatch = useDispatch();
 
   const column = [
     { field: 'name', headerName: 'Masjid Name', width: 400 },
-    { field: 'address', headerName: 'Address', width: 400, flex: 1 },
+    {
+      field: 'address', headerName: 'Address', width: 400, flex: 1,
+    },
     {
       field: 'actions',
       headerName: 'Action',
       width: 120,
-      renderCell: params => {
-        return (
-          <button
-            onClick={() => {
-              console.log('clicked');
-              openModal();
-              setData(params.row);
-            }}
+      renderCell: (params) => (
+        <button
+          type="button"
+          onClick={() => {
+            console.log('clicked');
+            dispatch(setToggleWithData({ toggle: true, data: { mList: params.row } }));
+            // openModal();
+            // setData(params.row);
+          }}
             // variant={'contained'}
-            className={'buttonStyle'}
-          >
-            View
-          </button>
-        );
-      },
+          className="buttonStyle"
+        >
+          View
+        </button>
+      ),
     },
   ];
 
@@ -51,32 +54,30 @@ const RenderCusomerBody = ({ masjidData, index }) => {
         columns={column}
         rows={masjidData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
       />
-      <Modal id="any-unique-identifier" isOpen={isModalOpen}>
+      <Modal id="any-unique-identifier" isOpen={toggle}>
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
                 <th>ID</th>
                 <th>User Name</th>
-                <th>{''}</th>
+                <th />
               </tr>
             </thead>
             <tbody>
-              <>
-                {data?.requests.map((values, index) => (
-                  <TimeRequest
-                    item={values}
-                    index={index}
-                    masjidId={data.id}
-                    masjidName={data.name}
-                  />
-                ))}
-              </>
+              {extras.mList?.requests.map((values, index) => (
+                <TimeRequest
+                  item={values}
+                  index={index}
+                  masjidId={extras.mList.id}
+                  masjidName={extras.mList.name}
+                />
+              ))}
             </tbody>
           </table>
         </div>
@@ -97,7 +98,7 @@ const RenderCusomerBody = ({ masjidData, index }) => {
               marginRight: 20,
               backgroundColor: 'darkred',
             }}
-            onClick={closeModal}
+            onClick={() => dispatch(setToggle(false))}
           >
             Close
           </button>
@@ -105,9 +106,9 @@ const RenderCusomerBody = ({ masjidData, index }) => {
       </Modal>
     </>
   );
-};
+}
 
-const RenderBody = ({ handleToast, masjidData, index }) => {
+function RenderBody({ handleToast, masjidData }) {
   const { isModalOpen, openModal, closeModal } = useModal();
   const Firestore = useFirestore();
   const [data, setData] = React.useState(null);
@@ -115,38 +116,38 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
   const column = [
     { field: 'id', hide: true },
     { field: 'name', headerName: 'Masjid Name', width: 400 },
-    { field: 'address', headerName: 'Address', width: 400, flex: 1 },
+    {
+      field: 'address', headerName: 'Address', width: 400, flex: 1,
+    },
     {
       field: 'actions',
       headerName: 'Action',
       width: 120,
-      renderCell: params => {
-        return (
-          <button
-            onClick={() => {
-              console.log('clicked');
-              openModal();
-              setData(params.row);
-            }}
+      renderCell: (params) => (
+        <button
+          onClick={() => {
+            console.log('clicked');
+            openModal();
+            setData(params.row);
+          }}
             // variant={'contained'}
-            className={'buttonStyle'}
-          >
-            View
-          </button>
-        );
-      },
+          className="buttonStyle"
+        >
+          View
+        </button>
+      ),
     },
   ];
 
   function onSubmit(values) {
-    const data = _.omit(values, ['latitude', 'longitude']);
-    Firestore.update('Masjid/' + data.id, {
-      ...data,
+    const data1 = _.omit(values, ['latitude', 'longitude']);
+    Firestore.update(`Masjid/${data1.id}`, {
+      ...data1,
       g: {
         geopoint: new Firestore.GeoPoint(values.latitude, values.longitude),
         geohash: geohash.encode(values.latitude, values.longitude, 9),
       },
-    }).then(value => closeModal());
+    }).then(() => closeModal());
   }
 
   return (
@@ -155,7 +156,7 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
         columns={column}
         rows={masjidData}
         pageSize={10}
-        autoHeight={true}
+        autoHeight
         components={{
           Toolbar: GridToolbar,
         }}
@@ -167,16 +168,17 @@ const RenderBody = ({ handleToast, masjidData, index }) => {
           preButton={{ onClick: closeModal, text: 'Close' }}
           onSubmit={onSubmit}
           Label="Save Changes"
-          variant={'edit'}
+          variant="edit"
         />
       </Modal>
     </>
   );
-};
+}
 
-const Table = props => {
-  console.log(props.bodyData);
-  const { isModalOpen, openModal, closeModal } = useModal();
+function Table({
+  bodyData, isAddMasjid, edit, timeRequest, limit, renderBody,
+}) {
+  console.log(bodyData);
   const [open, setOpen] = React.useState(false);
 
   const handleToast = () => {
@@ -198,7 +200,7 @@ const Table = props => {
         autoHideDuration={1500}
         onClose={handleClose}
       >
-        {props.isAddMasjid ? (
+        {isAddMasjid ? (
           <Alert
             onClose={handleClose}
             severity="success"
@@ -217,28 +219,28 @@ const Table = props => {
         )}
       </Snackbar>
       <div>
-        {props.edit ? (
-          <RenderBody masjidData={props.bodyData} handleToast={handleToast} />
+        {edit ? (
+          <RenderBody masjidData={bodyData} handleToast={handleToast} />
         ) : (
-          <>
-            {props.timeRequest ? (
-              <RenderCusomerBody
-                masjidData={props.bodyData}
-                handleToast={() => handleToast()}
-              />
-            ) : (
-              <>
-                {(props.limit && props.bodyData
-                  ? props.bodyData.slice(0, Number(props.limit))
-                  : props.bodyData
-                ).map((item, index) => props.renderBody(item, index))}
-              </>
-            )}
-          </>
+
+          timeRequest ? (
+            <RenderCusomerBody
+              masjidData={bodyData}
+              handleToast={() => handleToast()}
+            />
+          ) : (
+            <>
+              {(limit && bodyData
+                ? bodyData.slice(0, Number(limit))
+                : bodyData
+              ).map((item, index) => renderBody(item, index))}
+            </>
+          )
+
         )}
       </div>
     </div>
   );
-};
+}
 
 export default Table;

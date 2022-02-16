@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Chart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
-import StatusCard from '../components/status-card/StatusCard';
-import Table from '../components/table/Table';
 import { populate, useFirestoreConnect } from 'react-redux-firebase';
 import _ from 'lodash';
+import StatusCard from '../components/status-card/StatusCard';
+import Table from '../components/table/Table';
 
 const topCustomers = {
   head: ['ID', 'name', 'address', 'admin'],
@@ -22,7 +21,7 @@ const renderCusomerBody = (item, index) => (
   </tr>
 );
 
-const Dashboard = () => {
+function Dashboard() {
   const populates = [{ child: 'adminId', root: 'users', childAlias: 'user' }];
   useFirestoreConnect([
     {
@@ -39,15 +38,15 @@ const Dashboard = () => {
     },
   ]);
 
-  const firestore = useSelector(state => state.firestore);
+  const firestore = useSelector((state) => state.firestore);
   const masjid = populate(firestore, 'Masjid', populates);
-  const masjidData = _.map(masjid, (data, id) => ({ ...data, id: id }));
+  const masjidData = _.map(masjid, (data, id) => ({ ...data, id }));
   // const requestData = firestore.ordered.requests
   const newMasjidLength = firestore.ordered.newMasjid;
   const adminUsers = firestore.ordered.users;
-  const RequestsLength = _.sum(_.map(masjid, data => data.requestList?.length));
+  const RequestsLength = _.sum(_.map(masjid, (data) => data.requestList?.length));
   const AnnouncementLength = _.sum(
-    _.map(masjid, data => data.announcementList?.length),
+    _.map(masjid, (data) => data.announcementList?.length),
   );
   const adminRequests = firestore.ordered.adminRequest?.length;
 
@@ -88,7 +87,7 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="#"
+                to="#body"
                 style={{ color: '#455560' }}
                 // key={index}
               >
@@ -130,7 +129,7 @@ const Dashboard = () => {
             <div className="col-4">
               <Link
                 // onClick={() => props.clickOpen()}
-                to="#"
+                to="#body"
                 style={{ color: '#455560' }}
                 // key={index}
               >
@@ -166,6 +165,6 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Dashboard;
