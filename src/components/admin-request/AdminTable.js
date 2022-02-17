@@ -100,6 +100,7 @@ const AdminTable = props => {
       <DataGrid
         columns={column}
         rows={props.bodyData}
+        getRowId={row => row.id}
         pageSize={10}
         autoHeight={true}
         components={{

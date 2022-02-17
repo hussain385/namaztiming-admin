@@ -2,7 +2,6 @@ import React from 'react';
 import firebase from 'firebase/compat';
 import { useFirestore } from 'react-redux-firebase';
 import Loader from 'react-loader-spinner';
-import emailjs from 'emailjs-com';
 import { sendNotification } from '../../services/pushNotification';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -66,15 +65,18 @@ const Forms = props => {
           'This masjid already have a admin. Do you want to continue?',
         )
       ) {
-        await firestore.update('Masjid/' + props.item.masjid.id, {
-          adminId: firestore.FieldValue.delete().then(() => {
+        await firestore
+          .update('Masjid/' + props.item.masjid.id, {
+            adminId: firestore.FieldValue.delete(),
+          })
+          .then(() => {
             props.handleToast();
-          }),
-        });
+          });
       } else return null;
     }
     let newAdmin = 1;
     let existingAdmin = 1;
+    console.log('sending link...');
     // if (newAdmin === existingAdmin) {
     //   emailjs
     //     .sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', data, 'YOUR_USER_ID')
@@ -91,7 +93,7 @@ const Forms = props => {
     // setSubmitting(true);
     const actionCodeSettings = {
       url: encodeURI(
-        `https://masjid-finder-pakistan.web.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${data.userEmail}`,
+        `https://masjid-finder-pakistan.web.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${data.userEmail}&docId=${props.item.id}`,
       ),
       handleCodeInApp: true,
       dynamicLinkDomain: 'namaztimings.page.link',
@@ -100,6 +102,7 @@ const Forms = props => {
       .auth()
       .sendSignInLinkToEmail(data.userEmail, actionCodeSettings)
       .then(value => {
+        console.log('link sent!!!');
         props.closeModal();
         // setSubmitting(false);
         props.handleToast();

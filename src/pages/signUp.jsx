@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
-import { ErrorMessage, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as PropTypes from 'prop-types';
 import BoxSignup from '../components/BoxSignup/BoxSignUp';
 import Snackbar from '@mui/material/Snackbar';
@@ -178,14 +178,24 @@ function SignUp() {
     //   .get()
     //   .then(value => {
     //     console.log(value);
-    if (profile) {
+    if (isLoaded(profile) && !isEmpty(profile)) {
       console.log('exist', auth, profile);
-      firestore
-        .collection('Masjid')
-        .doc(params.get('masjidId'))
-        .update({
+      const batch = firestore.batch();
+
+      batch.update(
+        firestore.collection('Masjid').doc(decodeURI(params.get('masjidId'))),
+        {
           adminId: auth.uid,
-        })
+        },
+      );
+
+      batch.delete(
+        firestore
+          .collection('adminRequest')
+          .doc(decodeURI(params.get('docId'))),
+      );
+      batch
+        .commit()
         .then(e => {
           history('/success-page');
         })
@@ -220,55 +230,41 @@ function SignUp() {
             confirmPassword: '',
           }}
           validationSchema={SetPasswordSchema}
-          onSubmit={(values, { setSubmitting, setFieldError }) => {
+          onSubmit={async (values, { setSubmitting, setFieldError }) => {
             if (values.password !== values.confirmPassword) {
               return null;
             }
             setSubmitting(true);
-            firebase
-              .auth()
-              .currentUser.updatePassword(values.password)
-              .then(
-                () => {
-                  firebase
-                    .updateProfile({
-                      name: decodeURI(params.get('userName')),
-                      phone: decodeURI(params.get('userPhone')),
-                      email: decodeURI(params.get('userEmail')),
-                      isAdmin: false,
-                    })
-                    .then(
-                      () => {
-                        firestore
-                          .collection('Masjid')
-                          .doc(params.get('masjidId'))
-                          .update({
-                            adminId: auth.uid,
-                          })
-                          .then(
-                            () => {
-                              setSubmitting(false);
-                              handleToast();
-                              setSubmitting(false);
-                              return <Redirect to="/success-page" />;
-                            },
-                            reason => {
-                              setSubmitting(false);
-                              setFieldError('Firebase', reason.message);
-                            },
-                          );
-                      },
-                      reason => {
-                        setSubmitting(false);
-                        setFieldError('Firebase', reason.message);
-                      },
-                    );
-                },
-                reason => {
-                  setSubmitting(false);
-                  setFieldError('Firebase', reason.message);
+            const batch = firestore.batch();
+            try {
+              await firebase.auth().currentUser.updatePassword(values.password);
+              batch.set(firestore.collection('users').doc(auth.uid), {
+                name: decodeURI(params.get('userName')),
+                phone: decodeURI(params.get('userPhone')),
+                email: decodeURI(params.get('userEmail')),
+                isAdmin: false,
+              });
+              batch.update(
+                firestore
+                  .collection('Masjid')
+                  .doc(decodeURI(params.get('masjidId'))),
+                {
+                  adminId: auth.uid,
                 },
               );
+              batch.delete(
+                firestore
+                  .collection('adminRequest')
+                  .doc(decodeURI(params.get('docId'))),
+              );
+              await batch.commit();
+              handleToast();
+              setSubmitting(false);
+              return <Redirect to="/success-page" />;
+            } catch (e) {
+              setSubmitting(false);
+              setFieldError('Firebase', e.message);
+            }
           }}
         >
           {({

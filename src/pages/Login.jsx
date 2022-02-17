@@ -3,10 +3,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import './login.css';
 import { isEmpty, isLoaded, useFirebase } from 'react-redux-firebase';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
-import { useDispatch } from 'react-redux';
 import ThemeAction from '../redux/actions/ThemeAction';
 
 const LogInSchema = Yup.object().shape({
@@ -41,7 +40,12 @@ const Login = props => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (isLoaded(auth) && !isEmpty(auth)) {
+    if (
+      isLoaded(auth) &&
+      !isEmpty(auth) &&
+      isLoaded(profile) &&
+      !isEmpty(profile)
+    ) {
       if (profile.isAdmin === false) {
         console.log('not an admin');
         return logout();

@@ -129,7 +129,8 @@ const FormsTable = props => {
               if (props.variant === 'request') {
                 await firestore
                   .delete({ collection: 'newMasjid', doc: masjidData.id })
-                  .then(async value => {
+                  .then(async () => {
+                    console.log('token for request ', masjidData.token);
                     if (masjidData.token) {
                       await sendNotification(
                         masjidData.token,
