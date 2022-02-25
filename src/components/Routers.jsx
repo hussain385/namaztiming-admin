@@ -74,7 +74,11 @@ const Routers = () => {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/success-page" element={<SuccessPage />} />
         <Route path="/SignUp" element={<SignUp />} />
-        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/contact-us" element={
+            <RequireAuth>
+                <ContactUs />
+            </RequireAuth>
+        } />
 
         <Route
           path="/"

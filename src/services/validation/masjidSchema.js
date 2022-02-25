@@ -24,38 +24,38 @@ export const MasjidSchema = Yup.object().shape(
       ),
     ),
     gLink: Yup.string().url().required('Masjid address is required'),
-    pictureURL: Yup.mixed()
-      .test('isUndefined', 'Upload An Image', value => {
-        return !(_.isUndefined(value) || _.isNull(value));
-      })
-      .test('fileSize', 'File is too large', value => {
-        if (value?.size) {
-          return value.size <= 9000 * 1000;
-        }
-        return Yup.string()
-          .url()
-          .validate(value)
-          .then(value => {
-            if (value) {
-              return true;
-            }
-          });
-      })
-      .test('fileType', 'Unsupported File format', value => {
-        if (SUPPORTED_FORMATS.includes(value?.type)) {
-          return true;
-        }
-        return Yup.string()
-          .url()
-          .validate(value)
-          .then(value => {
-            if (value) {
-              return true;
-            }
-          });
-      })
-      // .url("Not a valid url",)
-      .required("Masjid's pictureURL is required"),
+    // pictureURL: Yup.mixed()
+    //   .test('isUndefined', 'Upload An Image', value => {
+    //     return !(_.isUndefined(value) || _.isNull(value));
+    //   })
+    //   .test('fileSize', 'File is too large', value => {
+    //     if (value?.size) {
+    //       return value.size <= 9000 * 1000;
+    //     }
+    //     return Yup.string()
+    //       .url()
+    //       .validate(value)
+    //       .then(value => {
+    //         if (value) {
+    //           return true;
+    //         }
+    //       });
+    //   })
+    //   .test('fileType', 'Unsupported File format', value => {
+    //     if (SUPPORTED_FORMATS.includes(value?.type)) {
+    //       return true;
+    //     }
+    //     return Yup.string()
+    //       .url()
+    //       .validate(value)
+    //       .then(value => {
+    //         if (value) {
+    //           return true;
+    //         }
+    //       });
+    //   })
+    //   // .url("Not a valid url",)
+    //   .required("Masjid's pictureURL is required"),
     userEmail: Yup.string()
       .email()
       .when(['userPhone', 'userName'], {

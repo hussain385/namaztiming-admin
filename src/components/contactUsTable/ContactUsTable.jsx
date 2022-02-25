@@ -10,6 +10,7 @@ import * as Yup from 'yup';
 import {TextField} from '@mui/material';
 import Loader from 'react-loader-spinner';
 import {init, send} from '@emailjs/browser';
+import {useFirestore} from "react-redux-firebase";
 
 init('user_k4PQLbwynLReSen9I1q0c');
 const ERROR = {
@@ -32,7 +33,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const RenderCusomerBody = ({masjidData, handleToast, handleToast1}) => {
     const {isModalOpen, openModal, closeModal} = useModal();
     const [data, setData] = React.useState();
-
+    console.log(masjidData)
     const column = [
         {field: 'userName', headerName: 'User Name', width: 400},
         {field: 'userEmail', headerName: 'User Email', width: 400, flex: 1},
@@ -82,6 +83,7 @@ const RenderCusomerBody = ({masjidData, handleToast, handleToast1}) => {
 
 const MessageDisplay = props => {
     const {isModalOpen, openModal, closeModal} = useModal();
+    console.log(props.data)
     return (
         <>
             <h1 style={{textAlign: 'center', marginBottom: '20px'}}>Contact Us</h1>
@@ -149,6 +151,7 @@ const MessageDisplay = props => {
                     handleToast1={() => props.handleToast1()}
                     handleToast={() => props.handleToast()}
                     data={props.data}
+                    closeOldModal={props.preButton.onClick}
                     preButton={{onClick: closeModal, text: 'Close'}}
                 />
             </Modal>
@@ -157,6 +160,7 @@ const MessageDisplay = props => {
 };
 
 const MessageReply = props => {
+    const Firestore = useFirestore();
     return (
         <Formik
             initialValues={{
@@ -169,14 +173,17 @@ const MessageReply = props => {
             })}
             onSubmit={values => {
                 send('service_nqjmqcg', 'template_vpq7rpr', {
-                        from_name: 'Admin',
-                        message: `${values.userMessage}`,
-                        reply_to: `${values.userEmail}`,
-                        type: `${values.userSubject}`,
-                    })
-                    .then(() => {
-                        props.handleToast();
-                        props.preButton.onClick();
+                    from_name: 'Namaz Timings Team',
+                    message: `${values.userMessage}`,
+                    reply_to: `${values.userEmail}`,
+                    type: `${values.userSubject}`,
+                })
+                    .then(async () => {
+                        await Firestore.delete(`contactForm/${props.data.id}`).then(() => {
+                            props.handleToast();
+                            props.closeOldModal();
+                            props.preButton.onClick();
+                        });
                     })
                     .catch(e => {
                         props.handleToast1();
@@ -324,7 +331,7 @@ const ContactUsTable = props => {
                 onClose={handleClose}
             >
                 <Alert onClose={handleClose} severity="success" sx={{width: '100%'}}>
-                    Email was send successfully!
+                    Email was send successfully and message was also deleted!
                 </Alert>
             </Snackbar>
             <Snackbar
