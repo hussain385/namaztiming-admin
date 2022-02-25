@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './login.css';
 // import { useUser } from 'reactfire';
 import { useNavigate } from 'react-router-dom';
@@ -54,7 +54,8 @@ Formik.propTypes = {
 
 function SignUp() {
   // const { status, data: user, error: userError } = useUser();
-  const params = new URLSearchParams(window.location.search);
+  const params = useMemo(() => new URLSearchParams(window.location.search), []);
+
   const [error, setError] = useState(null);
   const firebase = useFirebase();
   const { auth, profile, isInitializing } = useSelector(
