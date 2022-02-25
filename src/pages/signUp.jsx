@@ -197,7 +197,7 @@ function SignUp() {
       );
       batch
         .commit()
-        .then(e => {
+        .then(() => {
           history('/success-page');
         })
         .catch(reason => {
