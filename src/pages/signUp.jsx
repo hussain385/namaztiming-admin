@@ -121,7 +121,7 @@ function SignUp() {
           // Common errors could be invalid email and invalid or expired OTPs.
         });
     }
-  }, []);
+  }, [auth, firebase, params]);
 
   // function resetAndRoute() {
   //     firebase.auth().sendPasswordResetEmail(user.email).then(r => {
