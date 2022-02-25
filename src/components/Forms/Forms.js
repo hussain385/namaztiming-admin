@@ -93,7 +93,7 @@ const Forms = props => {
     // setSubmitting(true);
     const actionCodeSettings = {
       url: encodeURI(
-        `https://masjid-finder-pakistan.web.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${data.userEmail}&docId=${props.item.id}`,
+        `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${data.userEmail}&docId=${props.item.id}`,
       ),
       handleCodeInApp: true,
       dynamicLinkDomain: 'namaztimings.page.link',

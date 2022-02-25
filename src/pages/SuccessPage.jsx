@@ -36,7 +36,7 @@ const SuccessPage = props => {
       </div>
       <div id="lower-side">
         <p id="message">
-          Congratulations, your account has been successfully created.
+          Congratulations, this masjid has been added to your account.
         </p>
       </div>
     </div>
