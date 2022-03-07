@@ -60,7 +60,7 @@ const TableModal = ({params, Firestore, handleToast}) => {
                             handleToast={() => handleToast()}
                             preButton={{
                                 onClick: () => setModel(false),
-                                text: 'cancel',
+                                text: 'Cancel',
                             }}
                             variant={'request'}
                         />
