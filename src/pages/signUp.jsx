@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './login.css';
-// import { useUser } from 'reactfire';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -13,7 +12,6 @@ import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { Form, Formik } from 'formik';
 import * as PropTypes from 'prop-types';
-import BoxSignup from '../components/BoxSignup/BoxSignUp';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Redirect from 'react-dom';
@@ -24,10 +22,9 @@ import {
   useFirestore,
 } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
+import BoxSignup from '../components/BoxSignup/BoxSignUp';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 const ERROR = {
   color: 'darkred',
   fontSize: 12,
@@ -59,7 +56,7 @@ function SignUp() {
   const [error, setError] = useState(null);
   const firebase = useFirebase();
   const { auth, profile, isInitializing } = useSelector(
-    state => state.firebase,
+    (state) => state.firebase,
   );
   const firestore = useFirestore();
   const history = useNavigate();
@@ -115,13 +112,14 @@ function SignUp() {
           // You can check if the user is new or existing:
           // result.additionalUserInfo.isNewUser
         })
-        .catch(error => {
-          console.error(error.message);
-          setError(error.message);
+        .catch((error1) => {
+          console.error(error1.message);
+          setError(error1.message);
           // Some error occurred, you can inspect the code: error.code
           // Common errors could be invalid email and invalid or expired OTPs.
         });
     }
+    return () => {};
   }, [auth, firebase, params]);
 
   // function resetAndRoute() {
@@ -162,17 +160,17 @@ function SignUp() {
         value="Please try again"
         icon="far fa-times-circle"
         color="#c34a4a"
-        title={JSON.stringify(userError)}
+        title="error"
       />
     );
   }
 
   if (
-    params.get('userName') &&
-    params.get('userPhone') &&
-    params.get('masjidId') &&
-    isLoaded(auth) &&
-    !isEmpty(auth)
+    params.get('userName')
+    && params.get('userPhone')
+    && params.get('masjidId')
+    && isLoaded(auth)
+    && !isEmpty(auth)
   ) {
     // db.collection('users')
     //   .doc(user.uid)
@@ -200,15 +198,15 @@ function SignUp() {
         .then(() => {
           history('/success-page');
         })
-        .catch(reason => {
+        .catch((reason) => {
           console.error(reason);
         });
     }
     //   });
     return (
       <Container
-        component={'main'}
-        maxWidth={'xs'}
+        component="main"
+        maxWidth="xs"
         sx={{ display: 'flex', height: '100vh' }}
       >
         <Snackbar
@@ -253,11 +251,14 @@ function SignUp() {
                   adminId: auth.uid,
                 },
               );
-              batch.delete(
-                firestore
-                  .collection('adminRequest')
-                  .doc(decodeURI(params.get('docId'))),
-              );
+              const docId = params.get('docId');
+              if (docId) {
+                batch.delete(
+                  firestore
+                    .collection('adminRequest')
+                    .doc(decodeURI(docId)),
+                );
+              }
               await batch.commit();
               handleToast();
               setSubmitting(false);
@@ -290,11 +291,11 @@ function SignUp() {
                 borderRadius: '10px',
               }}
             >
-              <CardHeader title={'Set Your Password'} />
+              <CardHeader title="Set Your Password" />
               <TextField
-                margin={'normal'}
-                label={'Password'}
-                name={'password'}
+                margin="normal"
+                label="Password"
+                name="password"
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -304,9 +305,9 @@ function SignUp() {
                 fullWidth
               />
               <TextField
-                margin={'normal'}
-                label={'Confirm Password'}
-                name={'confirmPassword'}
+                margin="normal"
+                label="Confirm Password"
+                name="confirmPassword"
                 type="password"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -322,8 +323,8 @@ function SignUp() {
               )}
               <LoadingButton
                 onClick={handleSubmit}
-                type={'submit'}
-                variant={'contained'}
+                type="submit"
+                variant="contained"
                 loading={isSubmitting}
               >
                 Submit

@@ -1,8 +1,6 @@
 import React from 'react';
-import Table from '../components/table/Table';
-import { populate, useFirestoreConnect } from 'react-redux-firebase';
+import { useFirestoreConnect } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
-import _ from 'lodash';
 import '../components/table/table.css';
 import { ModalProvider } from 'react-simple-hook-modal';
 import 'react-simple-hook-modal/dist/styles.css';
@@ -14,30 +12,28 @@ const topCustomers = {
 
 const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
 
-const RenderCusomerBody = (item, index) => {
+function RenderCusomerBody(item, index) {
   return (
-    <>
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{item.name}</td>
-        <td>{item.address}</td>
-        <td>
-          <button
-            className="buttonStyle"
-            onClick={() => {
-              console.log(item.requests);
-            }}
-          >
-            View
-          </button>
-        </td>
-      </tr>
-    </>
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{item.name}</td>
+      <td>{item.address}</td>
+      <td>
+        <button
+          className="buttonStyle"
+          onClick={() => {
+            console.log(item.requests);
+          }}
+        >
+          View
+        </button>
+      </td>
+    </tr>
   );
-};
+}
 
-const ContactUS = () => {
-  const firestore = useSelector(state => state.firestore);
+function ContactUS() {
+  const firestore = useSelector((state) => state.firestore);
   useFirestoreConnect([
     {
       collection: 'contactForm',
@@ -58,7 +54,7 @@ const ContactUS = () => {
                   renderHead={(item, index) => renderCusomerHead(item, index)}
                   bodyData={requestData}
                   edit={false}
-                  contactUS={true}
+                  contactUS
                   renderBody={(item, index) => RenderCusomerBody(item, index)}
                 />
               </div>
@@ -68,6 +64,6 @@ const ContactUS = () => {
       </div>
     </ModalProvider>
   );
-};
+}
 
 export default ContactUS;

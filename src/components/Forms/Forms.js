@@ -1,11 +1,10 @@
 import React from 'react';
-import firebase from 'firebase/compat';
-import { useFirestore } from 'react-redux-firebase';
+import { useFirebase, useFirestore } from 'react-redux-firebase';
 import Loader from 'react-loader-spinner';
-import { sendNotification } from '../../services/pushNotification';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { sendNotification } from '../../services/pushNotification';
 
 const ERROR = {
   color: 'darkred',
@@ -20,8 +19,10 @@ const INPUT = {
   width: '100%',
 };
 
-const Forms = props => {
+function Forms(props) {
   const firestore = useFirestore();
+  const firebase = useFirebase();
+
   const schema = Yup.object().shape({
     userEmail: Yup.string()
       .email('Must be a valid email')
@@ -57,7 +58,7 @@ const Forms = props => {
   });
   console.log(errors);
 
-  const submit = async data => {
+  const submit = async (data) => {
     console.log('clicked on submit');
     if (props.item.masjid?.adminId) {
       if (
@@ -66,7 +67,7 @@ const Forms = props => {
         )
       ) {
         await firestore
-          .update('Masjid/' + props.item.masjid.id, {
+          .update(`Masjid/${props.item.masjid.id}`, {
             adminId: firestore.FieldValue.delete(),
           })
           .then(() => {
@@ -74,8 +75,8 @@ const Forms = props => {
           });
       } else return null;
     }
-    let newAdmin = 1;
-    let existingAdmin = 1;
+    const newAdmin = 1;
+    const existingAdmin = 1;
     console.log('sending link...');
     // if (newAdmin === existingAdmin) {
     //   emailjs
@@ -101,7 +102,7 @@ const Forms = props => {
     await firebase
       .auth()
       .sendSignInLinkToEmail(data.userEmail, actionCodeSettings)
-      .then(value => {
+      .then((value) => {
         console.log('link sent!!!');
         props.closeModal();
         // setSubmitting(false);
@@ -172,17 +173,17 @@ const Forms = props => {
         >
           Close
         </button>
-        {/*<input*/}
-        {/*  type="submit"*/}
-        {/*  style={{*/}
-        {/*    paddingRight: 10,*/}
-        {/*    paddingLeft: 10,*/}
-        {/*    color: 'white',*/}
-        {/*    backgroundColor: 'green',*/}
-        {/*    borderRadius: 7,*/}
-        {/*    height: 30,*/}
-        {/*  }}*/}
-        {/*/>*/}
+        {/* <input */}
+        {/*  type="submit" */}
+        {/*  style={{ */}
+        {/*    paddingRight: 10, */}
+        {/*    paddingLeft: 10, */}
+        {/*    color: 'white', */}
+        {/*    backgroundColor: 'green', */}
+        {/*    borderRadius: 7, */}
+        {/*    height: 30, */}
+        {/*  }} */}
+        {/* /> */}
         <button
           style={{
             paddingRight: 10,
@@ -205,6 +206,6 @@ const Forms = props => {
     </>
     // </form>
   );
-};
+}
 
 export default Forms;

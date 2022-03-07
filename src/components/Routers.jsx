@@ -1,9 +1,11 @@
 import React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import Dashboard from '../pages/Dashboard';
-import Request from '../pages/Request';
+import {
+  BrowserRouter, Navigate, Route, Routes,
+} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { isEmpty, isLoaded } from 'react-redux-firebase';
+import Dashboard from '../pages/Dashboard';
+import Request from '../pages/Request';
 import MasjidList from '../pages/masjid-list';
 import Login from '../pages/Login';
 import Layout from './layout/Layout';
@@ -22,7 +24,7 @@ import ContactUs from '../pages/ContactUs';
 function RequireAuth(props) {
   const { children } = props;
   const { auth, profile, isInitializing } = useSelector(
-    state => state.firebase,
+    (state) => state.firebase,
   );
   if (isInitializing || (isEmpty(profile) && !isLoaded(profile))) {
     return (
@@ -30,11 +32,10 @@ function RequireAuth(props) {
         <Loading />
       </Layout>
     );
-  } else if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
+  } if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
     return <Layout>{children}</Layout>;
-  } else {
-    return <Navigate to={{ pathname: '/login' }} />;
   }
+  return <Navigate to={{ pathname: '/login' }} />;
 }
 
 // function PrivateRoute({ children, ...rest }) {
@@ -65,7 +66,7 @@ function RequireAuth(props) {
 //   );
 // }
 
-const Routers = () => {
+function Routers() {
   return (
     <BrowserRouter>
       <Routes>
@@ -74,71 +75,74 @@ const Routers = () => {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/success-page" element={<SuccessPage />} />
         <Route path="/SignUp" element={<SignUp />} />
-        <Route path="/contact-us" element={
+        <Route
+          path="/contact-us"
+          element={(
             <RequireAuth>
-                <ContactUs />
+              <ContactUs />
             </RequireAuth>
-        } />
+          )}
+        />
 
         <Route
           path="/"
-          element={
+          element={(
             <RequireAuth>
               <Dashboard />
             </RequireAuth>
-          }
+          )}
         />
         <Route
           path="/masjidList"
-          element={
+          element={(
             <RequireAuth>
               <MasjidList />
             </RequireAuth>
-          }
+          )}
         />
 
         <Route
           path="/request"
-          element={
+          element={(
             <RequireAuth>
               <Request />
             </RequireAuth>
-          }
+          )}
         />
 
         <Route
           path="/admin-request"
-          element={
+          element={(
             <RequireAuth>
               <AdminRequest />
             </RequireAuth>
-          }
+          )}
         />
 
         <Route
           path="/add-masjid"
-          element={
+          element={(
             <RequireAuth>
               <AddMasjid />
             </RequireAuth>
-          }
+          )}
         />
 
         <Route
           path="/time-requests"
-          element={
+          element={(
             <RequireAuth>
               <TimeRequests />
             </RequireAuth>
-          }
+          )}
         />
 
-        {/*<Route path="/">*/}
-        {/*  <NotFound />*/}
-        {/*</Route>*/}
+        {/* <Route path="/"> */}
+        {/*  <NotFound /> */}
+        {/* </Route> */}
       </Routes>
     </BrowserRouter>
   );
-};
+}
 
 export default Routers;

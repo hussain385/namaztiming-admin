@@ -1,7 +1,7 @@
 import React from 'react';
 import './box.css';
 
-const BoxSignup = props => {
+function BoxSignup(props) {
   return (
     <div id="card" className="animated fadeIn">
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>
@@ -16,6 +16,6 @@ const BoxSignup = props => {
       </div>
     </div>
   );
-};
+}
 
 export default BoxSignup;

@@ -2,15 +2,7 @@ import React from 'react';
 import { ModalProvider } from 'react-simple-hook-modal';
 import RequestTable from '../components/requestTable/RequestTable';
 
-const Request = () => {
-  // useFirestoreConnect([
-  //   {
-  //     collection: 'newMasjid',
-  //   },
-  // ]);
-  // const firestore = useSelector(state => state.firestore);
-  // const masjid = populate(firestore, 'Masjid', populates);
-  // const masjidData = firestore.ordered.newMasjid;
+function Request() {
   return (
     <ModalProvider>
       <div>
@@ -27,6 +19,6 @@ const Request = () => {
       </div>
     </ModalProvider>
   );
-};
+}
 
 export default Request;

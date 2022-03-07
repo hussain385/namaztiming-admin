@@ -5,17 +5,22 @@ import {
   useFirestoreConnect,
 } from 'react-redux-firebase';
 import { Field, Formik } from 'formik';
-import { MasjidSchema } from '../../services/validation';
 import { LocalizationProvider, MobileTimePicker } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterMoment';
-import { Autocomplete, Box, Grid, TextField } from '@mui/material';
+import {
+  Autocomplete, Box, Grid, TextField,
+} from '@mui/material';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import geohash from 'ngeohash';
 import { useSelector } from 'react-redux';
 import Loader from 'react-loader-spinner';
+import { init, send } from '@emailjs/browser';
+import { MasjidSchema } from '../../services/validation';
 import { sendNotification } from '../../services/pushNotification';
+
+init('user_k4PQLbwynLReSen9I1q0c');
 
 const ERROR = {
   color: 'darkred',
@@ -23,7 +28,7 @@ const ERROR = {
   marginTop: 5,
 };
 
-const FormsTable = props => {
+function FormsTable(props) {
   useFirestoreConnect([
     {
       collection: 'users',
@@ -36,7 +41,7 @@ const FormsTable = props => {
   const filePath = 'MasjidUploads';
   const [image, setImage] = useState(masjidData?.pictureURL);
   const firestore = useFirestore();
-  const users = useSelector(state => state.firestore.ordered.users);
+  const users = useSelector((state) => state.firestore.ordered.users);
   const loading = users ? users.length === 0 : true;
   const [edit, setEdit] = useState(false);
 
@@ -84,7 +89,7 @@ const FormsTable = props => {
       }}
       validationSchema={MasjidSchema}
       validateOnChange={false}
-      validateOnBlur={true}
+      validateOnBlur
       onSubmit={async (values, { resetForm, setSubmitting }) => {
         const filter = [
           'latitude',
@@ -103,8 +108,7 @@ const FormsTable = props => {
               filePath,
               values.pictureURL,
             );
-            pictureURL =
-              await uploadedRef.uploadTaskSnaphot.ref.getDownloadURL();
+            pictureURL = await uploadedRef.uploadTaskSnaphot.ref.getDownloadURL();
           } catch (e) {
             console.error(e);
           }
@@ -125,7 +129,29 @@ const FormsTable = props => {
               },
               timeStamp: firestore.Timestamp.now(),
             })
-            .then(async () => {
+            .then(async (value2) => {
+              if (props.variant === 'edit') {
+                const user = _.find(users, (u) => u.email === values.userEmail);
+                if (user) {
+                  await send('service_nqjmqcg', 'template_vpq7rpr', {
+                    from_name: 'Namaz Timings Team',
+                    message: `This ${masjidData.name} has been added to your account`,
+                    reply_to: user.email,
+                    type: 'Admin Changes',
+                  });
+                } else {
+                  const actionCodeSettings = {
+                    url: encodeURI(
+                      `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${value2.id}&userEmail=${values.userEmail}`,
+                    ),
+                    handleCodeInApp: true,
+                    dynamicLinkDomain: 'namaztimings.page.link',
+                  };
+                  await firebase
+                    .auth()
+                    .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
+                }
+              }
               if (props.variant === 'request') {
                 await firestore
                   .delete({ collection: 'newMasjid', doc: masjidData.id })
@@ -148,8 +174,12 @@ const FormsTable = props => {
               props.handleToast();
             });
         } else if (props.variant === 'edit') {
+          console.log(values, 'from formstable when edit');
+          const user = _.find(users, (u) => u.email === values.userEmail);
+          console.log(user, 'the user we get');
           firestore
-            .update('Masjid/' + masjidData.id, {
+            .update(`Masjid/${masjidData.id}`, {
+              adminId: user?.id || '',
               ...data,
               pictureURL,
               g: {
@@ -193,9 +223,9 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Masjid Name"
-                name={'name'}
+                name="name"
                 value={values.name}
-                onChange={event => {
+                onChange={(event) => {
                   setFieldValue('name', event.target.value);
                 }}
                 error={touched.name && Boolean(errors.name)}
@@ -224,7 +254,7 @@ const FormsTable = props => {
                 onInputChange={(event, value) => {
                   setFieldValue('userName', value);
                 }}
-                getOptionLabel={option => {
+                getOptionLabel={(option) => {
                   if (option.name) {
                     return option.name;
                   }
@@ -234,11 +264,11 @@ const FormsTable = props => {
                 disabled={
                   (masjidData?.user?.name || masjidData?.userName) && !edit
                 }
-                renderInput={params => (
+                renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Admin Name"
-                    name={'userName'}
+                    name="userName"
                     error={touched.userName && Boolean(errors.userName)}
                     helperText={touched.userName && errors.userName}
                     InputProps={{
@@ -255,7 +285,7 @@ const FormsTable = props => {
                 options={users && users}
                 loading={loading}
                 disabled={
-                  (masjidData?.user?.email || masjidData?.userEmail) && !edit
+                  (masjidData?.user?.email || masjidData?.userEmail)
                 }
                 onChange={(event, value) => {
                   if (!value) {
@@ -272,18 +302,18 @@ const FormsTable = props => {
                 onInputChange={(event, value) => {
                   setFieldValue('userEmail', value);
                 }}
-                getOptionLabel={option => {
+                getOptionLabel={(option) => {
                   if (option.email) {
                     return option.email;
                   }
                   return option;
                 }}
                 value={values.userEmail}
-                renderInput={params => (
+                renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Admin Email"
-                    name={'userEmail'}
+                    name="userEmail"
                     error={touched.userEmail && Boolean(errors.userEmail)}
                     helperText={touched.userEmail && errors.userEmail}
                     InputProps={{
@@ -296,9 +326,9 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Admin Phone."
-                name={'userPhone'}
+                name="userPhone"
                 disabled={
-                  (masjidData?.user?.phone || masjidData?.userPhone) && !edit
+                  (masjidData?.user?.phone || masjidData?.userPhone)
                 }
                 value={values.userPhone}
                 onChange={handleChange}
@@ -309,8 +339,8 @@ const FormsTable = props => {
               />
             </Grid>
             {!(
-              _.isUndefined(masjidData?.user?.email) &&
-              _.isUndefined(masjidData?.userEmail)
+              _.isUndefined(masjidData?.user?.email)
+              && _.isUndefined(masjidData?.userEmail)
             ) && (
               <Grid item xs={12}>
                 <button
@@ -322,8 +352,8 @@ const FormsTable = props => {
                     marginRight: 20,
                     backgroundColor: 'green',
                   }}
-                  onClick={() => setEdit(prevState => !prevState)}
-                  type={'button'}
+                  onClick={() => setEdit((prevState) => !prevState)}
+                  type="button"
                 >
                   {edit ? 'Cancel' : 'Edit'}
                 </button>
@@ -350,15 +380,24 @@ const FormsTable = props => {
                         adminId: firestore.FieldValue.delete(),
                       })
                       .then(
-                        value => {
-                          console.log(value);
+                        (value) => {
+                          console.log(value, 'formtable when deleting user successfully');
+                          send('service_nqjmqcg', 'template_vpq7rpr', {
+                            from_name: 'Namaz Timings Team',
+                            message: `This ${masjidData.name} has been removed from your account`,
+                            reply_to: masjidData?.user?.email || masjidData?.userEmail,
+                            type: 'Admin Changes',
+                          }).then(() => {
+                            props.preButton?.onClick();
+                            props.handleToast();
+                          });
                         },
-                        reason => {
-                          console.error(reason);
+                        (reason) => {
+                          console.error(reason, 'formtable when deleting user error');
                         },
                       );
                   }}
-                  type={'button'}
+                  type="button"
                 >
                   Delete
                 </button>
@@ -368,7 +407,7 @@ const FormsTable = props => {
             <Grid item xs={12}>
               <TextField
                 label="Google Link"
-                name={'gLink'}
+                name="gLink"
                 value={values.gLink}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -380,7 +419,7 @@ const FormsTable = props => {
             <Grid item xs={12}>
               <TextField
                 label="Masjid Address"
-                name={'address'}
+                name="address"
                 value={values.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -392,7 +431,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Latitude"
-                name={'latitude'}
+                name="latitude"
                 value={values.latitude}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -404,7 +443,7 @@ const FormsTable = props => {
             <Grid item xs={12} md={6}>
               <TextField
                 label="Longitude"
-                name={'longitude'}
+                name="longitude"
                 value={values.longitude}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -429,15 +468,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.fajar'}
+                        name="timing.fajar"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.fajar',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.fajar',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.fajar, 'hh:mm A').isValid()
                             ? moment(values.timing.fajar, 'hh:mm A')
@@ -461,15 +498,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.zohar'}
+                        name="timing.zohar"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.zohar',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.zohar',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.zohar, 'hh:mm A').isValid()
                             ? moment(values.timing.zohar, 'hh:mm A')
@@ -493,15 +528,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.asar'}
+                        name="timing.asar"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.asar',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.asar',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.asar, 'hh:mm A').isValid()
                             ? moment(values.timing.asar, 'hh:mm A')
@@ -525,15 +558,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.magrib'}
+                        name="timing.magrib"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.magrib',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.magrib',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.magrib, 'hh:mm A').isValid()
                             ? moment(values.timing.magrib, 'hh:mm A')
@@ -557,15 +588,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.isha'}
+                        name="timing.isha"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.isha',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.isha',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.isha, 'hh:mm A').isValid()
                             ? moment(values.timing.isha, 'hh:mm A')
@@ -591,15 +620,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.jummah'}
+                        name="timing.jummah"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.jummah',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.jummah',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.jummah, 'hh:mm A').isValid()
                             ? moment(values.timing.jummah, 'hh:mm A')
@@ -622,15 +649,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.eidUlAddah'}
+                        name="timing.eidUlAddah"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.eidUlAddah',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.eidUlAddah',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.eidUlAddah, 'hh:mm A').isValid()
                             ? moment(values.timing.eidUlAddah, 'hh:mm A')
@@ -653,15 +678,13 @@ const FormsTable = props => {
                     </div>
                     <div>
                       <Field
-                        name={'timing.eidUlFitr'}
+                        name="timing.eidUlFitr"
                         component={MobileTimePicker}
-                        renderInput={params => <TextField {...params} />}
-                        onChange={e =>
-                          setFieldValue(
-                            'timing.eidUlFitr',
-                            moment(e).format('hh:mm A'),
-                          )
-                        }
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e) => setFieldValue(
+                          'timing.eidUlFitr',
+                          moment(e).format('hh:mm A'),
+                        )}
                         value={
                           moment(values.timing.eidUlFitr, 'hh:mm A').isValid()
                             ? moment(values.timing.eidUlFitr, 'hh:mm A')
@@ -703,7 +726,7 @@ const FormsTable = props => {
                     )}
                     <input
                       type="file"
-                      onChange={e => onImageChange(e, setFieldValue)}
+                      onChange={(e) => onImageChange(e, setFieldValue)}
                       className="filetype"
                       style={{ width: '92px', marginTop: '15px' }}
                     />
@@ -733,7 +756,7 @@ const FormsTable = props => {
                   backgroundColor: 'darkred',
                 }}
                 onClick={props.preButton?.onClick}
-                type={'button'}
+                type="button"
               >
                 {props.preButton?.text}
               </button>
@@ -762,7 +785,7 @@ const FormsTable = props => {
       )}
     </Formik>
   );
-};
+}
 
 FormsTable.propTypes = {
   masjidData: PropTypes.shape({
