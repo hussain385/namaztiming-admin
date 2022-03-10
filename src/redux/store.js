@@ -6,14 +6,6 @@ import {
 import { constants as rfConstants } from 'redux-firestore';
 import rootReducer from './reducers';
 
-// const persistConfig = {
-//   key: 'root',
-//   storage: AsyncStorage,
-//   whitelist: ['favorites'],
-// };
-
-// const persistedReducer = persistReducer(persistConfig, reducer);
-
 export const store = configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware =>
