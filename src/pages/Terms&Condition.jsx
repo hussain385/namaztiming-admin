@@ -1,7 +1,7 @@
 import React from 'react';
 import './login.css';
 
-function TermsCondition(props) {
+function TermsCondition() {
   return (
     <div className="termsPage">
       <h1>Namaz Timings</h1>

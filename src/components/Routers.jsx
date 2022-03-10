@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  BrowserRouter, Navigate, Route, Routes,
-} from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { isEmpty, isLoaded } from 'react-redux-firebase';
 import Dashboard from '../pages/Dashboard';
@@ -24,7 +22,7 @@ import ContactUs from '../pages/ContactUs';
 function RequireAuth(props) {
   const { children } = props;
   const { auth, profile, isInitializing } = useSelector(
-    (state) => state.firebase,
+    state => state.firebase,
   );
   if (isInitializing || (isEmpty(profile) && !isLoaded(profile))) {
     return (
@@ -32,7 +30,8 @@ function RequireAuth(props) {
         <Loading />
       </Layout>
     );
-  } if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
+  }
+  if (isLoaded(auth) && !isEmpty(auth) && profile.isAdmin) {
     return <Layout>{children}</Layout>;
   }
   return <Navigate to={{ pathname: '/login' }} />;
@@ -77,64 +76,63 @@ function Routers() {
         <Route path="/SignUp" element={<SignUp />} />
         <Route
           path="/contact-us"
-          element={(
+          element={
             <RequireAuth>
               <ContactUs />
             </RequireAuth>
-          )}
+          }
         />
-
         <Route
           path="/"
-          element={(
+          element={
             <RequireAuth>
               <Dashboard />
             </RequireAuth>
-          )}
+          }
         />
         <Route
           path="/masjidList"
-          element={(
+          element={
             <RequireAuth>
               <MasjidList />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/request"
-          element={(
+          element={
             <RequireAuth>
               <Request />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/admin-request"
-          element={(
+          element={
             <RequireAuth>
               <AdminRequest />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/add-masjid"
-          element={(
+          element={
             <RequireAuth>
               <AddMasjid />
             </RequireAuth>
-          )}
+          }
         />
 
         <Route
           path="/time-requests"
-          element={(
+          element={
             <RequireAuth>
               <TimeRequests />
             </RequireAuth>
-          )}
+          }
         />
 
         {/* <Route path="/"> */}
