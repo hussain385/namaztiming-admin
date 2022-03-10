@@ -26,6 +26,7 @@ const ERROR = {
 
 function FormsTable(props) {
   const [loading1, setLoading1] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
   useFirestoreConnect([
     {
       collection: 'users',
@@ -87,7 +88,9 @@ function FormsTable(props) {
       validationSchema={MasjidSchema}
       validateOnChange={false}
       validateOnBlur
-      onSubmit={async (values, { resetForm, setSubmitting }) => {
+      onSubmit={async (values, { resetForm }) => {
+        setSubmitting(true)
+        console.log(isSubmitting, "sanas")
         const filter = [
           'latitude',
           'longitude',
@@ -188,9 +191,8 @@ function FormsTable(props) {
               props.handleToast();
             });
         } else if (props.variant === 'edit') {
-          console.log(values, 'from formstable when edit');
           const user = _.find(users, (u) => u.email === values.userEmail);
-          console.log(user, 'the user we get');
+          // console.log(user, 'the user we get');
           firestore
             .update(`Masjid/${masjidData.id}`, {
               adminId: user?.id || '',
@@ -221,7 +223,6 @@ function FormsTable(props) {
         errors,
         touched,
         setFieldValue,
-        isSubmitting,
         /* and other goodies */
       }) => (
         <>
