@@ -10,7 +10,7 @@ const topCustomers = {
   head: ['ID', 'User Name', 'User Email', ''],
 };
 
-const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
+const renderCustomerHead = (item, index) => <th key={index}>{item}</th>;
 
 function RenderCusomerBody(item, index) {
   return (
@@ -51,7 +51,7 @@ function ContactUS() {
               <div className="card__body">
                 <ContactUsTable
                   headData={topCustomers.head}
-                  renderHead={(item, index) => renderCusomerHead(item, index)}
+                  renderHead={(item, index) => renderCustomerHead(item, index)}
                   bodyData={requestData}
                   edit={false}
                   contactUS
