@@ -1,0 +1,9 @@
+[[redirects]]
+  from = '/*'
+  status = 200
+  to = '/index.html'
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+  environment = {NODE_VERSION = '14'}
