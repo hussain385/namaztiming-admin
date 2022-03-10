@@ -13,7 +13,6 @@ import './assets/css/grid.css';
 import './assets/css/theme.css';
 import './assets/css/index.css';
 
-import { FirebaseAppProvider } from 'reactfire';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { store } from './redux/store';
 import Routers from './components/Routers';
@@ -53,12 +52,10 @@ ReactDOM.render(
   // <React.StrictMode>
   <Provider store={store}>
     <ReactReduxFirebaseProvider {...rrfProps}>
-      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Routers />
-        </ThemeProvider>
-      </FirebaseAppProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routers />
+      </ThemeProvider>
     </ReactReduxFirebaseProvider>
   </Provider>,
   // </React.StrictMode>,
