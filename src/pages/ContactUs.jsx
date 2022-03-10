@@ -10,6 +10,7 @@ const topCustomers = {
   head: ['ID', 'User Name', 'User Email', ''],
 };
 
+
 const renderCustomerHead = (item, index) => <th key={index}>{item}</th>;
 
 function RenderCusomerBody(item, index) {
