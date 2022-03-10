@@ -130,7 +130,7 @@ function FormsTable(props) {
               timeStamp: firestore.Timestamp.now(),
             })
             .then(async (value2) => {
-              if (props.variant === 'new') {
+              if (props.variant === 'new' && values.userEmail) {
                 const actionCodeSettings = {
                   url: encodeURI(
                     `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${value2.id}&userEmail=${values.userEmail}`,

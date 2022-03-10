@@ -67,6 +67,7 @@ function RenderCusomerBody({ masjidData, index }) {
               {data?.requests.map((values, index) => (
                 <TimeRequest
                   key={values.id}
+                  closeModal1={closeModal}
                   item={values}
                   index={index}
                   masjidId={data.id}
