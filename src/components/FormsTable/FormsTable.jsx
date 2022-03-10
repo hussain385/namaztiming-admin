@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import {
-  useFirebase,
-  useFirestore,
-  useFirestoreConnect,
-} from 'react-redux-firebase';
+import { useFirebase, useFirestore, useFirestoreConnect } from 'react-redux-firebase';
 import { Field, Formik } from 'formik';
 import { LocalizationProvider, MobileTimePicker } from '@mui/lab';
 import DateAdapter from '@mui/lab/AdapterMoment';
@@ -29,6 +25,7 @@ const ERROR = {
 };
 
 function FormsTable(props) {
+  const [loading1, setLoading1] = useState(false);
   useFirestoreConnect([
     {
       collection: 'users',
@@ -70,7 +67,7 @@ function FormsTable(props) {
         name: masjidData?.name || '',
         address: masjidData?.address || '',
         gLink: masjidData?.gLink || '',
-        pictureURL: masjidData?.pictureURL,
+        pictureURL: masjidData?.pictureURL || '',
         userEmail: masjidData?.user?.email || masjidData?.userEmail || '',
         userName: masjidData?.user?.name || masjidData?.userName || '',
         userPhone: masjidData?.user?.phone || masjidData?.userPhone || '',
@@ -130,12 +127,24 @@ function FormsTable(props) {
               timeStamp: firestore.Timestamp.now(),
             })
             .then(async (value2) => {
+              if (props.variant === 'new') {
+                const actionCodeSettings = {
+                  url: encodeURI(
+                    `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${value2.id}&userEmail=${values.userEmail}`,
+                  ),
+                  handleCodeInApp: true,
+                  dynamicLinkDomain: 'namaztimings.page.link',
+                };
+                await firebase
+                  .auth()
+                  .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
+              }
               if (props.variant === 'edit') {
                 const user = _.find(users, (u) => u.email === values.userEmail);
                 if (user) {
                   await send('service_nqjmqcg', 'template_vpq7rpr', {
                     from_name: 'Namaz Timings Team',
-                    message: `This ${masjidData.name} has been added to your account`,
+                    message: `This ${values.name} has been added to your account`,
                     reply_to: user.email,
                     type: 'Admin Changes',
                   });
@@ -153,10 +162,15 @@ function FormsTable(props) {
                 }
               }
               if (props.variant === 'request') {
+                await send('service_nqjmqcg', 'template_vpq7rpr', {
+                  from_name: 'Namaz Timings Team',
+                  message: `This ${masjidData.name} has been approved by admin. PLease send a admin request if you want to be an admin to this masjid`,
+                  reply_to: values.userEmail,
+                  type: 'Admin Changes',
+                });
                 await firestore
                   .delete({ collection: 'newMasjid', doc: masjidData.id })
                   .then(async () => {
-                    console.log('token for request ', masjidData.token);
                     if (masjidData.token) {
                       await sendNotification(
                         masjidData.token,
@@ -262,8 +276,8 @@ function FormsTable(props) {
                 }}
                 value={values.userName}
                 disabled={
-                  (masjidData?.user?.name || masjidData?.userName) && !edit
-                }
+                                    (masjidData?.user?.name || masjidData?.userName) && !edit
+                                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -285,8 +299,8 @@ function FormsTable(props) {
                 options={users && users}
                 loading={loading}
                 disabled={
-                  (masjidData?.user?.email || masjidData?.userEmail)
-                }
+                                    (masjidData?.user?.email || masjidData?.userEmail)
+                                }
                 onChange={(event, value) => {
                   if (!value) {
                     return setFieldValue('userEmail', '');
@@ -328,8 +342,8 @@ function FormsTable(props) {
                 label="Admin Phone."
                 name="userPhone"
                 disabled={
-                  (masjidData?.user?.phone || masjidData?.userPhone)
-                }
+                                    (masjidData?.user?.phone || masjidData?.userPhone)
+                                }
                 value={values.userPhone}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -340,70 +354,78 @@ function FormsTable(props) {
             </Grid>
             {!(
               _.isUndefined(masjidData?.user?.email)
-              && _.isUndefined(masjidData?.userEmail)
+                            && _.isUndefined(masjidData?.userEmail)
             ) && (
-              <Grid item xs={12}>
-                <button
-                  style={{
-                    width: 70,
-                    color: 'white',
-                    borderRadius: 7,
-                    height: 30,
-                    marginRight: 20,
-                    backgroundColor: 'green',
-                  }}
-                  onClick={() => setEdit((prevState) => !prevState)}
-                  type="button"
-                >
-                  {edit ? 'Cancel' : 'Edit'}
-                </button>
-                <button
-                  style={{
-                    width: 70,
-                    color: 'white',
-                    borderRadius: 7,
-                    height: 30,
-                    marginRight: 20,
-                    backgroundColor: 'darkred',
-                  }}
-                  onClick={() => {
-                    if (props.variant === 'request') {
-                      setFieldValue('userName', '');
-                      setFieldValue('userEmail', '');
-                      setFieldValue('userPhone', '');
-                      return null;
-                    }
-                    firestore
-                      .collection('Masjid')
-                      .doc(masjidData.id)
-                      .update({
-                        adminId: firestore.FieldValue.delete(),
-                      })
-                      .then(
-                        (value) => {
-                          console.log(value, 'formtable when deleting user successfully');
-                          send('service_nqjmqcg', 'template_vpq7rpr', {
-                            from_name: 'Namaz Timings Team',
-                            message: `This ${masjidData.name} has been removed from your account`,
-                            reply_to: masjidData?.user?.email || masjidData?.userEmail,
-                            type: 'Admin Changes',
-                          }).then(() => {
-                            props.preButton?.onClick();
-                            props.handleToast();
-                          });
-                        },
-                        (reason) => {
-                          console.error(reason, 'formtable when deleting user error');
-                        },
-                      );
-                  }}
-                  type="button"
-                >
-                  Delete
-                </button>
-              </Grid>
+            <Grid item xs={12}>
+              <button
+                style={{
+                  width: 70,
+                  color: 'white',
+                  borderRadius: 7,
+                  height: 30,
+                  marginRight: 20,
+                  backgroundColor: 'green',
+                }}
+                onClick={() => setEdit((prevState) => !prevState)}
+                type="button"
+              >
+                {edit ? 'Cancel' : 'Edit'}
+              </button>
+              <button
+                style={{
+                  width: 70,
+                  color: 'white',
+                  borderRadius: 7,
+                  height: 30,
+                  marginRight: 20,
+                  backgroundColor: 'darkred',
+                }}
+                onClick={() => {
+                  setLoading1(true);
+                  if (props.variant === 'request') {
+                    setFieldValue('userName', '');
+                    setFieldValue('userEmail', '');
+                    setFieldValue('userPhone', '');
+                    return null;
+                  }
+                  firestore
+                    .collection('Masjid')
+                    .doc(masjidData.id)
+                    .update({
+                      adminId: firestore.FieldValue.delete(),
+                    })
+                    .then(
+                      (value) => {
+                        console.log(value, 'formtable when deleting user successfully');
+                        send('service_nqjmqcg', 'template_vpq7rpr', {
+                          from_name: 'Namaz Timings Team',
+                          message: `This ${masjidData.name} has been removed from your account`,
+                          reply_to: masjidData?.user?.email || masjidData?.userEmail,
+                          type: 'Admin Changes',
+                        }).then(() => {
+                          setLoading1(false);
+                          props.preButton?.onClick();
+                          props.handleToast();
+                        });
+                      },
+                      (reason) => {
+                        console.error(reason, 'formtable when deleting user error');
+                      },
+                    );
+                }}
+                type="button"
+              >
+                {loading1 ? (
+                  <Loader type="Puff" color="white" height={12} width={40} />
+                ) : (
+                  <p style={{ color: 'white' }}>Delete</p>
+                )}
+              </button>
+            </Grid>
             )}
-
+            {props.variant === 'request' && (
+            <p style={{ color: 'darkred', margin: '15px' }}>This user will not become admin until he sends a confirmation email or admin request.</p>
+            )}
             <Grid item xs={12}>
               <TextField
                 label="Google Link"
@@ -476,10 +498,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.fajar, 'hh:mm A').isValid()
-                            ? moment(values.timing.fajar, 'hh:mm A')
-                            : values.timing.fajar
-                        }
+                                                    moment(values.timing.fajar, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.fajar, 'hh:mm A')
+                                                      : values.timing.fajar
+                                                }
                       />
                       {errors.timing?.fajar && touched.timing?.fajar && (
                         <p style={ERROR}>{errors.timing?.fajar}</p>
@@ -506,10 +528,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.zohar, 'hh:mm A').isValid()
-                            ? moment(values.timing.zohar, 'hh:mm A')
-                            : values.timing.zohar
-                        }
+                                                    moment(values.timing.zohar, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.zohar, 'hh:mm A')
+                                                      : values.timing.zohar
+                                                }
                       />
                       {errors.timing?.zohar && touched.timing?.zohar && (
                         <p style={ERROR}>{errors.timing?.zohar}</p>
@@ -536,10 +558,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.asar, 'hh:mm A').isValid()
-                            ? moment(values.timing.asar, 'hh:mm A')
-                            : values.timing.asar
-                        }
+                                                    moment(values.timing.asar, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.asar, 'hh:mm A')
+                                                      : values.timing.asar
+                                                }
                       />
                       {errors.timing?.asar && touched.timing?.asar && (
                         <p style={ERROR}>{errors.timing?.asar}</p>
@@ -566,10 +588,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.magrib, 'hh:mm A').isValid()
-                            ? moment(values.timing.magrib, 'hh:mm A')
-                            : values.timing.magrib
-                        }
+                                                    moment(values.timing.magrib, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.magrib, 'hh:mm A')
+                                                      : values.timing.magrib
+                                                }
                       />
                       {errors.timing?.magrib && touched.timing?.magrib && (
                         <p style={ERROR}>{errors.timing?.magrib}</p>
@@ -596,10 +618,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.isha, 'hh:mm A').isValid()
-                            ? moment(values.timing.isha, 'hh:mm A')
-                            : values.timing.isha
-                        }
+                                                    moment(values.timing.isha, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.isha, 'hh:mm A')
+                                                      : values.timing.isha
+                                                }
                       />
                       {errors.timing?.isha && touched.timing?.isha && (
                         <p style={ERROR}>{errors.timing?.isha}</p>
@@ -628,10 +650,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.jummah, 'hh:mm A').isValid()
-                            ? moment(values.timing.jummah, 'hh:mm A')
-                            : null
-                        }
+                                                    moment(values.timing.jummah, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.jummah, 'hh:mm A')
+                                                      : null
+                                                }
                       />
                     </div>
                   </div>
@@ -657,10 +679,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.eidUlAddah, 'hh:mm A').isValid()
-                            ? moment(values.timing.eidUlAddah, 'hh:mm A')
-                            : null
-                        }
+                                                    moment(values.timing.eidUlAddah, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.eidUlAddah, 'hh:mm A')
+                                                      : null
+                                                }
                       />
                     </div>
                   </div>
@@ -686,10 +708,10 @@ function FormsTable(props) {
                           moment(e).format('hh:mm A'),
                         )}
                         value={
-                          moment(values.timing.eidUlFitr, 'hh:mm A').isValid()
-                            ? moment(values.timing.eidUlFitr, 'hh:mm A')
-                            : null
-                        }
+                                                    moment(values.timing.eidUlFitr, 'hh:mm A').isValid()
+                                                      ? moment(values.timing.eidUlFitr, 'hh:mm A')
+                                                      : null
+                                                }
                       />
                     </div>
                   </div>
@@ -731,7 +753,7 @@ function FormsTable(props) {
                       style={{ width: '92px', marginTop: '15px' }}
                     />
                     {errors.pictureURL && (
-                      <p style={ERROR}>{errors.pictureURL}</p>
+                    <p style={ERROR}>{errors.pictureURL}</p>
                     )}
                   </Box>
                 </div>
@@ -746,20 +768,20 @@ function FormsTable(props) {
             }}
           >
             {props.preButton?.onClick && props.preButton?.text && (
-              <button
-                style={{
-                  width: 70,
-                  color: 'white',
-                  borderRadius: 7,
-                  height: 30,
-                  marginRight: 20,
-                  backgroundColor: 'darkred',
-                }}
-                onClick={props.preButton?.onClick}
-                type="button"
-              >
-                {props.preButton?.text}
-              </button>
+            <button
+              style={{
+                width: 70,
+                color: 'white',
+                borderRadius: 7,
+                height: 30,
+                marginRight: 20,
+                backgroundColor: 'darkred',
+              }}
+              onClick={props.preButton?.onClick}
+              type="button"
+            >
+              {props.preButton?.text}
+            </button>
             )}
             <button
               style={{
