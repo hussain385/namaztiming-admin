@@ -5,6 +5,7 @@ import './topnav.css';
 import { Link } from 'react-router-dom';
 import { useFirebase } from 'react-redux-firebase';
 import { Typography } from '@mui/material';
+import { GiHamburgerMenu } from 'react-icons/all';
 
 function RenderUserMenu() {
   const { logout } = useFirebase();
@@ -22,7 +23,7 @@ function Topnav(props) {
   return (
     <div className="topnav">
       <button onClick={() => props.clickOpen()}>
-        <i style={{ fontSize: 25 }} className="fas fa-bars" />
+        <GiHamburgerMenu size={30} />
       </button>
       <Link className="heading" to="/">
         <Typography
