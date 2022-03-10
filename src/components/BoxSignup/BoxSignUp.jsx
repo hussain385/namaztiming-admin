@@ -1,7 +1,7 @@
 import React from 'react';
 import './box.css';
 
-function BoxSignup(props) {
+function BoxSignUp(props) {
   return (
     <div id="card" className="animated fadeIn">
       <div id="upper-side2" style={{ backgroundColor: `${props.color}` }}>
@@ -18,4 +18,4 @@ function BoxSignup(props) {
   );
 }
 
-export default BoxSignup;
+export default BoxSignUp;

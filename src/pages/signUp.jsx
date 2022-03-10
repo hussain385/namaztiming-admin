@@ -22,7 +22,7 @@ import {
   useFirestore,
 } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
-import BoxSignup from '../components/BoxSignup/BoxSignUp';
+import BoxSignUp from '../components/BoxSignup/BoxSignUp';
 
 const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 const ERROR = {
@@ -130,7 +130,7 @@ function SignUp() {
 
   if (error && !auth) {
     return (
-      <BoxSignup
+      <BoxSignUp
         value="Link Invalid"
         icon="far fa-times-circle"
         color="#c34a4a"
@@ -156,7 +156,7 @@ function SignUp() {
 
   if (!auth) {
     return (
-      <BoxSignup
+      <BoxSignUp
         value="Please try again"
         icon="far fa-times-circle"
         color="#c34a4a"
@@ -338,7 +338,7 @@ function SignUp() {
 
   return (
     // <Container>
-    <BoxSignup
+    <BoxSignUp
       value="Loading"
       icon="far fa-clock"
       color="#becc00"
