@@ -6,4 +6,3 @@
 [build]
   publish = "dist"
   command = "npm run build"
-  environment = {NODE_VERSION = '14'}

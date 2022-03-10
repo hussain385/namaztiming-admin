@@ -27,3 +27,4 @@ dist-ssr
 /.yarn/unplugged/
 /.yarn/install-state.gz
 .idea/
+/yarn.lock
