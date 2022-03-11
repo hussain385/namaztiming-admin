@@ -16,7 +16,7 @@ import { init, send } from '@emailjs/browser';
 import { MasjidSchema } from '../../services/validation';
 import { sendNotification } from '../../services/pushNotification';
 
-init('user_k4PQLbwynLReSen9I1q0c');
+init('JYbAB8P623mTkLgvV');
 
 const ERROR = {
   color: 'darkred',
@@ -145,8 +145,7 @@ function FormsTable(props) {
               if (props.variant === 'edit') {
                 const user = _.find(users, (u) => u.email === values.userEmail);
                 if (user) {
-                  await send('service_nqjmqcg', 'template_vpq7rpr', {
-                    from_name: 'Namaz Timings Team',
+                  await send('service_6htulue', 'template_nwbvmks', {
                     message: `This ${values.name} has been added to your account`,
                     reply_to: user.email,
                     type: 'Admin Changes',

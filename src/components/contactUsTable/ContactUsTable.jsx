@@ -12,7 +12,7 @@ import Loader from 'react-loader-spinner';
 import {init, send} from '@emailjs/browser';
 import {useFirestore} from 'react-redux-firebase';
 
-init('user_k4PQLbwynLReSen9I1q0c');
+init('JYbAB8P623mTkLgvV');
 const ERROR = {
     color: 'darkred',
     fontSize: 12,
@@ -195,23 +195,21 @@ function MessageReply(props) {
                 userMessage: Yup.string().required('Message is required'),
             })}
             onSubmit={(values) => {
-                send('service_nqjmqcg', 'template_vpq7rpr', {
-                    from_name: 'Namaz Timings Team',
+                send('service_6htulue', 'template_nwbvmks', {
                     message: `${values.userMessage}`,
                     reply_to: `${values.userEmail}`,
                     type: `${values.userSubject}`,
-                })
-                    .then(async () => {
-                        await Firestore.delete(`contactForm/${props.data.id}`).then(() => {
-                            props.handleToast();
-                            props.closeOldModal();
-                            props.preButton.onClick();
-                        });
-                    })
-                    .catch((e) => {
-                        props.handleToast1();
+                }).then(async () => {
+                    await Firestore.delete(`contactForm/${props.data.id}`).then(() => {
+                        props.handleToast();
+                        props.closeOldModal();
                         props.preButton.onClick();
                     });
+                }).catch((e) => {
+                    console.log(e)
+                    props.handleToast1();
+                    props.preButton.onClick();
+                });
             }}
         >
             {({
