@@ -731,8 +731,8 @@ function FormsTable(props) {
                         <img
                           alt="masjid"
                           style={{ maxHeight: '100%', maxWidth: '100%' }}
-                          width="auto"
-                          height="auto"
+                          width="150"
+                          height="150"
                           src={image}
                         />
                         {/* <button onClick={() => onFileDelete(setFieldValue)}>
