@@ -164,8 +164,7 @@ function FormsTable(props) {
                 }
               }
               if (props.variant === 'request') {
-                await send('service_nqjmqcg', 'template_vpq7rpr', {
-                  from_name: 'Namaz Timings Team',
+                await send('service_6htulue', 'template_nwbvmks', {
                   message: `This ${masjidData.name} has been approved by admin. PLease send a admin request if you want to be an admin to this masjid`,
                   reply_to: values.userEmail,
                   type: 'Admin Changes',
