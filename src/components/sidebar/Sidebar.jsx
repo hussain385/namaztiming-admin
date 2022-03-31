@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './sidebar.css';
 import {
   FaInbox, FaRegAddressCard, FaRegBuilding,
-  FaRegClock, FaRegHourglass, FaRegLightbulb, FaRegStickyNote,
+  FaBell, FaRegClock, FaRegHourglass, FaRegLightbulb, FaRegStickyNote,
 } from 'react-icons/all';
 
 // import logo from '../../assets/images/logo.png'
@@ -45,6 +45,11 @@ const sideBarItems = [
     display_name: 'Contact Us',
     route: '/contact-us',
     icon: <FaRegAddressCard />,
+  },
+  {
+    display_name: 'Group Announcement',
+    route: '/group-announcement',
+    icon: <FaBell />,
   },
 ];
 
