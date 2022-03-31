@@ -68,7 +68,7 @@ function Sidebar(props) {
 
   return (
     <div className="sidebar">
-      <div className="sidebar__logo">Masjid Finder Pakistan</div>
+      <div className="sidebar__logo">Namaz Timings</div>
       {sideBarItems.map((item, index) => (
         <Link onClick={() => props.clickOpen()} to={item.route} key={index}>
           <SidebarItem
