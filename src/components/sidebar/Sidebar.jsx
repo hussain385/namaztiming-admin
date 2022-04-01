@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './sidebar.css';
 import {
   FaInbox, FaRegAddressCard, FaRegBuilding,
-  FaRegClock, FaRegHourglass, FaRegLightbulb, FaRegStickyNote,
+  FaBell, FaRegClock, FaRegHourglass, FaRegLightbulb, FaRegStickyNote,
 } from 'react-icons/all';
 
 // import logo from '../../assets/images/logo.png'
@@ -46,6 +46,11 @@ const sideBarItems = [
     route: '/contact-us',
     icon: <FaRegAddressCard />,
   },
+  {
+    display_name: 'Group Announcement',
+    route: '/group-announcement',
+    icon: <FaBell />,
+  },
 ];
 
 function SidebarItem(props) {
@@ -68,7 +73,7 @@ function Sidebar(props) {
 
   return (
     <div className="sidebar">
-      <div className="sidebar__logo">Masjid Finder Pakistan</div>
+      <div className="sidebar__logo">Namaz Timings</div>
       {sideBarItems.map((item, index) => (
         <Link onClick={() => props.clickOpen()} to={item.route} key={index}>
           <SidebarItem

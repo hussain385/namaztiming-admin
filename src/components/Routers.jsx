@@ -16,6 +16,7 @@ import SuccessPage from '../pages/SuccessPage';
 import TimeRequests from '../pages/TimeRequests';
 import TermsCondition from '../pages/Terms&Condition';
 import ContactUs from '../pages/ContactUs';
+import GroupAnnoucemnet from '../pages/GroupAnnoucemnet'
 
 // import {getAuth} from "firebase/auth";
 
@@ -134,10 +135,14 @@ function Routers() {
             </RequireAuth>
           }
         />
-
-        {/* <Route path="/"> */}
-        {/*  <NotFound /> */}
-        {/* </Route> */}
+        <Route
+            path="/group-announcement"
+            element={
+                <RequireAuth>
+                    <GroupAnnoucemnet />
+                </RequireAuth>
+              }
+          />
       </Routes>
     </BrowserRouter>
   );

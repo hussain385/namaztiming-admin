@@ -16,7 +16,7 @@ import { init, send } from '@emailjs/browser';
 import { MasjidSchema } from '../../services/validation';
 import { sendNotification } from '../../services/pushNotification';
 
-init('user_k4PQLbwynLReSen9I1q0c');
+init('JYbAB8P623mTkLgvV');
 
 const ERROR = {
   color: 'darkred',
@@ -26,6 +26,7 @@ const ERROR = {
 
 function FormsTable(props) {
   const [loading1, setLoading1] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
   useFirestoreConnect([
     {
       collection: 'users',
@@ -87,7 +88,9 @@ function FormsTable(props) {
       validationSchema={MasjidSchema}
       validateOnChange={false}
       validateOnBlur
-      onSubmit={async (values, { resetForm, setSubmitting }) => {
+      onSubmit={async (values, { resetForm }) => {
+        setSubmitting(true)
+        console.log(isSubmitting, "sanas")
         const filter = [
           'latitude',
           'longitude',
@@ -127,7 +130,7 @@ function FormsTable(props) {
               timeStamp: firestore.Timestamp.now(),
             })
             .then(async (value2) => {
-              if (props.variant === 'new') {
+              if (props.variant === 'new' && values.userEmail) {
                 const actionCodeSettings = {
                   url: encodeURI(
                     `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${value2.id}&userEmail=${values.userEmail}`,
@@ -142,8 +145,7 @@ function FormsTable(props) {
               if (props.variant === 'edit') {
                 const user = _.find(users, (u) => u.email === values.userEmail);
                 if (user) {
-                  await send('service_nqjmqcg', 'template_vpq7rpr', {
-                    from_name: 'Namaz Timings Team',
+                  await send('service_6htulue', 'template_nwbvmks', {
                     message: `This ${values.name} has been added to your account`,
                     reply_to: user.email,
                     type: 'Admin Changes',
@@ -162,8 +164,7 @@ function FormsTable(props) {
                 }
               }
               if (props.variant === 'request') {
-                await send('service_nqjmqcg', 'template_vpq7rpr', {
-                  from_name: 'Namaz Timings Team',
+                await send('service_6htulue', 'template_nwbvmks', {
                   message: `This ${masjidData.name} has been approved by admin. PLease send a admin request if you want to be an admin to this masjid`,
                   reply_to: values.userEmail,
                   type: 'Admin Changes',
@@ -188,9 +189,8 @@ function FormsTable(props) {
               props.handleToast();
             });
         } else if (props.variant === 'edit') {
-          console.log(values, 'from formstable when edit');
           const user = _.find(users, (u) => u.email === values.userEmail);
-          console.log(user, 'the user we get');
+          // console.log(user, 'the user we get');
           firestore
             .update(`Masjid/${masjidData.id}`, {
               adminId: user?.id || '',
@@ -221,7 +221,6 @@ function FormsTable(props) {
         errors,
         touched,
         setFieldValue,
-        isSubmitting,
         /* and other goodies */
       }) => (
         <>
@@ -732,8 +731,8 @@ function FormsTable(props) {
                         <img
                           alt="masjid"
                           style={{ maxHeight: '100%', maxWidth: '100%' }}
-                          width="auto"
-                          height="auto"
+                          width="150"
+                          height="150"
                           src={image}
                         />
                         {/* <button onClick={() => onFileDelete(setFieldValue)}>
