@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-    Autocomplete, Box, Grid, TextField,
-} from '@mui/material';
+import {TextField} from '@mui/material';
 
 const GroupAnnoucemnet = () => {
     return (
@@ -12,16 +10,32 @@ const GroupAnnoucemnet = () => {
                     <div className="card">
                         <div className="card__body">
                             <TextField
-                                label="Masjid Name"
-                                name="name"
-                                value={values.name}
-                                onChange={(event) => {
-                                    setFieldValue('name', event.target.value);
-                                }}
-                                error={touched.name && Boolean(errors.name)}
-                                helperText={touched.name && errors.name}
-                                fullWidth
+                                label="Public Annoucement"
+                                name="annoucement"
+                                sx={{width: '100%'}}
                             />
+                            <TextField
+                                label="Message"
+                                name="userMessage"
+                                fullWidth
+                                multiline
+                                rows={7.5}
+                                style={{marginTop: '20px'}}
+                            />
+                            <button
+                                style={{
+                                    paddingRight: 10,
+                                    paddingLeft: 10,
+                                    width: '100%',
+                                    color: 'white',
+                                    marginTop: '10px',
+                                    backgroundColor: 'green',
+                                    borderRadius: 7,
+                                    height: 30,
+                                }}
+                            >
+                                <p>Send</p>
+                            </button>
                         </div>
                     </div>
                 </div>
