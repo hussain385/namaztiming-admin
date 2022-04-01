@@ -1,8 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
 
 import { Provider } from 'react-redux';
 import { createFirestoreInstance } from 'redux-firestore';
@@ -46,7 +47,8 @@ const rrfProps = {
   createFirestoreInstance, // <- needed if using firestore
 };
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+root.render(
   // <React.StrictMode>
   <Provider store={store}>
     <ReactReduxFirebaseProvider {...rrfProps}>
@@ -57,5 +59,4 @@ ReactDOM.render(
     </ReactReduxFirebaseProvider>
   </Provider>,
   // </React.StrictMode>,
-  document.getElementById('root'),
 );

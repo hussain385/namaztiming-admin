@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './requestTable.css';
 import 'react-simple-hook-modal/dist/styles.css';
 import {
@@ -76,9 +76,12 @@ function RequestTable(props) {
   const [open, setOpen] = React.useState(false);
   const { bodyData, isAddMasjid } = props;
   console.log(bodyData);
-  const handleToast = () => {
-    setOpen(true);
-  };
+  const handleToast = useCallback(
+    () => {
+      setOpen(true);
+    },
+    [open],
+  );
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

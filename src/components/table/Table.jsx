@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Modal, useModal } from 'react-simple-hook-modal';
 import 'react-simple-hook-modal/dist/styles.css';
 import { useFirestore } from 'react-redux-firebase';
@@ -189,9 +189,12 @@ function Table(props) {
   const { isModalOpen, openModal, closeModal } = useModal();
   const [open, setOpen] = React.useState(false);
 
-  const handleToast = () => {
-    setOpen(true);
-  };
+  const handleToast = useCallback(
+    () => {
+      setOpen(true);
+    },
+    [open],
+  );
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -233,16 +236,16 @@ function Table(props) {
           <>
             {props.timeRequest ? (
               <RenderCusomerBody
-                  masjidData={props.bodyData}
-                  handleToast={() => handleToast()}
-                />
+                masjidData={props.bodyData}
+                handleToast={() => handleToast()}
+              />
             ) : (
-                <>
-                    {(props.limit && props.bodyData
-                        ? props.bodyData.slice(0, Number(props.limit))
-                        : props.bodyData
-                      ).map((item, index) => props.renderBody(item, index))}
-                  </>
+              <>
+                {(props.limit && props.bodyData
+                  ? props.bodyData.slice(0, Number(props.limit))
+                  : props.bodyData
+                ).map((item, index) => props.renderBody(item, index))}
+              </>
             )}
           </>
         )}

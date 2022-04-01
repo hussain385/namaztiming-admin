@@ -89,8 +89,8 @@ function FormsTable(props) {
       validateOnChange={false}
       validateOnBlur
       onSubmit={async (values, { resetForm }) => {
-        setSubmitting(true)
-        console.log(isSubmitting, "sanas")
+        setSubmitting(true);
+        console.log(isSubmitting, 'sanas');
         const filter = [
           'latitude',
           'longitude',
