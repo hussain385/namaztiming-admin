@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';

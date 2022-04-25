@@ -250,7 +250,7 @@ function FormsTable(props) {
               <Autocomplete
                 freeSolo
                 fullWidth
-                options={users && users}
+                options={users || []}
                 loading={loading}
                 onChange={(event, value) => {
                   if (!value) {
@@ -295,7 +295,7 @@ function FormsTable(props) {
               <Autocomplete
                 freeSolo
                 fullWidth
-                options={users && users}
+                options={users || []}
                 loading={loading}
                 disabled={
                                     (masjidData?.user?.email || masjidData?.userEmail)
