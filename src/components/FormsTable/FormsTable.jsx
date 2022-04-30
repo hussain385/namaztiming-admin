@@ -142,27 +142,6 @@ function FormsTable(props) {
                   .auth()
                   .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
               }
-              if (props.variant === 'edit') {
-                const user = _.find(users, (u) => u.email === values.userEmail);
-                if (user) {
-                  await send('service_6htulue', 'template_nwbvmks', {
-                    message: `This ${values.name} has been added to your account`,
-                    reply_to: user.email,
-                    type: 'Admin Changes',
-                  });
-                } else {
-                  const actionCodeSettings = {
-                    url: encodeURI(
-                      `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${value2.id}&userEmail=${values.userEmail}`,
-                    ),
-                    handleCodeInApp: true,
-                    dynamicLinkDomain: 'namaztimings.page.link',
-                  };
-                  await firebase
-                    .auth()
-                    .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
-                }
-              }
               if (props.variant === 'request') {
                 await send('service_6htulue', 'template_nwbvmks', {
                   message: `This ${masjidData.name} has been approved by admin. PLease send a admin request if you want to be an admin to this masjid`,
@@ -205,10 +184,46 @@ function FormsTable(props) {
               },
               timeStamp: firestore.Timestamp.now(),
             })
-            .then(() => {
+            .then(async () => {
               props.preButton?.onClick();
               setSubmitting(false);
               props.handleToast();
+              if (masjidData.tokens) {
+                for (let token of masjidData.tokens) {
+                  sendNotification(
+                      token,
+                      masjidData.name,
+                      'Info is updated by admin',
+                  ).then(
+                      value => {
+                        console.log(value);
+                      },
+                      reason => {
+                        console.error(reason);
+                      },
+                  );
+                }
+              }
+              const user = _.find(users, (u) => u.email === values.userEmail);
+              if (user) {
+                await send('service_6htulue', 'template_nwbvmks', {
+                  message: `This ${values.name} has been added to your account`,
+                  reply_to: user.email,
+                  type: 'Admin Changes',
+                });
+              } else {
+                console.log(values.userEmail, values.userName, masjidData.id)
+                const actionCodeSettings = {
+                  url: encodeURI(
+                      `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${masjidData.id}&userEmail=${values.userEmail}`,
+                  ),
+                  handleCodeInApp: true,
+                  dynamicLinkDomain: 'namaztimings.page.link',
+                };
+                await firebase
+                    .auth()
+                    .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
+              }
             });
         }
       }}
@@ -395,11 +410,9 @@ function FormsTable(props) {
                     })
                     .then(
                       (value) => {
-                        console.log(value, 'formtable when deleting user successfully');
-                        send('service_nqjmqcg', 'template_vpq7rpr', {
-                          from_name: 'Namaz Timings Team',
-                          message: `This ${masjidData.name} has been removed from your account`,
-                          reply_to: masjidData?.user?.email || masjidData?.userEmail,
+                        send('service_6htulue', 'template_nwbvmks', {
+                          message: `This ${masjidData.name} has been removed from your list by admin. PLease send a admin request again if you want to be an admin to this masjid`,
+                          reply_to: values.userEmail,
                           type: 'Admin Changes',
                         }).then(() => {
                           setLoading1(false);
@@ -424,6 +437,9 @@ function FormsTable(props) {
             )}
             {props.variant === 'request' && (
             <p style={{ color: 'darkred', margin: '15px' }}>This user will not become admin until he sends a confirmation email or admin request.</p>
+            )}
+            {_.isUndefined(masjidData?.user?.email) && (
+                <p style={{ color: 'darkred', margin: '15px' }}>Please select admin from the list.</p>
             )}
             <Grid item xs={12}>
               <TextField
