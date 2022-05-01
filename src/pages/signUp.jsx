@@ -196,7 +196,7 @@ function SignUp() {
       batch
         .commit()
         .then(() => {
-          history('/success-page');
+          window.location.replace("https://namaz-timings-pakistan.netlify.app/success-page");
         })
         .catch((reason) => {
           console.error(reason);
