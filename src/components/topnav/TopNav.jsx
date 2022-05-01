@@ -6,20 +6,12 @@ import { Link } from 'react-router-dom';
 import { useFirebase } from 'react-redux-firebase';
 import { Typography } from '@mui/material';
 import { GiHamburgerMenu } from 'react-icons/all';
+import { useNavigate } from 'react-router-dom';
 
-function RenderUserMenu() {
-  const { logout } = useFirebase();
-  return (
-    <a href="/" onClick={() => logout()}>
-      <div className="notification-item">
-        <i className="bx bx-log-out-circle bx-rotate-180" />
-        <span>Logout</span>
-      </div>
-    </a>
-  );
-}
 
 function Topnav(props) {
+    const { logout } = useFirebase();
+    const navigate = useNavigate();
   return (
     <div className="topnav">
       <button onClick={() => props.clickOpen()}>
@@ -35,7 +27,18 @@ function Topnav(props) {
           Namaz Timings
         </Typography>
       </Link>
-      <div className="topnav__right" />
+        <div className="topnav__right">
+            <a className="logoutBtn" onClick={() => {
+                logout().then(() => {
+                    navigate('/login')
+                })
+            }}>
+                <div className="notification-item">
+                    <i className="fas fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </div>
+            </a>
+        </div>
     </div>
   );
 }

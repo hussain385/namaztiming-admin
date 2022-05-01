@@ -89,3 +89,12 @@
 .heading:hover {
   color: var(--main-color);
 }
+
+.logoutBtn {
+  text-decoration: none;
+  color: var(--txt-color);
+  background-color: lightgrey;
+  border-radius: 100px;
+  height: 50px;
+  display: flex;
+}
