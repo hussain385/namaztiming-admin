@@ -38,11 +38,9 @@ function Forms(props) {
       .required('Your Phone no. is required'),
   });
 
-  console.log({
-    userEmail: `${props.item.userEmail}`,
-    userName: `${props.item.userName}`,
-    userPhone: `${props.item.userPhone}`,
-  });
+  console.log(
+      props.item.masjid.id
+  );
 
   const {
     register,
