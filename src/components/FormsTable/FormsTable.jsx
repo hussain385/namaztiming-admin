@@ -189,22 +189,21 @@ function FormsTable(props) {
               setSubmitting(false);
               props.handleToast();
               if (masjidData.tokens) {
-                for (let token of masjidData.tokens) {
+                for (const token of masjidData.tokens) {
                   sendNotification(
-                      token,
-                      masjidData.name,
-                      'Info is updated by admin',
+                    token,
+                    masjidData.name,
+                    'Info is updated by admin',
                   ).then(
-                      value => {
-                        console.log(value);
-                      },
-                      reason => {
-                        console.error(reason);
-                      },
+                    (value) => {
+                      console.log(value);
+                    },
+                    (reason) => {
+                      console.error(reason);
+                    },
                   );
                 }
               }
-              const user = _.find(users, (u) => u.email === values.userEmail);
               if (user) {
                 await send('service_6htulue', 'template_nwbvmks', {
                   message: `This ${values.name} has been added to your account`,
@@ -212,17 +211,17 @@ function FormsTable(props) {
                   type: 'Admin Changes',
                 });
               } else {
-                console.log(values.userEmail, values.userName, masjidData.id)
+                console.log(values.userEmail, values.userName, masjidData.id);
                 const actionCodeSettings = {
                   url: encodeURI(
-                      `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${masjidData.id}&userEmail=${values.userEmail}`,
+                    `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${values.userName}&userPhone=${values.userPhone}&masjidId=${masjidData.id}&userEmail=${values.userEmail}`,
                   ),
                   handleCodeInApp: true,
                   dynamicLinkDomain: 'namaztimings.page.link',
                 };
                 await firebase
-                    .auth()
-                    .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
+                  .auth()
+                  .sendSignInLinkToEmail(values.userEmail, actionCodeSettings);
               }
             });
         }
@@ -439,7 +438,7 @@ function FormsTable(props) {
             <p style={{ color: 'darkred', margin: '15px' }}>This user will not become admin until he sends a confirmation email or admin request.</p>
             )}
             {_.isUndefined(masjidData?.user?.email) && (
-                <p style={{ color: 'darkred', margin: '15px' }}>Please select admin from the list.</p>
+            <p style={{ color: 'darkred', margin: '15px' }}>Please select admin from the list.</p>
             )}
             <Grid item xs={12}>
               <TextField

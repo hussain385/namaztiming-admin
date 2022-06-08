@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import './requestTable.css';
 import 'react-simple-hook-modal/dist/styles.css';
 import {
-  Backdrop, Box, Container, Modal, Slide, Snackbar,
+  Box, Container, Modal, Slide, Snackbar,
 } from '@mui/material';
 import { firestoreConnect, useFirebase, useFirestore } from 'react-redux-firebase';
 import MuiAlert from '@mui/material/Alert';
@@ -19,7 +19,7 @@ function TableModal({ params, Firestore, handleToast }) {
   async function onDelete(item) {
     console.log(item, 'on delete');
     await Firestore.delete(`newMasjid/${item.id}`).then(() => {
-      alert('Request deleted successfully');
+      window.alert('Request deleted successfully');
     });
     await firebase.storage().refFromURL(item.pictureURL).delete();
     // window.location.reload();
@@ -39,11 +39,11 @@ function TableModal({ params, Firestore, handleToast }) {
         Delete
       </button>
       <Modal
-        id="any-unique-identifier"
+        // id="any-unique-identifier"
         open={model}
         onClose={() => setModel(false)}
         closeAfterTransition
-        BackdropComponent={Backdrop}
+        // BackdropComponent={Backdrop}
       >
         <Slide in={model} direction="up" timeout={100}>
           <Box
@@ -56,6 +56,7 @@ function TableModal({ params, Firestore, handleToast }) {
               p: 4,
             }}
           >
+            asd
             <FormsTable
               masjidData={params.row}
               handleToast={() => handleToast()}

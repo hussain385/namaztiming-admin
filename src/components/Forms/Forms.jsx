@@ -19,27 +19,27 @@ const INPUT = {
   width: '100%',
 };
 
-function Forms(props) {
+const schema = Yup.object().shape({
+  userEmail: Yup.string()
+    .email('Must be a valid email')
+    .required('Email is required'),
+  userName: Yup.string().required('Name is required'),
+  userPhone: Yup.string()
+    .matches(
+      /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/,
+      'Phone number is not valid',
+    )
+    .min(11, 'phone no. is short, please check again')
+    .max(16, 'phone no. is long, please check again')
+    .required('Your Phone no. is required'),
+});
+
+function Forms({ item, handleToast, closeModal }) {
   const firestore = useFirestore();
   const firebase = useFirebase();
 
-  const schema = Yup.object().shape({
-    userEmail: Yup.string()
-      .email('Must be a valid email')
-      .required('Email is required'),
-    userName: Yup.string().required('Name is required'),
-    userPhone: Yup.string()
-      .matches(
-        /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/,
-        'Phone number is not valid',
-      )
-      .min(11, 'phone no. is short, please check again')
-      .max(16, 'phone no. is long, please check again')
-      .required('Your Phone no. is required'),
-  });
-
   console.log(
-      props.item.masjid.id
+    item.masjid.id,
   );
 
   const {
@@ -48,9 +48,9 @@ function Forms(props) {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      userEmail: `${props.item.userEmail}`,
-      userName: `${props.item.userName}`,
-      userPhone: `${props.item.userPhone}`,
+      userEmail: `${item.userEmail}`,
+      userName: `${item.userName}`,
+      userPhone: `${item.userPhone}`,
     },
     resolver: yupResolver(schema),
   });
@@ -58,23 +58,23 @@ function Forms(props) {
 
   const submit = async (data) => {
     console.log('clicked on submit');
-    if (props.item.masjid?.adminId) {
+    if (item.masjid?.adminId) {
       if (
         window.confirm(
           'This masjid already have a admin. Do you want to continue?',
         )
       ) {
         await firestore
-          .update(`Masjid/${props.item.masjid.id}`, {
+          .update(`Masjid/${item.masjid.id}`, {
             adminId: firestore.FieldValue.delete(),
           })
           .then(() => {
-            props.handleToast();
+            handleToast();
           });
       } else return null;
     }
-    const newAdmin = 1;
-    const existingAdmin = 1;
+    // const newAdmin = 1;
+    // const existingAdmin = 1;
     console.log('sending link...');
     // if (newAdmin === existingAdmin) {
     //   emailjs
@@ -92,7 +92,7 @@ function Forms(props) {
     // setSubmitting(true);
     const actionCodeSettings = {
       url: encodeURI(
-        `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${props.item.masjid.id}&userEmail=${data.userEmail}&docId=${props.item.id}`,
+        `https://namaz-timings-pakistan.netlify.app/SignUp?userName=${data.userName}&userPhone=${data.userPhone}&masjidId=${item.masjid.id}&userEmail=${data.userEmail}&docId=${item.id}`,
       ),
       handleCodeInApp: true,
       dynamicLinkDomain: 'namaztimings.page.link',
@@ -100,17 +100,17 @@ function Forms(props) {
     await firebase
       .auth()
       .sendSignInLinkToEmail(data.userEmail, actionCodeSettings)
-      .then((value) => {
+      .then(() => {
         console.log('link sent!!!');
-        props.closeModal();
+        closeModal();
         // setSubmitting(false);
-        props.handleToast();
+        handleToast();
       });
-    if (props.item.token) {
+    if (item.token) {
       await sendNotification(
-        props.item.token,
+        item.token,
         'Admin request has been approved',
-        `Congratulations you are now admin of ${props.item.masjid?.name} please check your email`,
+        `Congratulations you are now admin of ${item.masjid?.name} please check your email`,
       );
     }
   };
@@ -148,9 +148,9 @@ function Forms(props) {
         />
         {errors.userPhone && <p style={ERROR}>{errors.userPhone?.message}</p>}
       </div>
-      <p>{props.item.masjid?.name}</p>
-      <p>{props.item.masjid?.address}</p>
-      {props.item.masjid?.adminId && <p style={ERROR}>Already Have an Admin</p>}
+      <p>{item.masjid?.name}</p>
+      <p>{item.masjid?.address}</p>
+      {item.masjid?.adminId && <p style={ERROR}>Already Have an Admin</p>}
       <div
         style={{
           display: 'flex',
@@ -167,7 +167,7 @@ function Forms(props) {
             marginRight: 20,
             backgroundColor: 'darkred',
           }}
-          onClick={props.closeModal}
+          onClick={closeModal}
         >
           Close
         </button>

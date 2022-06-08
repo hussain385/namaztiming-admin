@@ -1,6 +1,5 @@
 {
     "env": {
-        "browser": true,
         "es2021": true,
         "node": true
     },
@@ -20,6 +19,8 @@
     ],
     "rules": {
         "react/prop-types": 0,
-        "react/jsx-props-no-spreading": 0
+        "react/jsx-props-no-spreading": 0,
+        "react/button-has-type": 0,
+        "react/destructuring-assignment": 0
     }
 }
